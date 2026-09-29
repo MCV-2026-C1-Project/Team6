@@ -1,1 +1,28 @@
+# Datasets
 data/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual Environments
+.venv/
+venv/
+.env
+.conda/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Tools
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE & System
+.vscode/
+.idea/
+.DS_Store
