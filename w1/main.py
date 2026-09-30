@@ -4,8 +4,7 @@ import numpy as np
 
 import cv2
 
-# BBDD should be next to repo folder.
-BBDD_DIR = Path(__file__).resolve().parent.parent / 'BBDD'
+BBDD_DIR = Path(__file__).resolve().parent / 'data' / 'BBDD'
 
 #We only use .jpg because these are the only ones that contain the required images. Ask a teacher what .png files are for. 
 def load_images(folder):
