@@ -5,5 +5,7 @@ BBDD_DIR = Path(__file__).resolve().parent / 'data' / 'BBDD'
 if __name__ == '__main__':
     bbdd = load_images(BBDD_DIR)
     print(f'Loaded {len(bbdd)} images from {BBDD_DIR}')
-    hist = compute_histogram(bbdd[15])
+    img = bbdd[15]
+    show_histogram(img)
+    hist = complex_descriptor(img)
     print(f'Descriptor shape: {hist.shape}')
