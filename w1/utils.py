@@ -285,3 +285,44 @@ def evaluate(actual, predicted, k):
         )
 
     return mapk(actual, predicted, k)
+# Retrieval
+
+def retrieve(distances, db_ids, k=5):
+    """Return the top-k closest database image IDs for each query.
+
+    Args:
+        distances: Distance matrix of shape (n_queries, n_database).
+            Lower values are considered better matches.
+        db_ids: Database image IDs corresponding to the columns
+            of the distance matrix.
+        k: Number of database images to retrieve per query.
+
+    Returns:
+        List of lists containing the top-k database image IDs
+        for each query, ordered from smallest to largest distance.
+    """
+
+    if distances.ndim != 2:
+        raise ValueError("distances must be a 2D array")
+
+    if distances.shape[1] != len(db_ids):
+        raise ValueError(
+            "Number of database IDs must match the number of distance columns"
+        )
+
+    if k <= 0:
+        raise ValueError("k must be greater than 0")
+
+    if k > len(db_ids):
+        raise ValueError("k cannot be larger than the database")
+
+    sorted_indices = np.argsort(distances, axis=1)
+    top_k_indices = sorted_indices[:, :k]
+
+    results = []
+
+    for query_indices in top_k_indices:
+        query_results = [db_ids[i] for i in query_indices]
+        results.append(query_results)
+
+    return results
