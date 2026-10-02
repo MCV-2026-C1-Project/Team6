@@ -85,6 +85,7 @@ def normalize(hist: np.ndarray) -> np.ndarray:
 
 ### Descriptors
 # Added: normalize the histogram
+
 def simple_descriptor(img):
     """Given an image recieve the 3 1d colour histograms compressed in a single numpy array"""
     hists = []
@@ -198,7 +199,7 @@ def get_distances(
 
 ### Evaluation
 # apk and mapk copied from https://github.com/benhamner/Metrics
-#The ml_metrics package no longer
+# The ml_metrics package no longer
 # installs with modern setuptools, so the functions are included here.
 def apk(actual, predicted, k=10):
     """
@@ -292,7 +293,8 @@ def evaluate(actual, predicted, k):
         )
 
     return mapk(actual, predicted, k)
-# Retrieval
+
+### Retrieval
 
 def retrieve(distances, db_ids, k=5):
     """Return the top-k closest database image IDs for each query.
