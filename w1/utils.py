@@ -188,3 +188,100 @@ def get_distances(
         return other_metrics[metric](query_desc, db_desc)
 
     return sd.cdist(query_desc, db_desc, metric)
+
+### Evaluation
+# apk and mapk copied from https://github.com/benhamner/Metrics
+#The ml_metrics package no longer
+# installs with modern setuptools, so the functions are included here.
+def apk(actual, predicted, k=10):
+    """
+    Computes the average precision at k.
+
+    This function computes the average prescision at k between two lists of
+    items.
+
+    Parameters
+    ----------
+    actual : list
+             A list of elements that are to be predicted (order doesn't matter)
+    predicted : list
+                A list of predicted elements (order does matter)
+    k : int, optional
+        The maximum number of predicted elements
+
+    Returns
+    -------
+    score : double
+            The average precision at k over the input lists
+
+    """
+    if len(predicted)>k:
+        predicted = predicted[:k]
+
+    score = 0.0
+    num_hits = 0.0
+
+    for i,p in enumerate(predicted):
+        if p in actual and p not in predicted[:i]:
+            num_hits += 1.0
+            score += num_hits / (i+1.0)
+
+    if not actual:
+        return 0.0
+
+    return score / min(len(actual), k)
+
+def mapk(actual, predicted, k=10):
+    """
+    Computes the mean average precision at k.
+
+    This function computes the mean average prescision at k between two lists
+    of lists of items.
+
+    Parameters
+    ----------
+    actual : list
+             A list of lists of elements that are to be predicted
+             (order doesn't matter in the lists)
+    predicted : list
+                A list of lists of predicted elements
+                (order matters in the lists)
+    k : int, optional
+        The maximum number of predicted elements
+
+    Returns
+    -------
+    score : double
+            The mean average precision at k over the input lists
+
+    """
+    return np.mean([apk(a,p,k) for a,p in zip(actual, predicted)])
+
+
+def evaluate(actual, predicted, k):
+    """Compute mAP@k of the retrieval results against the ground truth.
+
+    Args:
+        actual: Ground truth as loaded from gt_corresps.pkl, a list of lists
+            where actual[query_id] holds the correct BBDD ids for that query.
+        predicted: Ranked BBDD ids for each query, either a dict
+            {query_id: [ids]} or a list of lists in the same order as actual.
+        k: Number of top results to consider.
+
+    Returns:
+        mAP@k as a float between 0 and 1.
+    """
+
+    # The query folder can have fewer images than the ground truth
+    # (qsd1_w1 has 24 images for 30 entries), so match them by query id
+    if isinstance(predicted, dict):
+        query_ids = sorted(predicted)
+        actual = [actual[qid] for qid in query_ids]
+        predicted = [list(predicted[qid]) for qid in query_ids]
+    elif len(actual) != len(predicted):
+        raise ValueError(
+            f'Got {len(predicted)} predictions for {len(actual)} ground truth '
+            'entries. Pass predictions as a dict {query_id: [ids]}.'
+        )
+
+    return mapk(actual, predicted, k)
