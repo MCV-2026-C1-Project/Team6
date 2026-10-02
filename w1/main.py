@@ -1,6 +1,7 @@
 from utils import *
 
-BBDD_DIR = Path(__file__).resolve().parent / 'data' / 'BBDD'
+DATA_DIR = Path(__file__).resolve().parent.parent / 'data'
+BBDD_DIR = DATA_DIR / 'BBDD'
 
 if __name__ == '__main__':
     bbdd = load_images(BBDD_DIR)
