@@ -18,6 +18,33 @@ def load_images(folder):
         images[image_id] = img
     return images
 
+# Function adapted to CieLab
+def load_images_lab(folder: str) -> dict[int, np.ndarray]:
+    """Load JPG images from a folder and convert them to CIE Lab.
+
+    Args:
+        folder: Path to the folder containing the images.
+
+    Returns:
+        Dictionary mapping image IDs to Lab images.
+    """
+
+    images = {}
+
+    for path in sorted(Path(folder).glob("*.jpg")):
+        img = cv2.imread(str(path))
+
+        if img is None:
+            print(f"Could not read {path}")
+            continue
+
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+        image_id = int(path.stem.split("_")[-1])
+        images[image_id] = img
+
+    return images
+
+
 def show_histogram(img):
     """Given an assumed BGR image plot its histogram and the hole image"""
     colors = ('b','g', 'r')
@@ -37,19 +64,60 @@ def show_histogram(img):
     ax_hist.set_ylabel("Frequency")
     plt.tight_layout()
     plt.show()
+    
 
-#This will later need normalization. 
-def compute_histogram(img):
+def normalize(hist: np.ndarray) -> np.ndarray:
+    """Normalize a histogram so its values sum to 1.
+
+    Args:
+        hist: Input histogram.
+
+    Returns:
+        Normalized histogram.
+    """
+
+    return cv2.normalize(hist, None, alpha=1, beta=0, norm_type=cv2.NORM_L1)
+
+
+### Descriptors
+# Added: normalize the histogram
+def simple_descriptor(img):
     """Given an image recieve the 3 1d colour histograms compressed in a single numpy array"""
     hists = []
     for i in range(img.shape[2]):
         hist = cv2.calcHist([img], [i], None, [256], [0, 256])
+        hist = normalize(hist)
         hists.append(hist.flatten())
 
     return np.concatenate(hists)
 
 
-# Distances
+def complex_descriptor(img: np.ndarray) -> np.ndarray:
+    """Compute a descriptor for each of the four image quadrants.
+
+    Args:
+        img: Input image.
+    
+    Returns:
+        Concatenated descriptors for the four quadrants.
+    """
+
+    h, w = img.shape[:2]
+    half_h, half_w = h // 2, w // 2
+
+    subimages = [
+        img[:half_h, :half_w],
+        img[:half_h, half_w:],
+        img[half_h:, :half_w],
+        img[half_h:, half_w:]
+    ]
+
+    return np.concatenate([
+        simple_descriptor(subimage)
+        for subimage in subimages
+    ])
+
+### Distances
 
 def chi2(x, y):
     num = (x[:, None, :] - y[None, :, :]) ** 2
