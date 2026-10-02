@@ -5,7 +5,7 @@ import cv2
 import scipy.spatial.distance as sd
 from typing import Literal
 
-#We only use .jpg because these are the only ones that contain the required images. Ask a teacher what .png files are for. 
+#We only use .jpg because these are the only ones that contain the required images.
 def load_images(folder):
     """Read every .jpg in folder and return {image_id: BGR image}."""
     images = {}
@@ -19,17 +19,19 @@ def load_images(folder):
     return images
 
 # Function adapted to CieLab
-def load_images_lab(folder: str) -> dict[int, np.ndarray]:
+def load_images_lab(folder: str) -> tuple[list[int], list[np.ndarray]]:
     """Load JPG images from a folder and convert them to CIE Lab.
 
     Args:
         folder: Path to the folder containing the images.
 
     Returns:
-        Dictionary mapping image IDs to Lab images.
+        Tuple (ids, images) where ids[i] is the ID of images[i].
+        Images are stored in Lab color space.
     """
 
-    images = {}
+    ids: list[int] = []
+    images: list[np.ndarray] = []
 
     for path in sorted(Path(folder).glob("*.jpg")):
         img = cv2.imread(str(path))
@@ -40,9 +42,11 @@ def load_images_lab(folder: str) -> dict[int, np.ndarray]:
 
         img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
         image_id = int(path.stem.split("_")[-1])
-        images[image_id] = img
 
-    return images
+        ids.append(image_id)
+        images.append(img)
+
+    return ids, images
 
 
 def show_histogram(img):
@@ -50,7 +54,7 @@ def show_histogram(img):
     colors = ('b','g', 'r')
     fig, (ax_img, ax_hist) = plt.subplots(1, 2, figsize=(12, 5))
 
-    ax_img.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    ax_img.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2LAB))
     ax_img.set_title("Original image")
     ax_img.axis('off')
 
@@ -92,6 +96,10 @@ def simple_descriptor(img):
     return np.concatenate(hists)
 
 
+def simple_descriptors(images):
+    return np.array([simple_descriptor(img) for img in images])
+
+
 def complex_descriptor(img: np.ndarray) -> np.ndarray:
     """Compute a descriptor for each of the four image quadrants.
 
@@ -102,20 +110,18 @@ def complex_descriptor(img: np.ndarray) -> np.ndarray:
         Concatenated descriptors for the four quadrants.
     """
 
-    h, w = img.shape[:2]
-    half_h, half_w = h // 2, w // 2
-
-    subimages = [
-        img[:half_h, :half_w],
-        img[:half_h, half_w:],
-        img[half_h:, :half_w],
-        img[half_h:, half_w:]
-    ]
+    rows = np.array_split(img, 3, axis = 0)
+    regions = [cell for row in rows for cell in np.array_split(row, 3, axis = 1)]
 
     return np.concatenate([
         simple_descriptor(subimage)
-        for subimage in subimages
+        for subimage in regions
     ])
+
+
+def complex_descriptors(images):
+    return np.array([complex_descriptor(img) for img in images])
+
 
 ### Distances
 
@@ -154,6 +160,7 @@ def total_variation(x, y):
         axis=2
     )
 
+DISTANCES = ["bhattacharyya", 'braycurtis', 'canberra', 'chebyshev', "chi2", 'cityblock', 'correlation', 'cosine', 'dice', 'euclidean', 'hamming', "hellinger", "histogram_intersection", 'jaccard', 'jensenshannon', 'mahalanobis', 'minkowski', 'rogerstanimoto', 'russellrao', 'seuclidean', 'sokalsneath', 'sqeuclidean', "total_variation", 'yule']
 
 def get_distances(
         query_desc: np.ndarray,
