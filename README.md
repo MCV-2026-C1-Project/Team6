@@ -21,11 +21,13 @@ project/
 ├── w1/
 │   ├── utils.py
 │   ├── main.py
+│   ├── test.py
 │   ├── grid_search.py      # week 1 only
 │   └── results/
 ├── w2/
 │   ├── utils.py
 │   ├── main.py
+│   ├── test.py
 │   └── ...
 └── ...
 ```
@@ -75,6 +77,15 @@ python main.py
 ### `utils.py` – shared functions
 
 Every week has a `utils.py` that always contains all the functions used by that week's scripts (image loading, descriptors, distances, retrieval and evaluation metrics). It is not run directly: it is imported by the other scripts with `from utils import *`.
+
+### `test.py` – run this to get the test results
+
+Every week has a `test.py`. Running it executes the same pipeline on that week's test set and saves the results in the format expected for the submission as a `result.pkl` file for each method.
+
+```bash
+cd wX
+python test.py
+```
 
 ### Extra scripts
 
