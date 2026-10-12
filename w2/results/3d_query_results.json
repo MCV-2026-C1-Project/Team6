@@ -1,0 +1,12662 @@
+{
+  "global_4_4_4": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        204,
+        141,
+        68
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        281,
+        170,
+        174,
+        172,
+        247
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        137,
+        217,
+        13,
+        205,
+        79
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        283,
+        221,
+        78,
+        94
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        274,
+        208,
+        145,
+        14,
+        11
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        246,
+        128,
+        238,
+        31,
+        110
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        50,
+        59,
+        37,
+        89
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        14,
+        176,
+        19,
+        109
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        261,
+        168,
+        0,
+        10
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        27,
+        162,
+        203,
+        169,
+        105
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        115,
+        31,
+        131,
+        8,
+        15
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        274,
+        145,
+        208,
+        11,
+        22
+      ],
+      "first_correct_rank_in_top5": 5
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        131,
+        138,
+        115,
+        213
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        143,
+        252,
+        101,
+        151,
+        13
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        128,
+        92,
+        242,
+        246,
+        31
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        76,
+        144,
+        282
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        36,
+        159,
+        189,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        189,
+        186,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        113,
+        262,
+        264,
+        286,
+        64
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        51,
+        39,
+        29
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        69,
+        39,
+        63
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        233,
+        257,
+        64,
+        82,
+        247
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        286,
+        10,
+        249
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        18,
+        278,
+        209,
+        212,
+        114
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        256,
+        39,
+        167
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        101,
+        105,
+        143,
+        190,
+        154
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        238,
+        110,
+        216
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        18,
+        278,
+        206,
+        20
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        27,
+        93,
+        276,
+        86,
+        127
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        123,
+        171,
+        218,
+        37
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "global_8_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        229,
+        194,
+        184
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        174,
+        281,
+        170,
+        109,
+        241
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        229,
+        79,
+        263,
+        2,
+        264
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        78,
+        260,
+        84,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        172,
+        54,
+        176,
+        169
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        246,
+        92,
+        128,
+        238,
+        219
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        180,
+        285,
+        17,
+        31
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        14,
+        125,
+        274
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        261,
+        83,
+        0,
+        52
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        46,
+        162,
+        203,
+        8,
+        93
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        31,
+        203,
+        259,
+        169,
+        50
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        11,
+        22,
+        208,
+        274,
+        79
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        31,
+        57,
+        170,
+        80,
+        218
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        38,
+        13,
+        252,
+        143
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        128,
+        92,
+        198,
+        46
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        76,
+        84,
+        45
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        186,
+        189,
+        77,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        189,
+        36,
+        186,
+        77,
+        75
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        64,
+        82,
+        72,
+        241
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        39,
+        88,
+        103
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        241,
+        135,
+        51,
+        281
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        244,
+        264,
+        72,
+        17,
+        241
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        10,
+        286,
+        279
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        209,
+        278,
+        18,
+        77,
+        108
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        241,
+        281,
+        135,
+        74
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        59,
+        268,
+        208,
+        285,
+        143
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        139,
+        110,
+        231,
+        230,
+        254
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        20,
+        206,
+        278,
+        209
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        276,
+        154,
+        105,
+        31,
+        27
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        218,
+        123,
+        213
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "global_16_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        229,
+        2,
+        236,
+        35
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        109,
+        241,
+        281,
+        247
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        79,
+        2,
+        263,
+        229,
+        120
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        69,
+        28,
+        144,
+        260
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        105,
+        235,
+        142
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        92,
+        128,
+        216,
+        238,
+        198
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        180,
+        285,
+        37,
+        105
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        125,
+        148,
+        214,
+        212
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        83,
+        206,
+        18
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        105,
+        174,
+        158
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        72,
+        31,
+        276,
+        86
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        145,
+        25,
+        14,
+        202
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        276,
+        72,
+        31,
+        259,
+        123
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        49,
+        101,
+        59,
+        85,
+        68
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        242,
+        185,
+        216,
+        31
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        103,
+        84,
+        88
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        189,
+        56,
+        77,
+        168
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        189,
+        77,
+        278,
+        18
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        241,
+        64,
+        260,
+        61
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        39,
+        239,
+        103,
+        193
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        241,
+        69,
+        221,
+        260,
+        262
+      ],
+      "first_correct_rank_in_top5": 5
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        79,
+        166,
+        241,
+        57,
+        21
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        278,
+        279,
+        286,
+        10
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        209,
+        18,
+        108,
+        36,
+        20
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        241,
+        262,
+        281,
+        69,
+        74
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        229,
+        59,
+        226,
+        218,
+        208
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        139,
+        230,
+        231,
+        121,
+        9
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        206,
+        20,
+        183,
+        52
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        276,
+        154,
+        31,
+        105,
+        203
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        218,
+        123,
+        37,
+        231
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "global_4_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        204,
+        5,
+        97
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        281,
+        174,
+        247,
+        109,
+        170
+      ],
+      "first_correct_rank_in_top5": 5
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        205,
+        13,
+        143,
+        217,
+        200
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        283,
+        78,
+        221,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        172,
+        251,
+        54,
+        176,
+        19
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        246,
+        128,
+        238,
+        110,
+        92
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        37,
+        89,
+        285,
+        180
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        14,
+        22,
+        274,
+        148
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        261,
+        10,
+        168,
+        83
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        162,
+        27,
+        105,
+        104
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        15,
+        259,
+        31,
+        115,
+        86
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        274,
+        208,
+        11,
+        22,
+        14
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        138,
+        31,
+        80,
+        130
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        143,
+        252,
+        101,
+        151,
+        13
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        128,
+        92,
+        242,
+        246,
+        31
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        45,
+        76,
+        63
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        36,
+        159,
+        189,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        186,
+        189,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        262,
+        264,
+        286,
+        64,
+        133
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        39,
+        215,
+        239,
+        103,
+        193
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        6,
+        63,
+        135
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        233,
+        257,
+        64,
+        244,
+        247
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        10,
+        286,
+        168
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        18,
+        278,
+        209,
+        212,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        241,
+        80,
+        281
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        101,
+        143,
+        38,
+        252,
+        197
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        238,
+        110,
+        216
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        18,
+        278,
+        206,
+        20
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        276,
+        130,
+        169,
+        154,
+        235
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        218,
+        123,
+        171
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "global_8_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        229,
+        184,
+        263
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        109,
+        241,
+        281,
+        247
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        263,
+        2,
+        79,
+        229,
+        120
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        28,
+        144,
+        260,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        105,
+        235,
+        39
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        92,
+        238,
+        128,
+        219,
+        216
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        180,
+        285,
+        31,
+        37
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        125,
+        75,
+        148,
+        106
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        52,
+        77,
+        206
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        50,
+        27,
+        174,
+        105
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        72,
+        276,
+        93,
+        31
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        145,
+        25,
+        202,
+        14
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        31,
+        72,
+        276,
+        170,
+        86
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        49,
+        52,
+        277,
+        222
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        242,
+        185,
+        92,
+        31
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        84,
+        103,
+        260
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        77,
+        207,
+        189,
+        56
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        189,
+        77,
+        18,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        241,
+        260,
+        64,
+        61
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        39,
+        239,
+        103,
+        193
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        241,
+        260,
+        69,
+        262,
+        221
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        17,
+        241,
+        245,
+        21,
+        79
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        10,
+        286,
+        278,
+        117
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        209,
+        278,
+        206,
+        18,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        241,
+        262,
+        281,
+        69,
+        74
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        59,
+        229,
+        226,
+        79,
+        133
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        110,
+        139,
+        231,
+        254,
+        173
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        20,
+        206,
+        183,
+        209
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        276,
+        154,
+        31,
+        203,
+        105
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        123,
+        218,
+        171
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_2_4_4_4": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        97,
+        141,
+        194
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        281,
+        170,
+        174,
+        172,
+        162
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        25,
+        277,
+        208,
+        205,
+        13
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        260,
+        144,
+        63
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        176,
+        208,
+        19,
+        145,
+        105
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        246,
+        110,
+        31,
+        242
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        50,
+        89,
+        37,
+        73
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        176,
+        19,
+        66,
+        125
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        226,
+        134,
+        188
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        31,
+        8,
+        129,
+        79
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        31,
+        259,
+        242,
+        88,
+        131
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        107,
+        14,
+        109
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        131,
+        259,
+        203
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        252,
+        101,
+        95,
+        143,
+        154
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        162,
+        128,
+        30,
+        187
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        260,
+        76,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        186,
+        189,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        186,
+        189,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        264,
+        103,
+        144,
+        113
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        39,
+        51,
+        167
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        135,
+        69,
+        63
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        72,
+        282,
+        244,
+        233,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        249,
+        117,
+        76
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        278,
+        212,
+        182,
+        36,
+        77
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        69,
+        281,
+        39
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        38,
+        105,
+        252,
+        101,
+        217
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        238,
+        110,
+        216
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        206,
+        77,
+        211,
+        278
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        27,
+        12,
+        149,
+        187
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        153,
+        37,
+        123,
+        62
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_2_8_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        194,
+        1,
+        229
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        281,
+        170,
+        174,
+        162,
+        187
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        120,
+        184,
+        263,
+        2,
+        104
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        260,
+        87,
+        63
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        169,
+        192,
+        239
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        246,
+        128,
+        92,
+        238,
+        219
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        285,
+        89,
+        93,
+        185
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        274,
+        125,
+        14
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        261,
+        275,
+        38
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        8,
+        185,
+        149,
+        46
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        88,
+        104,
+        242
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        274,
+        162,
+        184
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        103,
+        88,
+        218
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        252,
+        143,
+        49,
+        150
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        128,
+        46,
+        187,
+        115
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        45,
+        84,
+        237
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        77,
+        189,
+        186,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        189,
+        36,
+        186,
+        77,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        21,
+        64,
+        174,
+        82
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        39,
+        193,
+        103
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        21,
+        51,
+        135,
+        163
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        72,
+        195,
+        104,
+        57
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        286,
+        197,
+        212
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        278,
+        182,
+        36,
+        77,
+        212
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        174,
+        64,
+        241,
+        21
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        268,
+        226,
+        143,
+        208,
+        101
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        110,
+        139,
+        231,
+        230,
+        254
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        77,
+        5,
+        90,
+        165
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        31,
+        27,
+        276,
+        88
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        218,
+        123,
+        72
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_2_16_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        40,
+        236,
+        35
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        281,
+        109,
+        286,
+        187
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        263,
+        2,
+        120,
+        222,
+        79
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        28,
+        113,
+        133,
+        260
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        105,
+        142,
+        235
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        92,
+        238,
+        216,
+        46
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        285,
+        211,
+        180,
+        203
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        125,
+        148,
+        212,
+        35
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        68,
+        206,
+        47
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        242,
+        27,
+        50,
+        104
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        93,
+        88,
+        72
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        145,
+        12,
+        25,
+        51
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        259,
+        31,
+        72,
+        123,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        49,
+        217,
+        68,
+        59,
+        85
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        242,
+        110,
+        31,
+        246,
+        57
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        103,
+        84,
+        88
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        118,
+        77,
+        189,
+        36
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        189,
+        77,
+        278,
+        258
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        271,
+        225,
+        174,
+        64
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        103,
+        239,
+        39,
+        193
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        241,
+        21,
+        64
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        57,
+        79,
+        208,
+        187,
+        146
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        197,
+        18,
+        85,
+        212
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        36,
+        278,
+        77,
+        182,
+        212
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        286,
+        241,
+        64,
+        221
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        208,
+        268,
+        226,
+        133,
+        190
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        139,
+        230,
+        121,
+        110,
+        231
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        165,
+        77,
+        36,
+        206
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        276,
+        259,
+        31,
+        104
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        123,
+        218,
+        37,
+        110
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_2_4_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        97,
+        194,
+        141
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        281,
+        174,
+        170,
+        162,
+        11
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        277,
+        13,
+        222,
+        229,
+        205
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        87,
+        63,
+        260
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        176,
+        172,
+        239
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        246,
+        110,
+        242,
+        92
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        285,
+        37,
+        73,
+        31
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        125,
+        274,
+        212,
+        148
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        226,
+        134,
+        188
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        8,
+        79,
+        149,
+        104
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        31,
+        259,
+        86,
+        50,
+        88
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        14,
+        208,
+        274
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        130,
+        103,
+        218
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        252,
+        101,
+        143,
+        217,
+        205
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        128,
+        187,
+        162,
+        170
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        260,
+        45,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        186,
+        189,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        186,
+        189,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        264,
+        163,
+        21,
+        241
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        193,
+        103,
+        39
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        135,
+        23,
+        51
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        257,
+        233,
+        279,
+        245,
+        72
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        117,
+        286,
+        197
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        278,
+        212,
+        182,
+        36,
+        77
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        281,
+        174,
+        51
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        38,
+        101,
+        217,
+        252,
+        264
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        238,
+        110,
+        216
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        206,
+        77,
+        278,
+        90
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        276,
+        130,
+        31,
+        50
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        123,
+        115,
+        153
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_2_8_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        184,
+        236,
+        229
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        281,
+        187,
+        109,
+        174
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        263,
+        2,
+        120,
+        184,
+        11
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        28,
+        113,
+        260,
+        133
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        105,
+        142,
+        39
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        92,
+        238,
+        216,
+        219
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        50,
+        211,
+        180,
+        27
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        125,
+        274,
+        212,
+        148
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        77,
+        47,
+        108
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        242,
+        27,
+        50,
+        104
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        93,
+        239,
+        31,
+        72
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        145,
+        12,
+        202,
+        25
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        31,
+        259,
+        72,
+        123,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        49,
+        280,
+        85,
+        226
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        242,
+        246,
+        31,
+        110,
+        138
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        260,
+        103,
+        45
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        77,
+        189,
+        118,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        189,
+        77,
+        278,
+        118
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        271,
+        241,
+        225,
+        174
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        103,
+        193,
+        39
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        286,
+        21,
+        64
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        146,
+        57,
+        79,
+        241
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        18,
+        197,
+        278,
+        125
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        278,
+        182,
+        36,
+        77,
+        5
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        286,
+        241,
+        64,
+        281
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        226,
+        208,
+        268,
+        229,
+        190
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        110,
+        139,
+        231,
+        254,
+        173
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        77,
+        165,
+        206,
+        36
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        276,
+        86,
+        31,
+        259,
+        203
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        123,
+        218,
+        157
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_3_4_4_4": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        272,
+        194,
+        232
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        174,
+        281,
+        187,
+        146
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        277,
+        25,
+        232,
+        184,
+        95
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        283,
+        87,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        19,
+        274,
+        176,
+        208,
+        105
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        246,
+        110,
+        216,
+        240
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        273,
+        73,
+        37,
+        143
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        176,
+        19,
+        212,
+        66
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        188,
+        134,
+        275
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        31,
+        86,
+        149
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        31,
+        259,
+        142,
+        162,
+        88
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        107,
+        109,
+        14
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        259,
+        130,
+        31,
+        72
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        143,
+        252,
+        95,
+        150
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        31,
+        187,
+        110,
+        128
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        76,
+        84,
+        45
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        189,
+        186,
+        77,
+        159
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        186,
+        189,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        160,
+        103,
+        163,
+        113
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        39,
+        51,
+        255
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        63,
+        135,
+        69,
+        113
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        86,
+        281,
+        149,
+        3
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        117,
+        249,
+        168
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        212,
+        278,
+        165,
+        186
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        170,
+        63,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        38,
+        268,
+        217,
+        95,
+        160
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        238,
+        110,
+        216
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        16,
+        278,
+        90,
+        95
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        27,
+        149,
+        125,
+        93
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        153,
+        139,
+        115
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_3_8_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        1,
+        194,
+        2,
+        184
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        281,
+        187,
+        174,
+        109
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        120,
+        184,
+        263,
+        104,
+        25
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        87,
+        78,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        19,
+        251,
+        105,
+        154,
+        239
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        246,
+        92,
+        216,
+        219
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        89,
+        104,
+        162,
+        85
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        274,
+        14,
+        22
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        47,
+        18,
+        275
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        46,
+        8,
+        93,
+        187
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        242,
+        110,
+        239
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        162,
+        184,
+        274
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        130,
+        259,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        143,
+        252,
+        232,
+        150
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        128,
+        187,
+        46,
+        242
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        45,
+        84,
+        103
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        77,
+        186,
+        189,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        189,
+        36,
+        186,
+        77,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        174,
+        21,
+        57,
+        163
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        103,
+        88,
+        39
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        135,
+        51,
+        174,
+        21
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        104,
+        281,
+        208,
+        264
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        212,
+        286,
+        197
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        278,
+        212,
+        77,
+        36
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        174,
+        170,
+        241,
+        51
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        268,
+        143,
+        217,
+        220,
+        226
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        110,
+        139,
+        231,
+        230,
+        254
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        77,
+        5,
+        36,
+        90
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        27,
+        276,
+        203,
+        31
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        157,
+        218,
+        139
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_3_16_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        40,
+        35,
+        194,
+        2
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        187,
+        286,
+        174,
+        46
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        120,
+        263,
+        2,
+        222,
+        79
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        113,
+        28,
+        69,
+        26
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        105,
+        19,
+        142,
+        154
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        216,
+        92,
+        46,
+        238
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        139,
+        180,
+        110,
+        203
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        35,
+        125,
+        148
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        47,
+        257,
+        18
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        104,
+        50,
+        246
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        239,
+        31,
+        72,
+        88
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        12,
+        14,
+        25,
+        145
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        259,
+        31,
+        72,
+        110,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        217,
+        59,
+        85,
+        49
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        110,
+        242,
+        31,
+        157,
+        57
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        103,
+        84,
+        45
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        189,
+        118,
+        278,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        77,
+        189,
+        278,
+        75
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        271,
+        174,
+        57,
+        225
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        103,
+        39,
+        193
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        286,
+        69,
+        21,
+        241
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        187,
+        208,
+        57,
+        281
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        18,
+        197,
+        108,
+        212
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        278,
+        212,
+        36,
+        97
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        286,
+        241,
+        69,
+        46
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        220,
+        208,
+        268,
+        226,
+        229
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        139,
+        230,
+        121,
+        110,
+        9
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        270,
+        77,
+        165,
+        36
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        276,
+        259,
+        27,
+        104
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        218,
+        37,
+        157,
+        110
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_3_4_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        194,
+        272,
+        270
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        174,
+        281,
+        187,
+        146
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        277,
+        272,
+        232,
+        285,
+        222
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        87,
+        283,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        176,
+        172,
+        105
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        246,
+        110,
+        216,
+        240
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        73,
+        37,
+        153,
+        31
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        22,
+        14,
+        75
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        188,
+        134,
+        275
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        104,
+        27,
+        187,
+        46
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        110,
+        170,
+        239
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        14,
+        184,
+        109
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        130,
+        259,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        143,
+        252,
+        150,
+        226
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        110,
+        128,
+        246,
+        187,
+        31
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        45,
+        84,
+        76
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        186,
+        189,
+        77,
+        159
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        186,
+        189,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        174,
+        264,
+        281,
+        163
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        193,
+        88,
+        103
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        135,
+        63,
+        174
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        281,
+        86,
+        149,
+        257
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        117,
+        183,
+        197
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        212,
+        278,
+        165,
+        186
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        174,
+        170,
+        286
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        38,
+        268,
+        217,
+        143,
+        2
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        238,
+        110,
+        216
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        278,
+        90,
+        165,
+        143
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        27,
+        276,
+        203,
+        130
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        115,
+        121,
+        157
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_3_8_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        236,
+        35,
+        184
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        187,
+        286,
+        174,
+        281
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        263,
+        120,
+        184,
+        2,
+        79
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        113,
+        28,
+        69,
+        26
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        105,
+        19,
+        142,
+        154
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        216,
+        219,
+        92,
+        238
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        180,
+        110,
+        203,
+        139
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        11,
+        274,
+        148
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        18,
+        47,
+        257
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        50,
+        105,
+        104
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        239,
+        31,
+        72,
+        170
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        12,
+        14,
+        202,
+        25
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        31,
+        259,
+        72,
+        113,
+        160
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        5,
+        49,
+        85,
+        18
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        242,
+        110,
+        31,
+        246,
+        216
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        103,
+        84,
+        45
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        189,
+        77,
+        118,
+        168
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        189,
+        77,
+        278,
+        18
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        271,
+        174,
+        57,
+        163
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        103,
+        39,
+        193
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        286,
+        21,
+        64,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        208,
+        281,
+        187,
+        146
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        18,
+        197,
+        117,
+        85
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        278,
+        36,
+        77,
+        212
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        286,
+        241,
+        69,
+        46
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        268,
+        229,
+        208,
+        220,
+        226
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        110,
+        139,
+        231,
+        254,
+        173
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        77,
+        36,
+        141,
+        270
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        203,
+        276,
+        27,
+        31
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        157,
+        218,
+        110
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_4_4_4_4": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        194,
+        272,
+        232
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        174,
+        22,
+        187,
+        145
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        277,
+        25,
+        184,
+        95,
+        222
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        283,
+        260,
+        78
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        208,
+        137,
+        105,
+        19,
+        145
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        246,
+        110,
+        240,
+        216
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        2,
+        273,
+        73,
+        229
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        176,
+        19,
+        212,
+        66
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        178,
+        134,
+        188,
+        150
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        31,
+        142,
+        104
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        31,
+        142,
+        259,
+        162,
+        170
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        107,
+        11,
+        109,
+        14
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        259,
+        31,
+        130,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        95,
+        150,
+        16,
+        252
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        110,
+        187,
+        162,
+        31
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        76,
+        140,
+        286,
+        45
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        189,
+        186,
+        36,
+        77,
+        159
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        186,
+        189,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        225,
+        103,
+        72,
+        113
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        51,
+        39,
+        161
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        135,
+        51,
+        170,
+        63
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        282,
+        281,
+        257,
+        37
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        168,
+        197,
+        117,
+        58
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        212,
+        278,
+        5,
+        47
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        170,
+        51,
+        39,
+        135
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        38,
+        268,
+        2,
+        49,
+        217
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        110,
+        238,
+        216
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        278,
+        38,
+        5,
+        2
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        187,
+        27,
+        93,
+        149
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        153,
+        121,
+        218
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_4_8_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        1,
+        194,
+        2,
+        184
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        174,
+        187,
+        281,
+        225
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        184,
+        120,
+        104,
+        263,
+        25
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        78,
+        260,
+        87
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        19,
+        251,
+        105,
+        154,
+        172
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        246,
+        128,
+        216,
+        92,
+        185
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        240,
+        259,
+        273,
+        110
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        274,
+        22,
+        14
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        47,
+        275,
+        257,
+        0
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        93,
+        187,
+        46,
+        185
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        110,
+        242,
+        239
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        184,
+        162,
+        274
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        259,
+        130,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        141,
+        90,
+        232,
+        150
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        187,
+        46,
+        128,
+        162
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        45,
+        140,
+        135,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        77,
+        186,
+        189,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        189,
+        36,
+        186,
+        77,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        225,
+        57,
+        72,
+        163
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        88,
+        103,
+        132
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        135,
+        51,
+        174,
+        286
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        104,
+        281,
+        264,
+        187
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        212,
+        197,
+        286,
+        200
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        212,
+        278,
+        5,
+        97
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        51,
+        286,
+        174,
+        170
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        268,
+        217,
+        143,
+        220,
+        280
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        110,
+        139,
+        231,
+        230,
+        254
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        36,
+        77,
+        5,
+        141
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        27,
+        276,
+        203,
+        242
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        218,
+        121,
+        173
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_4_16_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        35,
+        40,
+        194,
+        222
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        286,
+        187,
+        174,
+        225
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        120,
+        222,
+        263,
+        2,
+        79
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        113,
+        28,
+        121,
+        133
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        105,
+        19,
+        142,
+        154
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        216,
+        92,
+        46,
+        8
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        240,
+        110,
+        139,
+        16
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        146,
+        35,
+        197
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        47,
+        0,
+        257,
+        18
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        104,
+        200,
+        137
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        239,
+        110,
+        192
+      ],
+      "first_correct_rank_in_top5": 5
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        12,
+        25,
+        174,
+        145
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        259,
+        31,
+        110,
+        72,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        272,
+        5,
+        85,
+        217
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        110,
+        242,
+        31,
+        174,
+        157
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        103,
+        57,
+        45
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        189,
+        118,
+        278,
+        212
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        278,
+        189,
+        77,
+        258
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        271,
+        225,
+        57,
+        70
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        103,
+        193,
+        39
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        286,
+        71,
+        241,
+        21
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        208,
+        245,
+        187,
+        281,
+        146
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        197,
+        18,
+        212,
+        85
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        278,
+        97,
+        212,
+        36
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        286,
+        241,
+        187,
+        57
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        268,
+        229,
+        220,
+        213,
+        2
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        121,
+        139,
+        230,
+        110,
+        9
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        77,
+        36,
+        141,
+        270
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        259,
+        104,
+        27,
+        276
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        218,
+        110,
+        37,
+        157
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_4_4_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        194,
+        236,
+        222,
+        272
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        174,
+        22,
+        187,
+        11
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        277,
+        222,
+        184,
+        272,
+        13
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        283,
+        78,
+        87
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        105,
+        176,
+        154
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        246,
+        110,
+        240,
+        216
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        73,
+        110,
+        213,
+        158
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        22,
+        187,
+        109
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        188,
+        150,
+        275,
+        178
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        104,
+        27,
+        162,
+        242
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        170,
+        110,
+        162
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        14,
+        184,
+        162
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        31,
+        57,
+        130,
+        259,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        150,
+        252,
+        93,
+        188
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        110,
+        187,
+        162,
+        242
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        45,
+        140,
+        84,
+        76
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        36,
+        189,
+        77,
+        159
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        186,
+        189,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        225,
+        72,
+        57,
+        163
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        88,
+        193,
+        103
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        51,
+        135,
+        286,
+        170
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        257,
+        281,
+        282,
+        196
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        168,
+        197,
+        117,
+        212
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        212,
+        278,
+        5,
+        47
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        170,
+        51,
+        174,
+        286
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        38,
+        268,
+        2,
+        49,
+        217
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        110,
+        238,
+        216
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        278,
+        38,
+        5,
+        2
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        27,
+        31,
+        276,
+        203
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        121,
+        153,
+        157
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "blocks_4_8_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        35,
+        236,
+        194
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        286,
+        187,
+        174,
+        225
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        120,
+        184,
+        263,
+        2,
+        79
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        113,
+        28,
+        121,
+        81
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        105,
+        19,
+        142,
+        172
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        216,
+        92,
+        219,
+        8
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        110,
+        240,
+        16,
+        139
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        274,
+        212,
+        11,
+        184
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        47,
+        18,
+        0,
+        257
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        252,
+        104,
+        12
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        239,
+        31,
+        170,
+        110
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        12,
+        202,
+        174,
+        145
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        31,
+        259,
+        110,
+        72,
+        113
+      ],
+      "first_correct_rank_in_top5": 5
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        5,
+        272,
+        49,
+        18
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        242,
+        31,
+        110,
+        174,
+        246
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        103,
+        45,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        189,
+        118,
+        77,
+        168
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        189,
+        77,
+        278,
+        18
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        271,
+        57,
+        225,
+        163
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        103,
+        193,
+        88
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        286,
+        241,
+        21,
+        162
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        208,
+        146,
+        281,
+        187
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        197,
+        18,
+        212,
+        85
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        278,
+        5,
+        97,
+        212
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        286,
+        241,
+        46,
+        121
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        268,
+        229,
+        220,
+        213,
+        2
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        110,
+        139,
+        231,
+        254,
+        173
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        141,
+        77,
+        36,
+        38
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        259,
+        104,
+        203,
+        31
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        218,
+        110,
+        121
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "pyramid_1_2_4_4_4": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        204,
+        141,
+        97
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        281,
+        170,
+        174,
+        172,
+        11
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        25,
+        137,
+        277,
+        205,
+        13
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        283,
+        260,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        208,
+        176,
+        145,
+        274,
+        19
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        246,
+        128,
+        110,
+        31,
+        242
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        50,
+        37,
+        89,
+        73
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        176,
+        14,
+        19,
+        109
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        261,
+        226,
+        188
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        31,
+        162,
+        104
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        31,
+        115,
+        131,
+        8,
+        242
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        107,
+        14,
+        274
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        131,
+        31,
+        203,
+        218
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        252,
+        101,
+        143,
+        95,
+        154
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        128,
+        246,
+        92,
+        242,
+        31
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        76,
+        260,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        186,
+        189,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        189,
+        186,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        264,
+        113,
+        103,
+        144
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        51,
+        39,
+        29
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        69,
+        135,
+        63
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        233,
+        257,
+        72,
+        82,
+        244
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        249,
+        286,
+        117
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        278,
+        212,
+        77,
+        18,
+        182
+      ],
+      "first_correct_rank_in_top5": 5
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        39,
+        256,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        101,
+        105,
+        38,
+        190,
+        252
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        238,
+        110,
+        216
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        206,
+        278,
+        211,
+        90
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        27,
+        93,
+        149,
+        276
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        123,
+        37,
+        153,
+        218
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "pyramid_1_2_8_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        194,
+        229,
+        1
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        281,
+        170,
+        174,
+        109,
+        162
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        263,
+        2,
+        229,
+        184,
+        120
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        260,
+        94,
+        84,
+        78
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        172,
+        19,
+        176,
+        169
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        246,
+        128,
+        92,
+        238,
+        219
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        285,
+        180,
+        89,
+        37
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        14,
+        125,
+        274
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        261,
+        38,
+        77
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        8,
+        46,
+        162,
+        149
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        203,
+        169,
+        88
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        274,
+        184,
+        79
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        88,
+        218,
+        130
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        252,
+        143,
+        38,
+        49
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        128,
+        92,
+        46,
+        115
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        76,
+        84,
+        45
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        77,
+        186,
+        189,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        189,
+        36,
+        186,
+        77,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        64,
+        21,
+        82,
+        241
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        39,
+        103,
+        88
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        135,
+        241,
+        21,
+        51
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        72,
+        245,
+        244,
+        264,
+        195
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        286,
+        10,
+        117
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        278,
+        77,
+        182,
+        212,
+        36
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        241,
+        281,
+        74,
+        135
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        268,
+        226,
+        208,
+        143,
+        190
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        139,
+        110,
+        231,
+        230,
+        254
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        206,
+        278,
+        90,
+        20
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        276,
+        86,
+        31,
+        27,
+        154
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        218,
+        123,
+        213
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "pyramid_1_2_16_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        229,
+        2,
+        236,
+        40
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        281,
+        109,
+        286,
+        174
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        263,
+        2,
+        79,
+        120,
+        222
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        28,
+        69,
+        113,
+        260
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        105,
+        142,
+        235
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        92,
+        216,
+        238,
+        46
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        285,
+        180,
+        211,
+        37
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        125,
+        148,
+        212,
+        35
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        206,
+        77,
+        68
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        105,
+        242,
+        174
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        72,
+        93,
+        88
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        145,
+        25,
+        12,
+        14
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        31,
+        72,
+        259,
+        276,
+        123
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        49,
+        101,
+        59,
+        68,
+        85
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        242,
+        246,
+        31,
+        216,
+        110
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        103,
+        84,
+        88
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        189,
+        77,
+        118,
+        56
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        189,
+        77,
+        278,
+        75
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        241,
+        64,
+        225,
+        174
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        39,
+        239,
+        103,
+        193
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        241,
+        262,
+        221,
+        69,
+        260
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        79,
+        57,
+        241,
+        166,
+        208
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        18,
+        197,
+        278,
+        286
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        36,
+        278,
+        77,
+        182,
+        209
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        241,
+        286,
+        281,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        208,
+        229,
+        226,
+        268,
+        133
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        139,
+        230,
+        121,
+        110,
+        231
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        206,
+        20,
+        165,
+        77
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        276,
+        154,
+        86,
+        31,
+        259
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        218,
+        123,
+        37,
+        157
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "pyramid_1_2_4_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        97,
+        204,
+        141
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        281,
+        174,
+        170,
+        109,
+        247
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        13,
+        277,
+        205,
+        197,
+        222
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        260,
+        69,
+        283
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        172,
+        19,
+        176,
+        54
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        246,
+        128,
+        110,
+        242,
+        238
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        37,
+        285,
+        89,
+        73
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        14,
+        274,
+        22,
+        125
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        261,
+        226,
+        188
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        162,
+        104,
+        149,
+        27
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        31,
+        259,
+        86,
+        50,
+        203
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        14,
+        274,
+        208
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        130,
+        218,
+        123
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        252,
+        101,
+        143,
+        217,
+        205
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        128,
+        246,
+        92,
+        242,
+        46
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        45,
+        76,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        186,
+        159,
+        189,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        186,
+        189,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        264,
+        64,
+        241,
+        21
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        39,
+        193,
+        103
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        135,
+        63,
+        286
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        233,
+        257,
+        64,
+        279,
+        244
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        286,
+        117,
+        10
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        278,
+        212,
+        77,
+        18,
+        182
+      ],
+      "first_correct_rank_in_top5": 5
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        281,
+        241,
+        247
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        101,
+        38,
+        252,
+        217,
+        143
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        238,
+        110,
+        216
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        278,
+        206,
+        211,
+        90
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        276,
+        130,
+        169,
+        86,
+        154
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        123,
+        218,
+        115
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "pyramid_1_2_8_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        229,
+        184,
+        236
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        281,
+        109,
+        286,
+        174
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        263,
+        2,
+        120,
+        79,
+        229
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        28,
+        260,
+        144,
+        113
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        105,
+        142,
+        235
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        92,
+        128,
+        238,
+        216,
+        219
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        50,
+        285,
+        180,
+        31,
+        37
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        125,
+        148,
+        274,
+        75
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        77,
+        206,
+        52
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        50,
+        27,
+        174,
+        242
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        93,
+        72,
+        31,
+        239
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        145,
+        25,
+        202,
+        12
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        31,
+        72,
+        259,
+        276,
+        123
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        49,
+        52,
+        85,
+        68
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        242,
+        31,
+        138,
+        92
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        84,
+        103,
+        260
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        77,
+        189,
+        118,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        189,
+        77,
+        278,
+        18
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        241,
+        64,
+        271,
+        225
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        39,
+        239,
+        103,
+        193
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        241,
+        262,
+        221,
+        286,
+        260
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        241,
+        79,
+        146,
+        57
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        10,
+        18,
+        197,
+        278
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        278,
+        77,
+        182,
+        36,
+        5
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        241,
+        281,
+        286,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        226,
+        208,
+        229,
+        268,
+        59
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        110,
+        139,
+        231,
+        254,
+        173
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        20,
+        206,
+        77,
+        165
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        276,
+        154,
+        31,
+        86,
+        203
+      ],
+      "first_correct_rank_in_top5": 4
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        123,
+        218,
+        157
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "pyramid_1_2_4_4_4_4": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        204,
+        97,
+        272
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        281,
+        174,
+        145,
+        172
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        25,
+        277,
+        208,
+        13,
+        205
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        283,
+        260,
+        78
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        208,
+        145,
+        274,
+        176,
+        19
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        246,
+        110,
+        31,
+        242
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        73,
+        37,
+        50,
+        89
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        176,
+        19,
+        14,
+        66
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        134,
+        188,
+        226
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        31,
+        162,
+        104
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        31,
+        142,
+        259,
+        242,
+        131
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        107,
+        14,
+        109
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        259,
+        131,
+        203
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        252,
+        143,
+        95,
+        150
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        128,
+        31,
+        242,
+        187
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        76,
+        45,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        186,
+        189,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        189,
+        186,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        113,
+        103,
+        264,
+        163
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        51,
+        39,
+        167
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        135,
+        69,
+        63
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        233,
+        257,
+        282,
+        244,
+        196
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        249,
+        286,
+        117
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        278,
+        212,
+        182,
+        77,
+        18
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        39,
+        135,
+        167
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        38,
+        217,
+        268,
+        160,
+        101
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        238,
+        110,
+        216
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        278,
+        90,
+        212,
+        16
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        27,
+        93,
+        149,
+        187
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        153,
+        123,
+        218
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "pyramid_1_2_4_8_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        194,
+        1,
+        229
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        281,
+        174,
+        187,
+        109
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        263,
+        184,
+        120,
+        2,
+        79
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        260,
+        78,
+        87
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        172,
+        176,
+        169
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        246,
+        128,
+        92,
+        216,
+        238
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        50,
+        89,
+        180,
+        37
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        212,
+        274,
+        14,
+        125
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        275,
+        261,
+        38
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        8,
+        46,
+        162,
+        93
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        242,
+        88,
+        57
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        274,
+        184,
+        162
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        88,
+        130,
+        103
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        252,
+        143,
+        150,
+        232
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        128,
+        46,
+        92,
+        187
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        45,
+        76,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        77,
+        186,
+        189,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        189,
+        36,
+        186,
+        77,
+        278
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        64,
+        21,
+        72,
+        82
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        39,
+        103,
+        88
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        135,
+        51,
+        21,
+        241
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        264,
+        104,
+        195,
+        244
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        286,
+        197,
+        168
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        278,
+        212,
+        77,
+        36
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        241,
+        281,
+        174,
+        74
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        268,
+        143,
+        226,
+        208,
+        217
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        110,
+        139,
+        231,
+        230,
+        254
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        77,
+        278,
+        90,
+        5
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        276,
+        27,
+        31,
+        154
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        218,
+        123,
+        173
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "pyramid_1_2_4_16_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        35,
+        40,
+        229,
+        2
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        286,
+        109,
+        281,
+        174
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        263,
+        2,
+        120,
+        79,
+        222
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        28,
+        113,
+        69,
+        260
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        105,
+        142,
+        235
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        92,
+        216,
+        238,
+        46
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        50,
+        180,
+        37,
+        211
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        125,
+        212,
+        148,
+        35
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        18,
+        47,
+        278
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        105,
+        174,
+        242
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        72,
+        239,
+        88
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        145,
+        12,
+        25,
+        14
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        31,
+        259,
+        72,
+        123,
+        276
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        49,
+        85,
+        272,
+        217
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        242,
+        246,
+        110,
+        31,
+        57
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        103,
+        84,
+        88
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        189,
+        118,
+        77,
+        168
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        189,
+        77,
+        278,
+        75
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        271,
+        225,
+        64,
+        241
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        39,
+        103,
+        193
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        241,
+        286,
+        69,
+        21
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        208,
+        79,
+        57,
+        187,
+        166
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        197,
+        18,
+        286,
+        278
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        36,
+        182,
+        278,
+        212,
+        77
+      ],
+      "first_correct_rank_in_top5": 2
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        241,
+        286,
+        281,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        268,
+        229,
+        208,
+        226,
+        220
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        139,
+        230,
+        121,
+        110,
+        9
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        77,
+        165,
+        20,
+        270
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        276,
+        31,
+        259,
+        154
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        218,
+        123,
+        37,
+        157
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "pyramid_1_2_4_4_8_8": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        236,
+        194,
+        97,
+        204
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        174,
+        281,
+        109,
+        11
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        277,
+        13,
+        222,
+        205,
+        197
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        94,
+        283,
+        78,
+        260
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        172,
+        19,
+        176,
+        54
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        246,
+        110,
+        238,
+        242
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        37,
+        73,
+        50,
+        31
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        14,
+        212,
+        22,
+        274
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        188,
+        275,
+        226
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        162,
+        104,
+        27,
+        93
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        203,
+        242,
+        170
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        11,
+        14,
+        274,
+        208
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        57,
+        31,
+        130,
+        103,
+        123
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        252,
+        143,
+        217,
+        226
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        128,
+        246,
+        242,
+        187,
+        92
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        45,
+        76,
+        84
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        36,
+        186,
+        189,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        186,
+        189,
+        36,
+        159,
+        77
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        264,
+        64,
+        72,
+        21
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        193,
+        103,
+        39
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        135,
+        63,
+        51
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        257,
+        233,
+        245,
+        281,
+        196
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        233,
+        286,
+        117,
+        168
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        278,
+        212,
+        182,
+        77,
+        18
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        221,
+        241,
+        51,
+        170
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        38,
+        217,
+        268,
+        101,
+        143
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        240,
+        254,
+        238,
+        110,
+        216
+      ],
+      "first_correct_rank_in_top5": 3
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        278,
+        90,
+        212,
+        280
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        276,
+        130,
+        27,
+        154
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        123,
+        218,
+        153
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ],
+  "pyramid_1_2_4_8_16_16": [
+    {
+      "query_id": 0,
+      "correct_ids": [
+        120
+      ],
+      "top5": [
+        120,
+        2,
+        229,
+        184,
+        236
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 1,
+      "correct_ids": [
+        170
+      ],
+      "top5": [
+        170,
+        286,
+        187,
+        281,
+        174
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 2,
+      "correct_ids": [
+        277
+      ],
+      "top5": [
+        263,
+        2,
+        120,
+        79,
+        184
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 3,
+      "correct_ids": [
+        227
+      ],
+      "top5": [
+        227,
+        28,
+        113,
+        260,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 4,
+      "correct_ids": [
+        251
+      ],
+      "top5": [
+        251,
+        19,
+        105,
+        142,
+        235
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 5,
+      "correct_ids": [
+        274
+      ],
+      "top5": [
+        128,
+        92,
+        216,
+        238,
+        219
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 6,
+      "correct_ids": [
+        285
+      ],
+      "top5": [
+        285,
+        50,
+        180,
+        37,
+        31
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 7,
+      "correct_ids": [
+        258
+      ],
+      "top5": [
+        258,
+        274,
+        125,
+        212,
+        148
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 8,
+      "correct_ids": [
+        117
+      ],
+      "top5": [
+        117,
+        0,
+        18,
+        77,
+        47
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 9,
+      "correct_ids": [
+        203
+      ],
+      "top5": [
+        203,
+        27,
+        50,
+        174,
+        105
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 10,
+      "correct_ids": [
+        192
+      ],
+      "top5": [
+        259,
+        31,
+        239,
+        72,
+        93
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 11,
+      "correct_ids": [
+        22
+      ],
+      "top5": [
+        22,
+        145,
+        202,
+        25,
+        12
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 12,
+      "correct_ids": [
+        113
+      ],
+      "top5": [
+        31,
+        72,
+        259,
+        123,
+        276
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 13,
+      "correct_ids": [
+        101
+      ],
+      "top5": [
+        101,
+        49,
+        52,
+        85,
+        197
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 14,
+      "correct_ids": [
+        174
+      ],
+      "top5": [
+        246,
+        242,
+        31,
+        110,
+        92
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 15,
+      "correct_ids": [
+        155
+      ],
+      "top5": [
+        155,
+        140,
+        103,
+        84,
+        45
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 16,
+      "correct_ids": [
+        270
+      ],
+      "top5": [
+        186,
+        77,
+        189,
+        118,
+        168
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 17,
+      "correct_ids": [
+        47
+      ],
+      "top5": [
+        36,
+        189,
+        77,
+        278,
+        18
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 18,
+      "correct_ids": [
+        286
+      ],
+      "top5": [
+        286,
+        271,
+        241,
+        225,
+        64
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 19,
+      "correct_ids": [
+        215
+      ],
+      "top5": [
+        215,
+        239,
+        39,
+        103,
+        193
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 20,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        241,
+        286,
+        64,
+        23
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 21,
+      "correct_ids": [
+        245
+      ],
+      "top5": [
+        245,
+        146,
+        79,
+        208,
+        57
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 22,
+      "correct_ids": [
+        257
+      ],
+      "top5": [
+        257,
+        197,
+        18,
+        10,
+        278
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 23,
+      "correct_ids": [
+        182
+      ],
+      "top5": [
+        182,
+        278,
+        77,
+        5,
+        36
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 24,
+      "correct_ids": [
+        262
+      ],
+      "top5": [
+        262,
+        241,
+        286,
+        281,
+        69
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 25,
+      "correct_ids": [
+        38
+      ],
+      "top5": [
+        229,
+        268,
+        226,
+        208,
+        79
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 26,
+      "correct_ids": [
+        238
+      ],
+      "top5": [
+        110,
+        139,
+        231,
+        254,
+        173
+      ],
+      "first_correct_rank_in_top5": null
+    },
+    {
+      "query_id": 27,
+      "correct_ids": [
+        67
+      ],
+      "top5": [
+        67,
+        77,
+        20,
+        141,
+        165
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 28,
+      "correct_ids": [
+        86
+      ],
+      "top5": [
+        86,
+        276,
+        31,
+        203,
+        154
+      ],
+      "first_correct_rank_in_top5": 1
+    },
+    {
+      "query_id": 29,
+      "correct_ids": [
+        133
+      ],
+      "top5": [
+        133,
+        37,
+        218,
+        123,
+        157
+      ],
+      "first_correct_rank_in_top5": 1
+    }
+  ]
+}
