@@ -99,3 +99,43 @@ if __name__ == "__main__":
     if scores:
         p, r, f = np.mean(scores, axis=0)
         print(f"Precision {p:.3f}  Recall {r:.3f}  F1 {f:.3f}")
+
+
+import numpy as np
+from skimage.filters import threshold_multiotsu
+
+# Light smoothing so the blocky/quantized histogram doesn't produce spiky bins
+dist_s = cv2.GaussianBlur(dist_u8, (0, 0), 2)
+
+# 3 classes: background | purple (frame) | bright (far region)
+t_low, t_high = threshold_multiotsu(dist_s, classes=3)
+print("Multi-Otsu thresholds:", t_low, t_high)
+
+# Foreground = everything above the lower threshold (purple + bright)
+fg_raw = (dist_s > t_low).astype(np.uint8)
+
+show_pair(dist_u8, fg_raw, "Distance map", "Raw foreground mask",
+          cmap_b="magma", cmap_a="gray", suptitle="Step 5: Multi-Otsu threshold")
+
+
+import numpy as np
+from skimage.filters import threshold_multiotsu
+from scipy import ndimage as ndi
+
+# 1. Smooth + compress the bright end so purple and bright count as one "painting" class
+dist_s = cv2.GaussianBlur(dist_u8, (0, 0), 2)
+dist_c = (255 * (dist_s / 255.0) ** 0.4).astype(np.uint8)   # gamma < 1 lifts the dark/purple values
+
+# 2. Lowest multi-Otsu threshold = background vs. everything else
+t_low = threshold_multiotsu(dist_c, classes=2)
+print("Threshold (compressed space):", t_low)
+fg_raw = (dist_c > t_low).astype(np.uint8)
+
+# 3. Clean up: keep the largest blob, fill holes (e.g. the dark dot in the middle)
+fg_raw = cv2.morphologyEx(fg_raw, cv2.MORPH_CLOSE, np.ones((9, 9), np.uint8))
+n, labels, stats, _ = cv2.connectedComponentsWithStats(fg_raw)
+largest = 1 + np.argmax(stats[1:, cv2.CC_STAT_AREA])
+fg_raw = ndi.binary_fill_holes(labels == largest).astype(np.uint8)
+
+show_pair(dist_u8, fg_raw, "Distance map", "Raw foreground mask",
+          cmap_b="magma", cmap_a="gray", suptitle="Step 5: Painting vs. background")
