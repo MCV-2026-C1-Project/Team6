@@ -50,8 +50,8 @@ if __name__ == "__main__":
     for i, (grid, ab_bins, l_bins) in enumerate(combinations, start=1):
         print(f"[{i}/{len(combinations)}] grid={grid}, ab_bins={ab_bins}, l_bins={l_bins}")
 
-        db_desc = np.array([color_light_block_descriptor(img, grid, ab_bins, l_bins) for img in db_images])
-        query_desc = np.array([color_light_block_descriptor(img, grid, ab_bins, l_bins) for img in query_images])
+        db_desc = color_light_block_descriptors(db_images, grid, ab_bins, l_bins)
+        query_desc = color_light_block_descriptors(query_images, grid, ab_bins, l_bins)
 
         for metric in METRICS:
             try:

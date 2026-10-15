@@ -80,6 +80,40 @@ def normalize(hist: np.ndarray) -> np.ndarray:
     return cv2.normalize(hist, None, alpha=1, beta=0, norm_type=cv2.NORM_L1)
 
 
+def normalize_lab_image(img: np.ndarray, normalize_l: bool = True, normalize_chroma: bool = True,
+                        low: float = 1, high: float = 99, chroma_target: float = 40) -> np.ndarray:
+    """
+    Reduce lighting and saturation differences between images (per-image normalization).
+
+    L* is stretched so its low/high percentiles map to 0 and 255. The chroma (distance of
+    (a*, b*) to the neutral point 128) is rescaled so its `high` percentile equals
+    chroma_target, keeping the hue of every pixel unchanged.
+
+    Args:
+        img: CIELAB image (uint8), as returned by load_images.
+        normalize_l: Whether to stretch the lightness channel.
+        normalize_chroma: Whether to rescale the chroma.
+        low: Lower percentile used for the L* stretch.
+        high: Upper percentile used for the L* stretch and chroma scaling.
+        chroma_target: Value the `high` percentile of the chroma is scaled to.
+
+    Returns:
+        Normalized CIELAB image (uint8) with the same shape as img.
+    """
+    L, a, b = [c.astype(np.float32) for c in cv2.split(img)]
+
+    if normalize_l:
+        lo, hi = np.percentile(L, [low, high])
+        L = (L - lo) / max(hi - lo, 1) * 255
+
+    if normalize_chroma:
+        a, b = a - 128, b - 128
+        scale = chroma_target / max(np.percentile(np.hypot(a, b), high), 1)
+        a, b = a * scale + 128, b * scale + 128
+
+    return cv2.merge([np.clip(c, 0, 255).astype(np.uint8) for c in (L, a, b)])
+
+
 ### Descriptors
 def simple_descriptor(img: np.ndarray) -> np.ndarray:
     """
@@ -146,7 +180,8 @@ def complex_descriptors(images: list[np.ndarray]) -> np.ndarray:
     return np.array([complex_descriptor(img) for img in images])
 
 
-def color_light_block_descriptor(img: np.ndarray, grid: int = 5, ab_bins: int = 48, l_bins: int = 8) -> np.ndarray:
+def color_light_block_descriptor(img: np.ndarray, grid: int = 4, ab_bins: int = 48, l_bins: int = 16,
+                                 mask: np.ndarray | None = None) -> np.ndarray:
     """
     Compute a color + lightness histogram for each cell of a grid x grid partition.
 
@@ -155,11 +190,15 @@ def color_light_block_descriptor(img: np.ndarray, grid: int = 5, ab_bins: int = 
     information and light for 1/3. The cell descriptors are concatenated and
     divided by the number of cells, so the result sums to 1.
 
+    The default parameters are the best configuration found in grid_search.py.
+
     Args:
         img: CIELAB image (uint8), as returned by load_images.
         grid: Number of rows and columns of the partition.
         ab_bins: Bins per color channel (a*, b*); each cell has ab_bins**2 color values.
         l_bins: Bins for the L* channel.
+        mask: Optional uint8 mask with the same height and width as img (non-zero = painting).
+            Only the masked pixels are counted. Cells without masked pixels are all zeros.
 
     Returns:
         1D descriptor of length grid**2 * (ab_bins**2 + l_bins).
@@ -167,26 +206,44 @@ def color_light_block_descriptor(img: np.ndarray, grid: int = 5, ab_bins: int = 
     rows = np.array_split(img, grid, axis=0)
     regions = [cell for row in rows for cell in np.array_split(row, grid, axis=1)]
 
+    if mask is None:
+        cell_masks = [None] * len(regions)
+    else:
+        mask_rows = np.array_split(mask.astype(np.uint8), grid, axis=0)
+        cell_masks = [cell for row in mask_rows for cell in np.array_split(row, grid, axis=1)]
+
     cell_descriptors = []
-    for cell in regions:
-        color = cv2.calcHist([cell], [1, 2], None, [ab_bins, ab_bins], [0, 256, 0, 256])
-        light = cv2.calcHist([cell], [0], None, [l_bins], [0, 256])
+    for cell, cell_mask in zip(regions, cell_masks):
+        color = cv2.calcHist([cell], [1, 2], cell_mask, [ab_bins, ab_bins], [0, 256, 0, 256])
+        light = cv2.calcHist([cell], [0], cell_mask, [l_bins], [0, 256])
         cell_descriptors.append(normalize(color).flatten() * 2/3)
-        cell_descriptors.append(normalize(light).flatten() * 1 / 3)
+        cell_descriptors.append(normalize(light).flatten() * 1/3)
 
     return np.concatenate(cell_descriptors) / grid**2
 
-def color_light_block_descriptors(images: list[np.ndarray]) -> np.ndarray:
+
+def color_light_block_descriptors(images: list[np.ndarray], grid: int = 4, ab_bins: int = 48, l_bins: int = 16,
+                                  masks: list[np.ndarray] | None = None) -> np.ndarray:
     """
-    Compute spatial color histogram descriptors for multiple images.
+    Compute color + lightness block descriptors for multiple images.
 
     Args:
-        images: List of input images.
+        images: List of CIELAB images, as returned by load_images.
+        grid: Number of rows and columns of the partition.
+        ab_bins: Bins per color channel (a*, b*).
+        l_bins: Bins for the L* channel.
+        masks: Optional list of masks, one per image (see color_light_block_descriptor).
 
     Returns:
-        2D NumPy array containing one complex descriptor per input image.
+        2D NumPy array containing one descriptor per input image.
     """
-    return np.array([color_light_block_descriptor(img) for img in images])
+    if masks is None:
+        masks = [None] * len(images)
+
+    return np.array([
+        color_light_block_descriptor(img, grid, ab_bins, l_bins, mask)
+        for img, mask in zip(images, masks)
+    ])
 
 
 ### Distances
