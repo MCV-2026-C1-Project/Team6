@@ -48,7 +48,7 @@ OUT_DIR = Path(__file__).resolve().parent / "bayes_search_out"
 # Mètrica a optimitzar: "f1" | "iou" | "error_rate"  (error_rate es minimitza)
 METRIC = "iou"
 
-N_TRIALS = 200             # nombre de configuracions que prova la cerca bayesiana
+N_TRIALS = 2000             # nombre de configuracions que prova la cerca bayesiana
 SEED = 0                    # llavor del sampler TPE (reproduïbilitat)
 N_JOBS = os.cpu_count()     # processos en paral·lel (per imatges, dins de cada prova)
 # Opcional: base de dades per poder reprendre la cerca, p. ex. "sqlite:///bayes.db"

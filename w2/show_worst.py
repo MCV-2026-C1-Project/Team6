@@ -29,10 +29,10 @@ import bayes_search_segmentation as seg
 # HIPERPARÀMETRES (es poden sobreescriure per línia de comandes)
 # =============================================================================
 PREFILTER = "none"          # "none" | "median"  (mida: seg.MEDIAN_KSIZE)
-COLOR_SPACE = "LAB"         # "HSV" | "LAB"
-CHANNELS = "La"             # noms dels canals: HSV -> H,S,V   LAB -> L,a,b
-THRESHOLD = "wallthr"          # "otsu" | "triangle" | "gmm" | "wallthr"
-CLOSE_FRAC = 0.012720          # n = close_frac * min(h, w)
+COLOR_SPACE = "HSV"         # "HSV" | "LAB"
+CHANNELS = "SV"             # noms dels canals: HSV -> H,S,V   LAB -> L,a,b
+THRESHOLD = "otsu"          # "otsu" | "triangle" | "gmm" | "wallthr"
+CLOSE_FRAC = 0.012306          # n = close_frac * min(h, w)
 
 METRIC = "iou"               # "f1" | "iou" | "error_rate"
 N_WORST = 10
