@@ -6,49 +6,74 @@ import pandas as pd
 # Dataset paths
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
-QSD1 = DATA_DIR / "qsd1_w1"
+QSD1 = DATA_DIR / "qsd1_w2"
+QSD2 = DATA_DIR / "qsd2_w2"
+
 
 METRIC = "histogram_intersection"
 
+BEST_PARAMS = {
+    "2d_descriptor": {
+        "grid": 4,
+        "ab_bins": 48,
+        "l_bins": 16
+    },
+    "3d_descriptor": {
+        "bins": (2, 8, 8),
+        "grids": (4,),
+    },
+    "segmentation": {
+        "prefilter": "none",
+        "color_space": "HSV",
+        "channels": [1, 2],
+        "threshold": "otsu",
+        "close_frac": 0.012306
+    }
+}
 
-if __name__ == "__main__":
-    # Load database, query images, and ground-truth correspondences.
+def task2(descriptor="2d_descriptor"):
+    global BBDD_DIR, QSD1, METRIC, BEST_PARAMS
+
     db_ids, db_images = load_images(BBDD_DIR)
     query_ids, query_images = load_images(QSD1)
+    params = BEST_PARAMS[descriptor]
 
     with open(QSD1 / "gt_corresps.pkl", "rb") as f:
         ground_truth = pickle.load(f)
 
-    # Compute descriptors and distances for both methods.
-    db_m1 = simple_descriptors(db_images)
-    query_m1 = simple_descriptors(query_images)
-    db_m2 = complex_descriptors(db_images)
-    query_m2 = complex_descriptors(query_images)
+    descriptor_function = {
+        "2d_descriptor": color_light_block_descriptors,
+        "3d_descriptor": spatial_descriptors_3d,
+    }.get(descriptor)
 
-    dists_m1 = get_distances(query_m1, db_m1, metric=METRIC)
-    dists_m2 = get_distances(query_m2, db_m2, metric=METRIC)
+    if descriptor_function is None:
+        raise ValueError(f"Unknown descriptor: {descriptor}")
 
-    # Retrieve the top-5 results and compute mAP@1 and mAP@5.
-    topk5_m1 = retrieve(dists_m1, db_ids, k=5)
-    m1_mapk1 = mapk(ground_truth, topk5_m1, k=1)
-    m1_mapk5 = mapk(ground_truth, topk5_m1, k=5)
+    db_desc = descriptor_function(db_images, **params)
+    query_desc = descriptor_function(query_images, **params)
 
-    topk5_m2 = retrieve(dists_m2, db_ids, k=5)
-    m2_mapk1 = mapk(ground_truth, topk5_m2, k=1)
-    m2_mapk5 = mapk(ground_truth, topk5_m2, k=5)
+    dists = get_distances(query_desc, db_desc, metric=METRIC)
+    topk5 = retrieve(dists, db_ids, k=5)
+    results = dict(zip(query_ids, topk5))
 
-    rows = [
-        ("Method 1", m1_mapk1, m1_mapk5),
-        ("Method 2", m2_mapk1, m2_mapk5),
-    ]
+    mapk1 = evaluate(ground_truth, results, k=1)
+    mapk5 = evaluate(ground_truth, results, k=5)
 
-    print("\nResults:")
-    sep = "-" * 32
-    print(sep)
-    print(f"{'':<10}{'mAP@1':>10}{'mAP@5':>10}")
-    print(sep)
+    print(f"\nResults ({descriptor}, distance={METRIC}):")
+    print("-" * 50)
+    print(f"{'':<25}{'mAP@1':>10}{'mAP@5':>10}")
+    print("-" * 50)
+    print(f"{descriptor:<25}{mapk1:>10.4f}{mapk5:>10.4f}")
+    print("-" * 50)
 
-    for name, k1, k5 in rows:
-        print(f"{name:<10}{k1:>10.4f}{k5:>10.4f}")
+    print("\nFailed queries:")
+    for qid, retrieved in zip(query_ids, topk5):
+        expected = ground_truth[qid]
+        if retrieved[0] not in expected:
+            rank = next((i + 1 for i, r in enumerate(retrieved) if r in expected), None)
+            print(f"  {qid}: expected {expected}, retrieved {retrieved} "
+                  f"({'rank ' + str(rank) if rank else 'not in top-5'})")
 
-    print(sep)
+
+if __name__ == "__main__":
+    task2()

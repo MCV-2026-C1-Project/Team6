@@ -85,6 +85,39 @@ def normalize(hist: np.ndarray) -> np.ndarray:
 
     return cv2.normalize(hist, None, alpha=1, beta=0, norm_type=cv2.NORM_L1)
 
+def normalize_lab_image(img: np.ndarray, normalize_l: bool = True, normalize_chroma: bool = True,
+                        low: float = 1, high: float = 99, chroma_target: float = 40) -> np.ndarray:
+    """
+    Reduce lighting and saturation differences between images (per-image normalization).
+
+    L* is stretched so its low/high percentiles map to 0 and 255. The chroma (distance of
+    (a*, b*) to the neutral point 128) is rescaled so its `high` percentile equals
+    chroma_target, keeping the hue of every pixel unchanged.
+
+    Args:
+        img: CIELAB image (uint8), as returned by load_images.
+        normalize_l: Whether to stretch the lightness channel.
+        normalize_chroma: Whether to rescale the chroma.
+        low: Lower percentile used for the L* stretch.
+        high: Upper percentile used for the L* stretch and chroma scaling.
+        chroma_target: Value the `high` percentile of the chroma is scaled to.
+
+    Returns:
+        Normalized CIELAB image (uint8) with the same shape as img.
+    """
+    L, a, b = [c.astype(np.float32) for c in cv2.split(img)]
+
+    if normalize_l:
+        lo, hi = np.percentile(L, [low, high])
+        L = (L - lo) / max(hi - lo, 1) * 255
+
+    if normalize_chroma:
+        a, b = a - 128, b - 128
+        scale = chroma_target / max(np.percentile(np.hypot(a, b), high), 1)
+        a, b = a * scale + 128, b * scale + 128
+
+    return cv2.merge([np.clip(c, 0, 255).astype(np.uint8) for c in (L, a, b)])
+
 
 # =============================================================================
 # DESCRIPTORS
@@ -153,6 +186,274 @@ def complex_descriptors(images: list[np.ndarray]) -> np.ndarray:
         2D NumPy array containing one complex descriptor per input image.
     """
     return np.array([complex_descriptor(img) for img in images])
+
+
+def color_light_block_descriptor(img: np.ndarray, grid: int = 4, ab_bins: int = 48, l_bins: int = 16,
+                                 mask: np.ndarray | None = None) -> np.ndarray:
+    """
+    Compute a color + lightness histogram for each cell of a grid x grid partition.
+
+    For each cell, a joint 2D a*b* histogram (color) and a 1D L* histogram (light)
+    are L1-normalized and weighted 2/3 and 1/3, so color accounts for 2/3 of the
+    information and light for 1/3. The cell descriptors are concatenated and
+    divided by the number of cells, so the result sums to 1.
+
+    The default parameters are the best configuration found in grid_search.py.
+
+    Args:
+        img: CIELAB image (uint8), as returned by load_images.
+        grid: Number of rows and columns of the partition.
+        ab_bins: Bins per color channel (a*, b*); each cell has ab_bins**2 color values.
+        l_bins: Bins for the L* channel.
+        mask: Optional uint8 mask with the same height and width as img (non-zero = painting).
+            Only the masked pixels are counted. Cells without masked pixels are all zeros.
+
+    Returns:
+        1D descriptor of length grid**2 * (ab_bins**2 + l_bins).
+    """
+    rows = np.array_split(img, grid, axis=0)
+    regions = [cell for row in rows for cell in np.array_split(row, grid, axis=1)]
+
+    if mask is None:
+        cell_masks = [None] * len(regions)
+    else:
+        mask_rows = np.array_split(mask.astype(np.uint8), grid, axis=0)
+        cell_masks = [cell for row in mask_rows for cell in np.array_split(row, grid, axis=1)]
+
+    cell_descriptors = []
+    for cell, cell_mask in zip(regions, cell_masks):
+        color = cv2.calcHist([cell], [1, 2], cell_mask, [ab_bins, ab_bins], [0, 256, 0, 256])
+        light = cv2.calcHist([cell], [0], cell_mask, [l_bins], [0, 256])
+        cell_descriptors.append(normalize(color).flatten() * 2/3)
+        cell_descriptors.append(normalize(light).flatten() * 1/3)
+
+    return np.concatenate(cell_descriptors) / grid**2
+
+
+def color_light_block_descriptors(images: list[np.ndarray], grid: int = 4, ab_bins: int = 48, l_bins: int = 16,
+                                  masks: list[np.ndarray] | None = None) -> np.ndarray:
+    """
+    Compute color + lightness block descriptors for multiple images.
+
+    Args:
+        images: List of CIELAB images, as returned by load_images.
+        grid: Number of rows and columns of the partition.
+        ab_bins: Bins per color channel (a*, b*).
+        l_bins: Bins for the L* channel.
+        masks: Optional list of masks, one per image (see color_light_block_descriptor).
+
+    Returns:
+        2D NumPy array containing one descriptor per input image.
+    """
+    if masks is None:
+        masks = [None] * len(images)
+
+    return np.array([
+        color_light_block_descriptor(img, grid, ab_bins, l_bins, mask)
+        for img, mask in zip(images, masks)
+    ])
+
+
+def histogram_3d(image: np.ndarray, bins: int = 8) -> np.ndarray:
+    """
+    Compute a normalized joint 3D histogram from a Lab image.
+
+    Args:
+        image: Non-empty uint8 Lab image of shape (height, width, 3).
+            Uses OpenCV's 8-bit encoding, with all channels in [0, 255].
+        bins: Number of bins per channel. Must be a positive integer.
+
+    Returns:
+        A flattened histogram containing bins ** 3 values.
+        The values sum to 1 and represent pixel proportions.
+    """
+    if image.dtype != np.uint8:
+        raise ValueError("Expected a uint8 image.")
+
+    if image.ndim != 3 or image.shape[2] != 3 or image.size == 0:
+        raise ValueError("Expected a non-empty three-channel image.")
+
+    if not isinstance(bins, int) or bins < 1:
+        raise ValueError("bins must be a positive integer.")
+
+    # Count L, a and b combinations together.
+    histogram = cv2.calcHist(
+        [image],
+        [0, 1, 2],
+        None,
+        [bins, bins, bins],
+        [0, 256, 0, 256, 0, 256],
+    )
+
+    # Convert counts into proportions.
+    histogram /= histogram.sum()
+
+    return histogram.flatten()
+
+def spatial_descriptor_3d(
+    image: np.ndarray,
+    bins: tuple[int, int, int] = (4, 8, 8),
+    grids: tuple[int, ...] = (3,),
+    weights: tuple[float, ...] | None = None,
+    mask: np.ndarray | None = None,
+) -> np.ndarray:
+    """
+    Compute a global, block-based or hierarchical 3D Lab descriptor.
+
+    Args:
+        image: Non-empty uint8 OpenCV Lab image of shape (H, W, 3).
+        bins: Positive bin counts for L, a and b respectively.
+        grids: Grid widths. (4,) means 4x4 blocks; (1, 2, 4)
+            means a three-level spatial pyramid.
+        weights: Non-negative weights for the grid levels.
+            None gives equal weight to each level.
+        mask: Optional binary foreground mask of shape (H, W).
+            Non-zero pixels are included; zero pixels are ignored.
+
+    Returns:
+        A flattened float32 descriptor with
+        product(bins) * sum(grid ** 2 for grid in grids) values.
+        Non-empty cells have equal weight within each level.
+        The final descriptor sums to 1.
+
+    Raises:
+        ValueError: If the image, settings or mask are invalid,
+            or the mask contains no foreground pixels.
+    """
+    if image.dtype != np.uint8:
+        raise ValueError("Expected a uint8 Lab image.")
+
+    if image.ndim != 3 or image.shape[2] != 3 or image.size == 0:
+        raise ValueError("Expected a non-empty three-channel image.")
+
+    if len(bins) != 3 or any(
+        not isinstance(b, int) or b < 1 for b in bins
+    ):
+        raise ValueError("Provide three positive integer bin counts.")
+
+    if not grids or any(
+        not isinstance(g, int) or g < 1
+        or g > min(image.shape[:2]) for g in grids
+    ):
+        raise ValueError("Grid sizes must be positive and fit the image.")
+
+    level_weights = (
+        np.ones(len(grids), dtype=np.float64)
+        if weights is None
+        else np.asarray(weights, dtype=np.float64)
+    )
+
+    if (
+        level_weights.shape != (len(grids),)
+        or not np.all(np.isfinite(level_weights))
+        or np.any(level_weights < 0)
+        or level_weights.sum() <= 0
+    ):
+        raise ValueError(
+            "Provide one finite, non-negative weight per grid, "
+            "with at least one positive weight."
+        )
+
+    level_weights /= level_weights.sum()
+
+    if mask is not None:
+        mask = np.asarray(mask)
+
+        if mask.shape != image.shape[:2]:
+            raise ValueError("Mask shape must match image height and width.")
+
+        if not np.all(np.isfinite(mask)):
+            raise ValueError("Mask must contain only finite values.")
+
+        mask = np.ascontiguousarray(
+            (mask != 0).astype(np.uint8) * 255
+        )
+
+        if not np.any(mask):
+            raise ValueError("Mask contains no foreground pixels.")
+
+    levels = []
+
+    for grid, weight in zip(grids, level_weights):
+        cells = []
+
+        image_rows = np.array_split(image, grid, axis=0)
+        mask_rows = (
+            np.array_split(mask, grid, axis=0)
+            if mask is not None
+            else [None] * grid
+        )
+
+        for image_row, mask_row in zip(image_rows, mask_rows):
+            image_blocks = np.array_split(image_row, grid, axis=1)
+            mask_blocks = (
+                np.array_split(mask_row, grid, axis=1)
+                if mask_row is not None
+                else [None] * grid
+            )
+
+            for block, block_mask in zip(image_blocks, mask_blocks):
+                histogram = cv2.calcHist(
+                    [np.ascontiguousarray(block)],
+                    [0, 1, 2],
+                    (
+                        np.ascontiguousarray(block_mask)
+                        if block_mask is not None
+                        else None
+                    ),
+                    list(bins),
+                    [0, 256, 0, 256, 0, 256],
+                ).flatten()
+
+                # Empty foreground cells remain zero.
+                count = histogram.sum()
+                if count > 0:
+                    histogram /= count
+
+                cells.append(histogram)
+
+        level = np.concatenate(cells)
+        level /= level.sum()
+        levels.append(level * weight)
+
+    descriptor = np.concatenate(levels).astype(np.float32)
+    descriptor /= descriptor.sum()
+
+    return descriptor
+
+def spatial_descriptors_3d(
+    images: list[np.ndarray],
+    bins: tuple[int, int, int] = (4, 8, 8),
+    grids: tuple[int, ...] = (3,),
+    weights: tuple[float, ...] | None = None,
+    masks: list[np.ndarray] | None = None,
+) -> np.ndarray:
+    """
+    Compute 3D spatial descriptors for multiple images.
+
+    Args:
+        images: List of CIELAB images.
+        bins: Number of bins for the L*, a*, and b* channels.
+        grids: Grid sizes for each spatial level.
+        weights: Optional weights for each grid level.
+        masks: Optional list of masks, one per image.
+
+    Returns:
+        2D NumPy array containing one descriptor per input image.
+    """
+    if masks is None:
+        masks = [None] * len(images)
+
+    return np.array([
+        spatial_descriptor_3d(
+            image,
+            bins=bins,
+            grids=grids,
+            weights=weights,
+            mask=mask
+        )
+        for image, mask in zip(images, masks)
+    ])
 
 
 # =============================================================================
@@ -293,13 +594,6 @@ GMM_SAMPLE_SIZE = 14
 GMM_SMOOTH_SIGMA = 2
 PROJ_FRAC = 0.5
 
-BEST_PARAMS = {
-    "prefilter": "none",
-    "color_space": "HSV",
-    "channels": [1, 2],
-    "threshold": "otsu",
-    "close_frac": 0.012306,
-}
 
 def prefilter_image(bgr: np.ndarray, name: Literal["none", "median"]) -> np.ndarray:
     """
