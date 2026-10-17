@@ -830,6 +830,30 @@ def segment(
     return mask_to_rect(mask)
 
 
+def segments(
+    images: list[np.ndarray],
+    prefilter: Literal["none", "median"],
+    color_space: Literal["HSV", "LAB"],
+    channels: list[int],
+    threshold: Literal["otsu", "triangle", "gmm", "wallthr"],
+    close_frac: float,
+) -> np.ndarray:
+    """
+    Apply segment() to a list of images.
+
+    Args:
+        images: Input images to segment.
+        Other arguments: Passed directly to segment().
+
+    Returns:
+        Array of binary masks, one for each image.
+    """
+    return np.array([
+        segment(img, prefilter, color_space, channels, threshold, close_frac)
+        for img in images
+    ])
+
+
 # =============================================================================
 # EVALUATION
 # =============================================================================
