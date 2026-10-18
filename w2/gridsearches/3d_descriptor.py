@@ -10,6 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(PROJECT_ROOT))
 
 from w2.utils import *
+from w1.utils import complex_descriptors
 
 
 ROOT = Path(__file__).resolve().parent.parent.parent
