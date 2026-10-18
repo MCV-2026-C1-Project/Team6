@@ -1,175 +1,119 @@
 from utils import *
 import pickle
-import pandas as pd
 
 
 # Dataset paths
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
+QSD1 = DATA_DIR / "qsd1_w2"
+QSD2 = DATA_DIR / "qsd2_w2"
+QST1 = DATA_DIR / "qst1_w2"
+QST2 = DATA_DIR / "qst2_w2"
 OUT_DIR = Path(__file__).resolve().parent / "results"
 
-week = "w2"
-QSD1 = DATA_DIR / f"qsd1_{week}"
-QSD2 = DATA_DIR / f"qsd2_{week}"
-QST1 = DATA_DIR / f"qst1_{week}"
-QST2 = DATA_DIR / f"qst2_{week}"
-
-
 METRIC = "histogram_intersection"
+DESCRIPTOR = "2d"
 
-BEST_PARAMS = {
-    "2d_descriptor": {
-        "grid": 4,
-        "ab_bins": 48,
-        "l_bins": 16
-    },
-    "3d_descriptor": {
-        "bins": (2, 8, 8),
-        "grids": (4,),
-    },
-    "segmentation": {
-        "prefilter": "none",
-        "color_space": "HSV",
-        "channels": [1, 2],
-        "threshold": "otsu",
-        "close_frac": 0.012306
-    }
+# Best parameters
+DESC_PARAMS_2D = {"grid": 4, "ab_bins": 48, "l_bins": 16}
+DESC_PARAMS_3D = {"bins": (2, 8, 8), "grids": (4,)}
+SEG_PARAMS = {
+    "prefilter": "none",
+    "color_space": "HSV",
+    "channels": [1, 2],
+    "threshold": "otsu",
+    "close_frac": 0.012306,
 }
 
-def retrieval_task(query_dir, descriptor="2d_descriptor", use_masks=False):
-    db_ids, db_images = load_images(BBDD_DIR)
-    query_ids, query_images = load_images(query_dir)
-
-    desc_params = BEST_PARAMS[descriptor]
-    descriptor_function = {
-        "2d_descriptor": color_light_block_descriptors,
-        "3d_descriptor": spatial_descriptors_3d,
-    }[descriptor]
-
-    if use_masks:
-        seg_params = BEST_PARAMS["segmentation"]
-        db_masks = segments(db_images, **seg_params)
-        query_masks = segments(query_images, **seg_params)
-    else:
-        db_masks = query_masks = None
-
-    db_desc = descriptor_function(db_images, masks=db_masks, **desc_params)
-    query_desc = descriptor_function(query_images, masks=query_masks, **desc_params)
-
-    dists = get_distances(query_desc, db_desc, metric=METRIC)
-    topk5 = retrieve(dists, db_ids, k=5)
-    results = dict(zip(query_ids, topk5))
-
-    with open(query_dir / "gt_corresps.pkl", "rb") as f:
-        ground_truth = pickle.load(f)
-
-    mapk1 = evaluate(ground_truth, results, k=1)
-    mapk5 = evaluate(ground_truth, results, k=5)
-
-    print(f"\nResults ({descriptor})")
-    print("-" * 50)
-    print(f"{'':<25}{'mAP@1':>10}{'mAP@5':>10}")
-    print("-" * 50)
-    print(f"{descriptor:<25}{mapk1:>10.4f}{mapk5:>10.4f}")
-    print("-" * 50)
-
-    print("\nFailed queries:")
-    for qid, retrieved in results.items():
-        expected = ground_truth[qid]
-        if retrieved[0] not in expected:
-            rank = next((i + 1 for i, r in enumerate(retrieved) if r in expected), None)
-            print(
-                f"  {qid}: expected {expected}, retrieved {retrieved} "
-                f"({'rank ' + str(rank) if rank else 'not in top-5'})"
-            )
-
-    return results
-
-
-def segmentation():
-    query_ids, query_images = load_images(QSD2)
-
-    # Predicted masks
-    pred_masks = segments(query_images, **BEST_PARAMS["segmentation"])
-
-    # Ground-truth masks
-    gt_paths = sorted(QSD2.glob("*.png"))
-    gt_masks = [
-        cv2.imread(str(path), cv2.IMREAD_GRAYSCALE)
-        for path in gt_paths
-    ]
-
-    results = [
-        metrics(pred, gt)
-        for pred, gt in zip(pred_masks, gt_masks)
-    ]
-
-    print("\nSegmentation results")
-    print("-" * 50)
-    print(f"Precision:  {np.mean([r['precision'] for r in results]):.4f}")
-    print(f"Recall:     {np.mean([r['recall'] for r in results]):.4f}")
-    print(f"F1:         {np.mean([r['f1'] for r in results]):.4f}")
-    print(f"IoU:        {np.mean([r['iou'] for r in results]):.4f}")
-    print(f"Error rate: {np.mean([r['error_rate'] for r in results]):.4f}")
-    print("-" * 50)
-
-
-def test():
-    print("Loading images...")
-    db_ids, db_images = load_images(BBDD_DIR)
-
-    descriptor_params = BEST_PARAMS["2d_descriptor"]
-    segmentation_params = BEST_PARAMS["segmentation"]
-
-    # Segment database images
-    print("Segmenting database images...")
-    db_masks = segments(db_images, **segmentation_params)
-
-    # Compute masked database descriptors
-    print("Extracting database descriptors...")
-    db_desc = color_light_block_descriptors(db_images, masks=db_masks, **descriptor_params)
-
-    for query_dir in [QST1, QST2]:
-        print(f"\nProcessing {query_dir.name}...")
-
-        query_ids, query_images = load_images(query_dir)
-
-        # Segment query images
-        query_masks = segments(query_images, **segmentation_params)
-
-        # Compute masked query descriptors
-        query_desc = color_light_block_descriptors(query_images, masks=query_masks, **descriptor_params)
-
-        # Retrieval
-        dists = get_distances(query_desc, db_desc, metric=METRIC)
-        results = retrieve(dists, db_ids, k=10)
-
-        print(f"Results for {query_dir.name}:")
-        print(results)
-
-        # Save result.pkl
-        OUT_DIR.mkdir(parents=True, exist_ok=True)
-
-        with open(OUT_DIR / "result.pkl", "wb") as f:
-            pickle.dump(results, f)
-
-        # QST2: save masks
-        if query_dir == QST2:
-            for query_id, mask in zip(query_ids, query_masks):
-                cv2.imwrite(
-                    str(OUT_DIR / f"masks/{query_id}.png"),
-                    (mask * 255).astype(np.uint8)
-                )
-
-        print(f"Results saved to {OUT_DIR}")
-
+# Selected descriptor
+get_descriptors = {"2d": color_light_block_descriptors, "3d": spatial_descriptors_3d}[DESCRIPTOR]
+DESC_PARAMS = {"2d": DESC_PARAMS_2D, "3d": DESC_PARAMS_3D}[DESCRIPTOR]
 
 if __name__ == "__main__":
-    # Task 1 & 2
-    # retrieval_task(QSD1, "2d_descriptor", use_masks=False)
+    sep = "-" * 40
+    print(f"Descriptor: {DESCRIPTOR}")
 
-    # Task 3 & 4
-    segmentation()
+    # Load database.
+    db_ids, db_images = load_images(BBDD_DIR)
 
-    # Task 5
-    # retrieval_task(QSD2, "2d_descriptor", use_masks=True)
+    # ------------------------------------------------------------------
+    # Tasks 1 & 2: retrieval on QSD1 without masks.
+    # ------------------------------------------------------------------
+    q1_ids, q1_images = load_images(QSD1)
+    with open(QSD1 / "gt_corresps.pkl", "rb") as f:
+        gt_q1 = pickle.load(f)
+
+    db_desc = get_descriptors(db_images, masks=None, **DESC_PARAMS)
+    q1_desc = get_descriptors(q1_images, masks=None, **DESC_PARAMS)
+
+    dists_q1 = get_distances(q1_desc, db_desc, metric=METRIC)
+    results_q1 = dict(zip(q1_ids, retrieve(dists_q1, db_ids, k=5)))
+
+    print("\nTasks 1 & 2: Retrieval QSD1 (no masks)")
+    print(sep)
+    print(f"{'mAP@1':<20}{evaluate(gt_q1, results_q1, k=1):>10.4f}")
+    print(f"{'mAP@5':<20}{evaluate(gt_q1, results_q1, k=5):>10.4f}")
+    print(sep)
+
+    # ------------------------------------------------------------------
+    # Tasks 3 & 4: background removal on QSD2.
+    # ------------------------------------------------------------------
+    q2_ids, q2_images = load_images(QSD2)
+    q2_masks = segments(q2_images, **SEG_PARAMS)
+
+    gt_masks = [cv2.imread(str(p), cv2.IMREAD_GRAYSCALE) for p in sorted(QSD2.glob("*.png"))]
+    seg = [metrics(pred, gt) for pred, gt in zip(q2_masks, gt_masks)]
+
+    print("\nTasks 3 & 4: Segmentation QSD2")
+    print(sep)
+    for key in ["precision", "recall", "f1", "iou", "error_rate"]:
+        print(f"{key:<20}{np.mean([r[key] for r in seg]):>10.4f}")
+    print(sep)
+
+    # ------------------------------------------------------------------
+    # Task 5: retrieval on QSD2 with masks.
+    # ------------------------------------------------------------------
+    with open(QSD2 / "gt_corresps.pkl", "rb") as f:
+        gt_q2 = pickle.load(f)
+
+    crops = [crop_to_mask(img, m) for img, m in zip(q2_images, q2_masks)]
+    q2_desc = get_descriptors(crops, masks=None, **DESC_PARAMS)
+
+    dists_q2 = get_distances(q2_desc, db_desc, metric=METRIC)
+    results_q2 = dict(zip(q2_ids, retrieve(dists_q2, db_ids, k=5)))
+
+    print("\nTask 5: Retrieval QSD2 (masks)")
+    print(sep)
+    print(f"{'mAP@1':<20}{evaluate(gt_q2, results_q2, k=1):>10.4f}")
+    print(f"{'mAP@5':<20}{evaluate(gt_q2, results_q2, k=5):>10.4f}")
+    print(sep)
+
+    # ------------------------------------------------------------------
+    # Test: QST1 (no masks) and QST2 (masks), top-10.
+    # ------------------------------------------------------------------
+    # QST1
+    qt1_ids, qt1_images = load_images(QST1)
+    qt1_desc = get_descriptors(qt1_images, **DESC_PARAMS)
+    results_qt1 = retrieve(get_distances(qt1_desc, db_desc, metric=METRIC), db_ids, k=10)
+
+    out_qt1 = OUT_DIR / "QST1" / "method1"
+    out_qt1.mkdir(parents=True, exist_ok=True)
+    with open(out_qt1 / "result.pkl", "wb") as f:
+        pickle.dump(results_qt1, f)
+
+    # QST2
+    qt2_ids, qt2_images = load_images(QST2)
+    qt2_masks = segments(qt2_images, **SEG_PARAMS)
+
+    crops = [crop_to_mask(img, m) for img, m in zip(qt2_images, qt2_masks)]
+    qt2_desc = get_descriptors(crops, masks=None, **DESC_PARAMS)
+    results_qt2 = retrieve(get_distances(qt2_desc, db_desc, metric=METRIC), db_ids, k=10)
+
+    out_qt2 = OUT_DIR / "QST2" / "method1"
+    out_qt2.mkdir(parents=True, exist_ok=True)
+    with open(out_qt2 / "result.pkl", "wb") as f:
+        pickle.dump(results_qt2, f)
+    for qid, mask in zip(qt2_ids, qt2_masks):
+        cv2.imwrite(str(out_qt2 / f"{qid}.png"), (mask * 255).astype(np.uint8))
+
+    print(f"\nTest results saved to {OUT_DIR}")

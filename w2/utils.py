@@ -13,7 +13,7 @@ from scipy.ndimage import gaussian_filter1d
 # =============================================================================
 
 # We only use .jpg because these are the only ones that contain the required images.
-def load_images(folder: str) -> tuple[list[int], list[np.ndarray]]:
+def load_images(folder: str, color_space: int = None) -> tuple[list[int], list[np.ndarray]]:
     """
     Load JPG images from a folder and convert them to CIE Lab.
 
@@ -35,7 +35,8 @@ def load_images(folder: str) -> tuple[list[int], list[np.ndarray]]:
             print(f"Could not read {path}")
             continue
 
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+        if color_space:
+            img = cv2.cvtColor(img, color_space)
         image_id = int(path.stem.split("_")[-1])
 
         ids.append(image_id)
@@ -236,7 +237,7 @@ def color_light_block_descriptors(images: list[np.ndarray], grid: int = 4, ab_bi
     Compute color + lightness block descriptors for multiple images.
 
     Args:
-        images: List of CIELAB images, as returned by load_images.
+        images: List of BGR images, as returned by load_images.
         grid: Number of rows and columns of the partition.
         ab_bins: Bins per color channel (a*, b*).
         l_bins: Bins for the L* channel.
@@ -249,7 +250,12 @@ def color_light_block_descriptors(images: list[np.ndarray], grid: int = 4, ab_bi
         masks = [None] * len(images)
 
     return np.array([
-        color_light_block_descriptor(img, grid, ab_bins, l_bins, mask)
+        color_light_block_descriptor(
+            cv2.cvtColor(img, cv2.COLOR_BGR2LAB),
+            grid,
+            ab_bins,
+            l_bins,
+            mask)
         for img, mask in zip(images, masks)
     ])
 
@@ -432,7 +438,7 @@ def spatial_descriptors_3d(
     Compute 3D spatial descriptors for multiple images.
 
     Args:
-        images: List of CIELAB images.
+        images: List of BGR images.
         bins: Number of bins for the L*, a*, and b* channels.
         grids: Grid sizes for each spatial level.
         weights: Optional weights for each grid level.
@@ -446,7 +452,7 @@ def spatial_descriptors_3d(
 
     return np.array([
         spatial_descriptor_3d(
-            image,
+            cv2.cvtColor(image, cv2.COLOR_BGR2LAB),
             bins=bins,
             grids=grids,
             weights=weights,
@@ -852,6 +858,13 @@ def segments(
         segment(img, prefilter, color_space, channels, threshold, close_frac)
         for img in images
     ]
+
+
+def crop_to_mask(img: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    ys, xs = np.nonzero(mask)
+    if ys.size == 0:
+        return img
+    return img[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
 
 
 # =============================================================================
