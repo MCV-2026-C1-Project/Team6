@@ -128,7 +128,7 @@ if __name__ == "__main__":
     ):
         raise ValueError("A ground-truth painting is missing from BBDD.")
 
-    output = Path(__file__).resolve().parent / "results"
+    output = Path(__file__).resolve().parent / "results/3d_descriptor"
     output.mkdir(parents=True, exist_ok=True)
 
     metrics = ["histogram_intersection", "hellinger", "chi2"]

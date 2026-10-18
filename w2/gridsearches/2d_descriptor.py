@@ -8,7 +8,7 @@ import pandas as pd
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
 QSD1 = DATA_DIR / "qsd1_w2"
-RESULTS_DIR = Path(__file__).resolve().parent / "results"
+RESULTS_DIR = Path(__file__).resolve().parent / "results/2d_descriptor"
 
 # Parameter grid for color_light_block_descriptor
 GRIDS = [2, 3, 4, 5, 6]

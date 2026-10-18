@@ -848,10 +848,10 @@ def segments(
     Returns:
         Array of binary masks, one for each image.
     """
-    return np.array([
+    return [
         segment(img, prefilter, color_space, channels, threshold, close_frac)
         for img in images
-    ])
+    ]
 
 
 # =============================================================================

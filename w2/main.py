@@ -6,8 +6,13 @@ import pandas as pd
 # Dataset paths
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
-QSD1 = DATA_DIR / "qsd1_w2"
-QSD2 = DATA_DIR / "qsd2_w2"
+OUT_DIR = Path(__file__).resolve().parent / "results"
+
+week = "w2"
+QSD1 = DATA_DIR / f"qsd1_{week}"
+QSD2 = DATA_DIR / f"qsd2_{week}"
+QST1 = DATA_DIR / f"qst1_{week}"
+QST2 = DATA_DIR / f"qst2_{week}"
 
 
 METRIC = "histogram_intersection"
@@ -80,6 +85,7 @@ def retrieval_task(query_dir, descriptor="2d_descriptor", use_masks=False):
 
     return results
 
+
 def segmentation():
     query_ids, query_images = load_images(QSD2)
 
@@ -87,44 +93,83 @@ def segmentation():
     pred_masks = segments(query_images, **BEST_PARAMS["segmentation"])
 
     # Ground-truth masks
+    gt_paths = sorted(QSD2.glob("*.png"))
     gt_masks = [
-        cv2.imread(str(QSD2 / f"{qid}.png"), cv2.IMREAD_GRAYSCALE)
-        for qid in query_ids
+        cv2.imread(str(path), cv2.IMREAD_GRAYSCALE)
+        for path in gt_paths
     ]
 
-    precisions, recalls, f1s = [], [], []
-
-    for pred, gt in zip(pred_masks, gt_masks):
-        pred = pred > 0
-        gt = gt > 0
-
-        tp = np.sum(pred & gt)
-        fp = np.sum(pred & ~gt)
-        fn = np.sum(~pred & gt)
-
-        precision = tp / (tp + fp) if tp + fp else 0
-        recall = tp / (tp + fn) if tp + fn else 0
-        f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0
-
-        precisions.append(precision)
-        recalls.append(recall)
-        f1s.append(f1)
+    results = [
+        metrics(pred, gt)
+        for pred, gt in zip(pred_masks, gt_masks)
+    ]
 
     print("\nSegmentation results")
     print("-" * 50)
-    print(f"Precision: {np.mean(precisions):.4f}")
-    print(f"Recall:    {np.mean(recalls):.4f}")
-    print(f"F1:        {np.mean(f1s):.4f}")
+    print(f"Precision:  {np.mean([r['precision'] for r in results]):.4f}")
+    print(f"Recall:     {np.mean([r['recall'] for r in results]):.4f}")
+    print(f"F1:         {np.mean([r['f1'] for r in results]):.4f}")
+    print(f"IoU:        {np.mean([r['iou'] for r in results]):.4f}")
+    print(f"Error rate: {np.mean([r['error_rate'] for r in results]):.4f}")
     print("-" * 50)
-    return pred_masks
+
+
+def test():
+    print("Loading images...")
+    db_ids, db_images = load_images(BBDD_DIR)
+
+    descriptor_params = BEST_PARAMS["2d_descriptor"]
+    segmentation_params = BEST_PARAMS["segmentation"]
+
+    # Segment database images
+    print("Segmenting database images...")
+    db_masks = segments(db_images, **segmentation_params)
+
+    # Compute masked database descriptors
+    print("Extracting database descriptors...")
+    db_desc = color_light_block_descriptors(db_images, masks=db_masks, **descriptor_params)
+
+    for query_dir in [QST1, QST2]:
+        print(f"\nProcessing {query_dir.name}...")
+
+        query_ids, query_images = load_images(query_dir)
+
+        # Segment query images
+        query_masks = segments(query_images, **segmentation_params)
+
+        # Compute masked query descriptors
+        query_desc = color_light_block_descriptors(query_images, masks=query_masks, **descriptor_params)
+
+        # Retrieval
+        dists = get_distances(query_desc, db_desc, metric=METRIC)
+        results = retrieve(dists, db_ids, k=10)
+
+        print(f"Results for {query_dir.name}:")
+        print(results)
+
+        # Save result.pkl
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+        with open(OUT_DIR / "result.pkl", "wb") as f:
+            pickle.dump(results, f)
+
+        # QST2: save masks
+        if query_dir == QST2:
+            for query_id, mask in zip(query_ids, query_masks):
+                cv2.imwrite(
+                    str(OUT_DIR / f"masks/{query_id}.png"),
+                    (mask * 255).astype(np.uint8)
+                )
+
+        print(f"Results saved to {OUT_DIR}")
 
 
 if __name__ == "__main__":
     # Task 1 & 2
-    retrieval_task(QSD1, "2d_descriptor", use_masks=False)
+    # retrieval_task(QSD1, "2d_descriptor", use_masks=False)
 
     # Task 3 & 4
-    pred_masks = segmentation()
+    segmentation()
 
     # Task 5
-    retrieval_task(QSD2, "2d_descriptor", use_masks=True)
+    # retrieval_task(QSD2, "2d_descriptor", use_masks=True)
