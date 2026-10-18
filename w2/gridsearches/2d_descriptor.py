@@ -1,13 +1,19 @@
-from w2.utils import *
 import itertools
 import pickle
 import pandas as pd
+import sys
+from pathlib import Path
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(PROJECT_ROOT))
+
+from w2.utils import *
 
 # Dataset paths
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
 QSD1 = DATA_DIR / "qsd1_w2"
+QSD2 = DATA_DIR / "qsd2_w2"
 RESULTS_DIR = Path(__file__).resolve().parent / "results/2d_descriptor"
 
 # Parameter grid for color_light_block_descriptor
@@ -38,10 +44,13 @@ def get_distances_by_query(query_desc: np.ndarray, db_desc: np.ndarray, metric: 
 if __name__ == "__main__":
     # Load database, query images, and ground-truth correspondences.
     db_ids, db_images = load_images(BBDD_DIR)
-    query_ids, query_images = load_images(QSD1)
+    query_ids, query_images = load_images(QSD2)
 
-    with open(QSD1 / "gt_corresps.pkl", "rb") as f:
+    with open(QSD2 / "gt_corresps.pkl", "rb") as f:
         ground_truth = pickle.load(f)
+
+    gt_masks = [cv2.imread(str(p), cv2.IMREAD_GRAYSCALE) for p in sorted(QSD2.glob("*.png"))]
+    crops = [crop_to_mask(img, m) for img, m in zip(query_images, gt_masks)]
 
     results = []
     combinations = list(itertools.product(GRIDS, AB_BINS, L_BINS))
@@ -51,7 +60,7 @@ if __name__ == "__main__":
         print(f"[{i}/{len(combinations)}] grid={grid}, ab_bins={ab_bins}, l_bins={l_bins}")
 
         db_desc = color_light_block_descriptors(db_images, grid, ab_bins, l_bins)
-        query_desc = color_light_block_descriptors(query_images, grid, ab_bins, l_bins)
+        query_desc = color_light_block_descriptors(crops, grid, ab_bins, l_bins)
 
         for metric in METRICS:
             try:

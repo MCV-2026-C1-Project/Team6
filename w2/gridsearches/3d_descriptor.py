@@ -1,10 +1,13 @@
 import csv
 import json
 import pickle
-from pathlib import Path
 from time import perf_counter
-
 import numpy as np
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(PROJECT_ROOT))
 
 from w2.utils import *
 

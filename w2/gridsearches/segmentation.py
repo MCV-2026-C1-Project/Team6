@@ -1,9 +1,12 @@
 import time
-from pathlib import Path
-
 import cv2
 import numpy as np
 import optuna
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(PROJECT_ROOT))
 
 from w2.utils import segment, metrics
 
@@ -35,7 +38,7 @@ def objective(trial):
         "color_space": trial.suggest_categorical("color_space", ["HSV", "LAB"]),
         "channels": CHANNELS[trial.suggest_categorical("channels", list(range(len(CHANNELS))))],
         "threshold": trial.suggest_categorical("threshold", ["otsu", "triangle", "gmm", "wallthr"]),
-        "close_frac": trial.suggest_float("close_frac", 0.0, 0.05),
+        "close_frac": trial.suggest_float("close_frac", 0.0, 1.0),
     }
     scores = [metrics(segment(img, **params), gt)[METRIC] for img, gt in data]
     return np.mean(scores)
