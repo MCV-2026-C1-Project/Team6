@@ -152,7 +152,10 @@ if __name__ == "__main__":
     out_qt2.mkdir(parents=True, exist_ok=True)
     with open(out_qt2 / "result.pkl", "wb") as f:
         pickle.dump(results_qt2, f)
-    for qid, mask in zip(qt2_ids, qt2_masks):
-        cv2.imwrite(str(out_qt2 / f"{qid}.png"), (mask * 255).astype(np.uint8))
+    for i, (qid, mask) in enumerate(zip(qt2_ids, qt2_masks)):
+        stem = Path(str(qid)).stem
+        idx = int(stem) if stem.isdigit() else i
+        mask_u8 = (np.asarray(mask) > 0).astype(np.uint8) * 255
+        cv2.imwrite(str(out_qt2 / f"{idx:05d}.png"), mask_u8)
 
     print(f"\nTest results saved to {OUT_DIR}")
