@@ -1,12 +1,5 @@
 from utils import *
 import pickle
-# import sys
-# from copy import deepcopy
-
-# PROJECT_ROOT = Path(__file__).resolve().parent.parent
-# sys.path.append(str(PROJECT_ROOT))
-
-# from w1.utils import complex_descriptors
 
 
 # Dataset paths
@@ -79,9 +72,6 @@ if __name__ == "__main__":
     print(sep)
 
     # ------------------------------------------------------------------
-    # Task 5: retrieval on QSD2 — descriptor × mask comparison.
-    # ------------------------------------------------------------------
-    # ------------------------------------------------------------------
     # Task 5: retrieval on QSD1 and QSD2 — descriptor × mask comparison.
     # ------------------------------------------------------------------
     with open(QSD2 / "gt_corresps.pkl", "rb") as f:
@@ -138,11 +128,11 @@ if __name__ == "__main__":
     # Test: QST1 (no masks) and QST2 (masks), top-10.
     # ------------------------------------------------------------------
 
-    db_desc = get_descriptors(db_images, masks=None, **DESC_PARAMS_2D_BEST2)
+    db_desc = get_descriptors(db_images, masks=None, **DESC_PARAMS)
 
     # QST1
     qt1_ids, qt1_images = load_images(QST1)
-    qt1_desc = get_descriptors(qt1_images, **DESC_PARAMS_2D_BEST2)
+    qt1_desc = get_descriptors(qt1_images, **DESC_PARAMS)
     results_qt1 = retrieve(get_distances(qt1_desc, db_desc, metric=METRIC), db_ids, k=10)
 
     out_qt1 = OUT_DIR / "QST1" / "method1"
@@ -155,14 +145,17 @@ if __name__ == "__main__":
     qt2_masks = segments(qt2_images, **SEG_PARAMS)
 
     crops = [crop_to_mask(img, m) for img, m in zip(qt2_images, qt2_masks)]
-    qt2_desc = get_descriptors(crops, masks=None, **DESC_PARAMS_2D_BEST2)
+    qt2_desc = get_descriptors(crops, masks=None, **DESC_PARAMS)
     results_qt2 = retrieve(get_distances(qt2_desc, db_desc, metric=METRIC), db_ids, k=10)
 
     out_qt2 = OUT_DIR / "QST2" / "method1"
     out_qt2.mkdir(parents=True, exist_ok=True)
     with open(out_qt2 / "result.pkl", "wb") as f:
         pickle.dump(results_qt2, f)
-    for qid, mask in zip(qt2_ids, qt2_masks):
-        cv2.imwrite(str(out_qt2 / f"{qid}.png"), (mask * 255).astype(np.uint8))
+    for i, (qid, mask) in enumerate(zip(qt2_ids, qt2_masks)):
+        stem = Path(str(qid)).stem
+        idx = int(stem) if stem.isdigit() else i
+        mask_u8 = (np.asarray(mask) > 0).astype(np.uint8) * 255
+        cv2.imwrite(str(out_qt2 / f"{idx:05d}.png"), mask_u8)
 
     print(f"\nTest results saved to {OUT_DIR}")

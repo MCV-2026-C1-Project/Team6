@@ -1,7 +1,7 @@
 matplotlib==3.11.2
-numpy==2.5.3
+numpy==2.5.4
 opencv_python==5.0.0.93
+optuna==5.0.0
 pandas==3.0.6
+scikit_learn==1.9.1
 scipy==1.18.1
-scikit-learn==1.9.1
-optuna
