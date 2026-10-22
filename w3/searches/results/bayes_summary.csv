@@ -1,0 +1,7 @@
+descriptor,mAP@5,mAP@1,color,channels,n_blocks,n_coef,skip_dc,metric,size,block_size,n_regions,n_bins,levels,wavelet,scales
+dct_block,1.0,1.0,YCrCb,012,6.0,20.0,True,cityblock,,,,,,,
+dct_pyramid,1.0,1.0,YCrCb,012,,32.0,False,canberra,,,,,"1,2,3",,
+dct_histogram,0.9416666666666667,0.9333333333333333,Lab,02,,7.0,False,hellinger,256.0,16.0,4.0,8.0,,,
+dwt_block,0.9,0.9,Lab,02,6.0,,,cosine,384.0,,,,3,db2,
+dwt_histogram,0.8666666666666667,0.8666666666666667,YCrCb,02,6.0,,,hellinger,256.0,,,8.0,3,db2,
+lbp_block,0.6416666666666667,0.6,Lab,012,6.0,,,chi2,256.0,,,,,,16_2
