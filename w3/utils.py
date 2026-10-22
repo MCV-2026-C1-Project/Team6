@@ -10,19 +10,21 @@ from scipy import ndimage as ndi
 # =============================================================================
 #
 # Pipeline (images are assumed to be already denoised):
-#   1. Colour cue: Mahalanobis distance of every pixel to the wall, modelled
-#      from the image border (same idea as Week 2), thresholded with Otsu.
-#   2. Edge cue: high-pass filter (Prewitt by default) on the grey image,
-#      thresholded with Otsu. Each connected group of edges (a frame outline)
-#      is filled with its convex hull ("hull"), or the regions enclosed by
-#      edges are found with a flood fill from the border ("flood").
-#   3. Fusion of both cues, morphological clean-up and hole filling.
-#   4. Connected components -> keep at most 2 that are big and rectangular.
-#   5. Fit a quadrilateral to each one (paintings may be slightly rotated) and
-#      order the paintings left-to-right (or top-to-bottom when stacked).
+#   1. Edge input: the image in the chosen colour space and channels. With
+#      use_mahalanobis=1 those channels are turned into the Mahalanobis
+#      distance of every pixel to the wall (modelled on the border pixels).
+#   2. Edges: high-pass filter (Prewitt by default) on that map, thresholded
+#      with Otsu and closed so each frame becomes a closed outline.
+#   3. Week 2 post-processing: fill holes (closed outlines become solid) and
+#      an opening to remove the edges that do not enclose anything.
+#   4. Largest connected components with holes filled (Week 2), extended to
+#      keep up to 2 paintings that are big enough and fill their bounding box.
+#   5. Week 2 projection rectangle for each painting separately, and ordering
+#      left-to-right (or top-to-bottom when stacked).
 
 BORDER_SIZE = 15
 MAX_PAINTINGS = 2
+PROJ_FRAC = 0.5
 
 EDGE_KERNELS = {
     "prewitt": (
@@ -33,30 +35,26 @@ EDGE_KERNELS = {
         np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32),
         np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], np.float32),
     ),
-    "scharr": (
-        np.array([[-3, 0, 3], [-10, 0, 10], [-3, 0, 3]], np.float32),
-        np.array([[-3, -10, -3], [0, 0, 0], [3, 10, 3]], np.float32),
-    ),
 }
 
 DEFAULT_PARAMS = {
-    # Colour cue
+    # Input of the edge detection
     "color_space": "HSV",
     "channels": [1, 2],
-    # Edge cue
+    "use_mahalanobis": 0,  # 1: Mahalanobis distance to the wall, 0: raw channels
+    # Edge detection
     "edge_operator": "prewitt",
     "blur_ksize": 5,
-    "edge_close_frac": 0.01,
-    "edge_fill": "hull",
-    # Fusion and clean-up
-    "fusion": "or",
+    "edge_close_frac": 0.02,
+    # Clean-up
     "open_frac": 0.02,
-    # Candidate selection
+    # Component selection
     "min_area_frac": 0.02,
     "min_rel_area": 0.15,
-    "min_rectangularity": 0.75,
+    "min_extent": 0.6,
     # Shape fitting
-    "fit": "poly",
+    "fit_rect": True,  # Week 2 projection rectangle per painting
+    "proj_frac": PROJ_FRAC,
 }
 
 
@@ -108,7 +106,7 @@ def fill_holes(mask: np.ndarray) -> np.ndarray:
 
 
 # -----------------------------------------------------------------------------
-# Step 1: colour cue (Week 2 background model)
+# Step 1: input map for the edge detection
 # -----------------------------------------------------------------------------
 def mahalanobis(color: np.ndarray, border: np.ndarray, channels: list[int]) -> np.ndarray:
     """
@@ -134,210 +132,170 @@ def mahalanobis(color: np.ndarray, border: np.ndarray, channels: list[int]) -> n
     return np.sqrt(np.maximum(d2, 0)).astype(np.float32)
 
 
-def color_cue(
+COLOR_SPACES = {"HSV": cv2.COLOR_BGR2HSV, "LAB": cv2.COLOR_BGR2LAB}
+
+
+def edge_input(
     img_bgr: np.ndarray,
     color_space: Literal["HSV", "LAB"] = "HSV",
     channels: list[int] = (1, 2),
-) -> tuple[np.ndarray, np.ndarray]:
+    use_mahalanobis: int = 1,
+) -> np.ndarray:
     """
-    Foreground mask from the colour distance to the wall.
+    Map on which the edges are detected.
+
+    Args:
+        img_bgr: Input BGR image.
+        color_space: Color space the image is converted to.
+        channels: Channels of that color space that are used.
+        use_mahalanobis: 1 -> Mahalanobis distance of every pixel to the wall
+            (modelled on the border pixels), a single-channel map where the
+            paintings stand out from the wall. 0 -> the selected channels
+            themselves.
 
     Returns:
-        (distance map, binary uint8 mask)
+        Float32 array of shape (h, w) if use_mahalanobis else (h, w, C).
     """
-    spaces = {"HSV": cv2.COLOR_BGR2HSV, "LAB": cv2.COLOR_BGR2LAB}
-    h, w = img_bgr.shape[:2]
-    color = cv2.cvtColor(img_bgr, spaces[color_space])
-    dist = mahalanobis(color, border_mask(h, w), list(channels))
-    src = np.clip(dist, 0, 255).astype(np.uint8)
-    _, mask = cv2.threshold(src, 0, 1, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    return dist, mask
+    color = cv2.cvtColor(img_bgr, COLOR_SPACES[color_space])
+    if use_mahalanobis:
+        h, w = img_bgr.shape[:2]
+        return mahalanobis(color, border_mask(h, w), list(channels))
+    return color[..., list(channels)].astype(np.float32)
 
 
 # -----------------------------------------------------------------------------
-# Step 2: edge cue (high-pass filters)
+# Step 2: edge detection (high-pass filters)
 # -----------------------------------------------------------------------------
 def gradient_magnitude(
-    img_bgr: np.ndarray,
+    image: np.ndarray,
     operator: Literal["prewitt", "sobel", "laplacian"] = "prewitt",
     blur_ksize: int = 5,
 ) -> np.ndarray:
     """
-    Gradient magnitude of the grey image, normalised to [0, 255].
+    Gradient magnitude of a single or multi-channel map, normalised to
+    [0, 255]. For several channels the maximum response is kept per pixel.
 
     A Gaussian blur is applied first so that the wall/painting texture does
     not dominate over the frame edges.
     """
-    gray = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)
-    if blur_ksize > 1:
-        gray = cv2.GaussianBlur(gray, (blur_ksize, blur_ksize), 0)
+    image = image.astype(np.float32)
+    if image.ndim == 2:
+        image = image[..., None]
 
-    if operator == "laplacian":
-        mag = np.abs(cv2.Laplacian(gray, cv2.CV_32F, ksize=3))
-    else:
-        kx, ky = EDGE_KERNELS[operator]
-        gx = cv2.filter2D(gray, cv2.CV_32F, kx)
-        gy = cv2.filter2D(gray, cv2.CV_32F, ky)
-        mag = np.sqrt(gx ** 2 + gy ** 2)
+    mag = np.zeros(image.shape[:2], np.float32)
+    for c in range(image.shape[2]):
+        channel = image[..., c]
+        if blur_ksize > 1:
+            channel = cv2.GaussianBlur(channel, (blur_ksize, blur_ksize), 0)
+
+        if operator == "laplacian":
+            channel_mag = np.abs(cv2.Laplacian(channel, cv2.CV_32F, ksize=3))
+        else:
+            kx, ky = EDGE_KERNELS[operator]
+            gx = cv2.filter2D(channel, cv2.CV_32F, kx)
+            gy = cv2.filter2D(channel, cv2.CV_32F, ky)
+            channel_mag = np.sqrt(gx ** 2 + gy ** 2)
+        # Each channel has its own range, so normalise before combining.
+        channel_mag /= channel_mag.max() + 1e-6
+        mag = np.maximum(mag, channel_mag)
 
     return cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
 
 
-def fill_from_border(edges: np.ndarray) -> np.ndarray:
-    """
-    Regions that cannot be reached from the image border without crossing
-    an edge pixel (i.e. regions enclosed by edges, plus the edges themselves).
-    """
-    h, w = edges.shape
-    # Pad with a 1-pixel background frame so the flood fill starts everywhere
-    # on the border at once.
-    padded = np.zeros((h + 2, w + 2), np.uint8)
-    padded[1:-1, 1:-1] = edges
-    flood = padded.copy()
-    ff_mask = np.zeros((h + 4, w + 4), np.uint8)
-    cv2.floodFill(flood, ff_mask, (0, 0), 1)
-    # Pixels still at 0 were not reached -> enclosed.
-    enclosed = (flood == 0)[1:-1, 1:-1]
-    return (enclosed | (edges > 0)).astype(np.uint8)
-
-
-def fill_hulls(edges: np.ndarray, min_area_frac: float = 0.01) -> np.ndarray:
-    """
-    Fill the convex hull of every connected group of edges.
-
-    A painting frame is usually one connected group of edges, so its hull is
-    the whole painting even when the frame outline has small gaps (where a
-    flood fill would leak). Tiny groups are ignored.
-    """
-    out = np.zeros_like(edges)
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    for contour in contours:
-        hull = cv2.convexHull(contour)
-        if cv2.contourArea(hull) >= min_area_frac * edges.size:
-            cv2.fillPoly(out, [hull], 1)
-    return out
-
-
 def edge_cue(
-    img_bgr: np.ndarray,
+    image: np.ndarray,
     operator: str = "prewitt",
     blur_ksize: int = 5,
     close_frac: float = 0.01,
-    fill: Literal["flood", "hull"] = "hull",
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     """
-    Foreground mask from the edges.
+    Binary edge map of the edge input.
 
     Args:
-        fill: "flood" keeps the regions enclosed by edges (flood fill from
-            the border), "hull" fills the convex hull of each edge group.
+        image: Map returned by edge_input (Mahalanobis or colour channels).
+        operator: High-pass filter used to compute the gradient.
+        blur_ksize: Gaussian blur applied before the filter.
+        close_frac: Closing kernel size as a fraction of the smallest image
+            side. It joins the edges of each frame into a closed outline.
 
     Returns:
-        (gradient magnitude, binary edge map, filled regions mask)
+        (gradient magnitude, binary uint8 edge map after Otsu and closing)
     """
-    mag = gradient_magnitude(img_bgr, operator, blur_ksize)
+    mag = gradient_magnitude(image, operator, blur_ksize)
     _, edges = cv2.threshold(mag, 0, 1, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     # The border itself is wall: drop edges touching it (image borders, crops).
     edges[border_mask(*edges.shape, b=2)] = 0
     edges = morph(edges, cv2.MORPH_CLOSE, close_frac)
-    if fill == "flood":
-        return mag, edges, fill_from_border(edges)
-    if fill == "hull":
-        return mag, edges, fill_hulls(edges)
-    raise ValueError(f"Unknown edge fill: {fill}")
+    return mag, edges
 
 
 # -----------------------------------------------------------------------------
-# Step 3: fusion and clean-up
+# Step 3: regions (Week 2 post-processing)
 # -----------------------------------------------------------------------------
-def fuse(
-    color_mask: np.ndarray,
-    edge_mask: np.ndarray,
-    method: Literal["or", "and", "color", "edge"] = "or",
-) -> np.ndarray:
-    """Combine the colour and the edge foreground masks."""
-    if method == "or":
-        return color_mask | edge_mask
-    if method == "and":
-        return color_mask & edge_mask
-    if method == "color":
-        return color_mask.copy()
-    if method == "edge":
-        return edge_mask.copy()
-    raise ValueError(f"Unknown fusion: {method}")
-
-
-def clean_mask(mask: np.ndarray, open_frac: float = 0.02) -> np.ndarray:
+def clean_mask(edges: np.ndarray, open_frac: float = 0.02) -> np.ndarray:
     """
-    Fill holes and remove thin structures (edges of furniture, frame
-    shadows...) with an opening. The opening also separates two paintings
-    that are only joined by a thin bridge.
+    Turn closed frame outlines into filled regions.
+
+    Holes are filled, so a closed outline becomes a solid painting. Edges that
+    do not enclose anything stay thin and are removed by the opening, which
+    also separates two paintings joined by a thin bridge.
     """
-    mask = fill_holes(mask)
+    mask = fill_holes(edges)
     mask = morph(mask, cv2.MORPH_OPEN, open_frac)
     return fill_holes(mask)
 
 
 # -----------------------------------------------------------------------------
-# Step 4: candidate selection
+# Step 4: largest components (Week 2, extended to 2 paintings)
 # -----------------------------------------------------------------------------
-def rectangularity(component: np.ndarray) -> float:
-    """Area of the blob divided by the area of its minimum rotated rectangle."""
-    contours, _ = cv2.findContours(component, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if not contours:
-        return 0.0
-    contour = max(contours, key=cv2.contourArea)
-    (_, _), (rw, rh), _ = cv2.minAreaRect(contour)
-    if rw * rh == 0:
-        return 0.0
-    return float(component.sum()) / (rw * rh)
-
-
-def select_candidates(
+def largest_components_filled(
     mask: np.ndarray,
     min_area_frac: float = 0.02,
     min_rel_area: float = 0.15,
-    min_rectangularity: float = 0.75,
+    min_extent: float = 0.6,
     max_paintings: int = MAX_PAINTINGS,
 ) -> tuple[list[np.ndarray], list[dict]]:
     """
-    Split a mask into connected components and keep the painting-like ones.
+    Keep the largest connected components and fill their holes.
 
-    A component is kept when it is larger than `min_area_frac` of the image,
-    at least `min_rel_area` times the largest component and its
-    rectangularity is above `min_rectangularity`.
+    Week 2 kept only the largest component. Here every component is a
+    candidate and it is kept when:
+      - its area is at least `min_area_frac` of the image,
+      - its area is at least `min_rel_area` times the largest component
+        (a second painting must not be a tiny blob),
+      - its extent (area / bounding box area) is at least `min_extent`
+        (paintings fill their bounding box, furniture or shadows do not).
+    At most `max_paintings` components are kept, the largest first.
 
     Returns:
-        (kept component masks sorted by area, info about every component)
+        (kept component masks, info about every component)
     """
     n, labels, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
     if n < 2:
         return [], []
 
     image_area = mask.size
-    areas = stats[1:, cv2.CC_STAT_AREA]
-    largest = areas.max()
+    largest = stats[1:, cv2.CC_STAT_AREA].max()
 
     info = []
     for label in range(1, n):
-        component = (labels == label).astype(np.uint8)
-        area = stats[label, cv2.CC_STAT_AREA]
-        rect = rectangularity(component)
+        x, y, w, h, area = stats[label]
+        extent = area / (w * h)
         reasons = []
         if area < min_area_frac * image_area:
             reasons.append("too small")
         if area < min_rel_area * largest:
             reasons.append("small vs largest")
-        if rect < min_rectangularity:
-            reasons.append("not rectangular")
+        if extent < min_extent:
+            reasons.append("low extent")
         info.append({
             "label": label,
             "area": int(area),
-            "rectangularity": rect,
-            "bbox": stats[label, :4].tolist(),
+            "extent": float(extent),
+            "bbox": [int(x), int(y), int(w), int(h)],
             "kept": not reasons,
             "reasons": reasons,
-            "mask": component,
+            "mask": fill_holes(labels == label),
         })
 
     kept = sorted((c for c in info if c["kept"]), key=lambda c: -c["area"])
@@ -351,41 +309,34 @@ def select_candidates(
 
 
 # -----------------------------------------------------------------------------
-# Step 5: shape fitting and ordering
+# Step 5: shape fitting (Week 2) and ordering
 # -----------------------------------------------------------------------------
-def fit_shape(
-    component: np.ndarray,
-    method: Literal["min_area_rect", "bbox", "poly", "none"] = "min_area_rect",
-) -> np.ndarray:
+def mask_to_rect(mask: np.ndarray, proj_frac: float = PROJ_FRAC) -> np.ndarray:
     """
-    Replace a blob by a clean quadrilateral.
+    Convert the mask of ONE painting into an axis-aligned rectangle using its
+    projections (Week 2 method).
 
-    "min_area_rect": rotated rectangle (paintings are slightly rotated).
-    "bbox": axis-aligned bounding box.
-    "poly": convex hull simplified with approxPolyDP.
-    "none": keep the blob as is.
+    A column (row) belongs to the painting if its fraction of foreground
+    pixels exceeds `proj_frac` times the maximum over all columns (rows).
+    This ignores thin protrusions that a plain bounding box would include.
+    With two paintings it must be applied to each component separately,
+    otherwise the projections of both paintings would be merged.
+
+    Returns:
+        Binary uint8 mask with ones inside the rectangle (all zeros if the
+        input is empty).
     """
-    if method == "none":
-        return component
-    contours, _ = cv2.findContours(component, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if not contours:
-        return component
-    contour = max(contours, key=cv2.contourArea)
-
-    if method == "min_area_rect":
-        points = cv2.boxPoints(cv2.minAreaRect(contour))
-    elif method == "bbox":
-        x, y, w, h = cv2.boundingRect(contour)
-        points = np.array([[x, y], [x + w - 1, y], [x + w - 1, y + h - 1], [x, y + h - 1]])
-    elif method == "poly":
-        hull = cv2.convexHull(contour)
-        points = cv2.approxPolyDP(hull, 0.02 * cv2.arcLength(hull, True), True)
-    else:
-        raise ValueError(f"Unknown fit: {method}")
-
-    out = np.zeros_like(component)
-    cv2.fillPoly(out, [np.round(points).astype(np.int32).reshape(-1, 1, 2)], 1)
-    return out
+    H, W = mask.shape
+    rect = np.zeros((H, W), np.uint8)
+    if not mask.any():
+        return rect
+    col_prof, row_prof = mask.mean(axis=0), mask.mean(axis=1)
+    cols = col_prof > proj_frac * col_prof.max()
+    rows = row_prof > proj_frac * row_prof.max()
+    x0, x1 = np.where(cols)[0][[0, -1]]
+    y0, y1 = np.where(rows)[0][[0, -1]]
+    rect[y0:y1 + 1, x0:x1 + 1] = 1
+    return rect
 
 
 def order_masks(masks: list[np.ndarray]) -> list[np.ndarray]:
@@ -421,26 +372,23 @@ def detect_paintings_debug(img_bgr: np.ndarray, **params) -> dict:
     """
     p = {**DEFAULT_PARAMS, **params}
 
-    color_dist, color_mask = color_cue(img_bgr, p["color_space"], p["channels"])
-    grad, edges, edge_mask = edge_cue(
-        img_bgr, p["edge_operator"], p["blur_ksize"], p["edge_close_frac"],
-        p["edge_fill"],
+    edge_map = edge_input(img_bgr, p["color_space"], p["channels"], p["use_mahalanobis"])
+    grad, edges = edge_cue(
+        edge_map, p["edge_operator"], p["blur_ksize"], p["edge_close_frac"]
     )
-    fused = fuse(color_mask, edge_mask, p["fusion"])
-    cleaned = clean_mask(fused, p["open_frac"])
-    candidates, info = select_candidates(
-        cleaned, p["min_area_frac"], p["min_rel_area"], p["min_rectangularity"]
+    cleaned = clean_mask(edges, p["open_frac"])
+    components, info = largest_components_filled(
+        cleaned, p["min_area_frac"], p["min_rel_area"], p["min_extent"]
     )
-    masks = order_masks([fit_shape(c, p["fit"]) for c in candidates])
+    if p["fit_rect"]:
+        components = [mask_to_rect(c, p["proj_frac"]) for c in components]
+    masks = order_masks(components)
 
     return {
         "params": p,
-        "color_dist": color_dist,
-        "color_mask": color_mask,
+        "edge_input": edge_map,
         "gradient": grad,
         "edges": edges,
-        "edge_mask": edge_mask,
-        "fused": fused,
         "cleaned": cleaned,
         "candidates": info,
         "masks": masks,
