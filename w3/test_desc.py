@@ -4,14 +4,25 @@ import pandas as pd
 from pathlib import Path
 
 
-# Dataset paths
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
 QUERY_DIR = DATA_DIR / "qsd1_w3"
 
-# Desplaçaments aleatoris de les queries
+PARAMS = {
+    "descriptor": dct_block_descriptor,
+    "color_code": cv2.COLOR_BGR2YCrCb,
+    "channels": [0, 1, 2],
+    "size": 672,
+    "metric": "cityblock",
+    "kwargs": {
+        "n_blocks": 6,
+        "n_coef": 20,
+        "skip_dc": True,
+    },
+}
+
 APPLY_SHIFT = True
-MAX_SHIFT = 0.03         # desplaçament màxim, en fracció de l'alçada/amplada (3%)
+MAX_SHIFT = 0.05
 SEED = 42
 
 
@@ -25,36 +36,23 @@ def random_shift(img, max_shift, rng):
 
 
 if __name__ == "__main__":
-    # Load database, query images, and ground-truth correspondences.
     db_ids, db_images = load_images(BBDD_DIR)
     query_ids, query_images = load_images(QUERY_DIR)
 
     with open(QUERY_DIR / "gt_corresps.pkl", "rb") as f:
         ground_truth = pickle.load(f)
 
-    rng = np.random.default_rng(SEED)
+        rng = np.random.default_rng(SEED)
+    if APPLY_SHIFT:
+        query_images = [random_shift(im, MAX_SHIFT, rng) for im in query_images]
 
     print("Computing BBDD descriptors...")
-    db_descs = []
-    for db_img in db_images:
-
-        img = preprocess(db_img, cv2.COLOR_BGR2HSV, [1, 2], 672)
-        db_desc = dwt_histogram_descriptor(img)
-
-        db_descs.append(db_desc)
-    db_descs = np.vstack(db_descs)
+    db_descs = compute_descriptors(PARAMS["descriptor"], db_images, PARAMS["color_code"],
+                                   PARAMS["channels"], PARAMS["size"], **PARAMS["kwargs"])
 
     print("Computing query descriptors...")
-    query_descs = []
-    for q_img in query_images:
-        if APPLY_SHIFT:
-            q_img = random_shift(q_img, MAX_SHIFT, rng)
-
-        img = preprocess(q_img, cv2.COLOR_BGR2HSV, [1, 2], 672)
-        query_desc = dwt_histogram_descriptor(img)
-
-        query_descs.append(query_desc)
-    query_descs = np.vstack(query_descs)
+    query_descs = compute_descriptors(PARAMS["descriptor"], query_images, PARAMS["color_code"],
+                                      PARAMS["channels"], PARAMS["size"], **PARAMS["kwargs"])
 
     dists = get_distances(query_descs, db_descs, metric="histogram_intersection")
 
