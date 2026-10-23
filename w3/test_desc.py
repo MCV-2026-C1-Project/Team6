@@ -21,7 +21,7 @@ PARAMS = {
     },
 }
 
-APPLY_SHIFT = True
+APPLY_SHIFT = False
 MAX_SHIFT = 0.05
 SEED = 42
 

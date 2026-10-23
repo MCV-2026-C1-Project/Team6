@@ -44,6 +44,39 @@ def load_images(folder: str, color_space: int = None) -> tuple[list[int], list[n
 
     return ids, images
 
+# =============================================================================
+# DENOISING
+# =============================================================================
+
+def denoise_image(image_bgr):
+    """Apply a 5x5 mean filter only when impulse-like noise is detected.
+
+    The detector flags an image when more than 1% of its grayscale pixels
+    differ by over 30 intensity levels from all eight neighboring pixels.
+    Otherwise, return an unchanged copy.
+    """
+    gray = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2GRAY).astype(np.int16)
+    height, width = gray.shape
+    padded = np.pad(gray, 1, mode="edge")
+    isolated = np.ones((height, width), dtype=bool)
+
+    for dy in (-1, 0, 1):
+        for dx in (-1, 0, 1):
+            if dy == 0 and dx == 0:
+                continue
+
+            neighbor = padded[
+                1 + dy : 1 + dy + height,
+                1 + dx : 1 + dx + width,
+            ]
+            isolated &= np.abs(gray - neighbor) > 30
+
+    impulse_fraction = float(isolated.mean())
+
+    if impulse_fraction <= 0.01:
+        return image_bgr.copy()
+
+    return cv2.blur(image_bgr, (5, 5))
 
 # =============================================================================
 # DESCRIPTORS
@@ -462,17 +495,19 @@ def get_distances(
             "bhattacharyya", 'braycurtis', 'canberra', 'chebyshev', "chi2", 'cityblock', 'correlation', 'cosine', 'dice', 'euclidean', 'hamming', "hellinger", "histogram_intersection", 'jaccard', 'jensenshannon', 'mahalanobis', 'minkowski', 'rogerstanimoto', 'russellrao', 'seuclidean', 'sokalsneath', 'sqeuclidean', "total_variation", 'yule'
         ] = 'euclidean'
     ) -> np.ndarray:
-
     """
     Compute pairwise distances between query and database descriptors.
 
     Args:
-        query_desc: 2D NumPy array of shape (n_queries, n_features) with query descriptors as rows.
-        db_desc: 2D NumPy array of shape (n_database, n_features) with database descriptors as rows.
+        query_desc: (n_queries, n_features) o (n_queries, max_paintings, n_features).
+            missing paintings must be filled with NaN.
+        db_desc: (n_database, n_features).
         metric: Distance metric to use.
 
     Returns:
-        Distance matrix of shape (n_queries, n_database).
+        (n_queries, n_database) si l'input és 2D, o
+        (n_queries, max_paintings, n_database) si és 3D, amb NaN a les
+        files corresponents a quadres inexistents.
     """
     other_metrics = {
         "chi2": chi2,
@@ -482,10 +517,21 @@ def get_distances(
         "total_variation": total_variation,
     }
 
-    if metric in other_metrics:
-        return other_metrics[metric](query_desc, db_desc)
+    query_desc = np.asarray(query_desc, dtype=float)
+    is_3d = query_desc.ndim == 3
+    n_feat = query_desc.shape[-1]
 
-    return sd.cdist(query_desc, db_desc, metric)
+    flat = query_desc.reshape(-1, n_feat)
+    valid = ~np.isnan(flat).any(axis=1)
+
+    dists = np.full((flat.shape[0], db_desc.shape[0]), np.nan)
+    if valid.any():
+        if metric in other_metrics:
+            dists[valid] = other_metrics[metric](flat[valid], db_desc)
+        else:
+            dists[valid] = sd.cdist(flat[valid], db_desc, metric)
+
+    return dists.reshape(*query_desc.shape[:-1], -1) if is_3d else dists
 
 
 # =============================================================================
@@ -672,6 +718,16 @@ def crop_to_mask(img: np.ndarray, mask: np.ndarray) -> np.ndarray:
     if ys.size == 0:
         return img
     return img[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+
+
+def combined_mask(masks: list[np.ndarray], image_shape: tuple[int, ...]) -> np.ndarray:
+    """Combine separate painting masks into one binary image mask."""
+    result = np.zeros(image_shape[:2], dtype=np.uint8)
+    for mask in masks:
+        if np.asarray(mask).shape != result.shape:
+            raise ValueError("A painting mask does not match its image dimensions.")
+        result[np.asarray(mask) > 0] = 255
+    return result
 
 
 # =============================================================================
