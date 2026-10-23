@@ -77,7 +77,7 @@ def denoise_image(image_bgr):
     if impulse_fraction <= 0.01:
         return image_bgr.copy()
 
-    return cv2.median(image_bgr, (3, 3))
+    return cv2.medianBlur(image_bgr, 3)
 
 # =============================================================================
 # DESCRIPTORS

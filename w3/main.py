@@ -6,39 +6,39 @@ from tqdm import tqdm
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
-QUERY_DIR = DATA_DIR / "qsd2_w3" / "non_augmented"
+QUERY_DIR = DATA_DIR / "qsd2_w3"
 OUTPUT_DIR = Path(__file__).resolve().parent / "output"
 
-GROUND_TRUTH_DIR = QUERY_DIR.parent / "gt_corresps.pkl"
+GROUND_TRUTH_DIR = QUERY_DIR / "gt_corresps.pkl"
 
 SAVE_VISUALIZATIONS = True
 SAVE_RESULTS = True
 K = 10
 
-PARAMS = {
-    "descriptor": dct_block_descriptor,
-    "color_code": cv2.COLOR_BGR2YCrCb,
-    "channels": [0, 1, 2],
-    "size": 672,
-    "metric": "cityblock",
-    "kwargs": {
-        "n_blocks": 6,
-        "n_coef": 20,
-        "skip_dc": True,
-    },
-}
-
 # PARAMS = {
-#     "descriptor": dct_pyramid_descriptor,
+#     "descriptor": dct_block_descriptor,
 #     "color_code": cv2.COLOR_BGR2YCrCb,
 #     "channels": [0, 1, 2],
 #     "size": 672,
-#     "metric": "canberra",
+#     "metric": "cityblock",
 #     "kwargs": {
-#         "n_coef": 32,
-#         "skip_dc": False,
+#         "n_blocks": 6,
+#         "n_coef": 20,
+#         "skip_dc": True,
 #     },
 # }
+
+PARAMS = {
+    "descriptor": dct_pyramid_descriptor,
+    "color_code": cv2.COLOR_BGR2YCrCb,
+    "channels": [0, 1, 2],
+    "size": 672,
+    "metric": "canberra",
+    "kwargs": {
+        "n_coef": 32,
+        "skip_dc": False,
+    },
+}
 
 
 # =============================================================================
