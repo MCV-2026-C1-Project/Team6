@@ -1,0 +1,10 @@
+filter,mAP@1,mAP@5,flagged_query_mAP@5,change_vs_baseline_mAP@5
+No filter,0.6667,0.7444,,+0.0000
+Mean 5x5,0.7333,0.7833,0.8571,+0.0389
+Gaussian 3x3,0.6667,0.7444,0.6905,+0.0000
+Median 3x3,0.6667,0.7500,0.7143,+0.0056
+Bilateral d=5,0.6667,0.7500,0.7143,+0.0056
+Bilateral d=9,0.7000,0.7667,0.7857,+0.0222
+Non-local means h=5,0.7000,0.7667,0.7857,+0.0222
+Non-local means h=10,0.7333,0.7833,0.8571,+0.0389
+Non-local means h=15,0.7333,0.7833,0.8571,+0.0389
