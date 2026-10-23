@@ -32,10 +32,19 @@ def process_queries(query_images: list[np.ndarray], n_feat: int, params: dict):
     """
     Detect up to MAX_PAINTINGS paintings per query and describe each of them.
 
+    Each query is denoised, its paintings are detected and every painting is
+    cropped to its mask and described with the given params.
+
+    Args:
+        query_images: Query images in BGR format.
+        n_feat: Length of the descriptor returned by describe.
+        params: Descriptor parameters passed to describe.
+
     Returns:
-        descs: (n_queries, MAX_PAINTINGS, n_feat) array, NaN rows where a
-            painting does not exist (all NaN if nothing is detected).
-        masks_by_query: detected masks of each query.
+        Tuple (descs, masks_by_query) where descs is a float32 array of shape
+        (n_queries, MAX_PAINTINGS, n_feat) with NaN in the rows of missing
+        paintings (all NaN if nothing is detected), and masks_by_query[i] is
+        the list of detected masks of query i.
     """
     descs = np.full((len(query_images), MAX_PAINTINGS, n_feat), np.nan, np.float32)
     masks_by_query = []

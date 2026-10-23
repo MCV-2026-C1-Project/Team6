@@ -13,19 +13,21 @@ from tqdm import tqdm
 # TOOLS
 # =============================================================================
 
-# We only use .jpg because these are the only ones that contain the required images.
 def load_images(folder: str, color_space: int = None) -> tuple[list[int], list[np.ndarray]]:
     """
-    Load JPG images from a folder and convert them to CIE Lab.
+    Load the JPG images of a folder, optionally converting their color space.
+
+    Only .jpg files are read because they are the only ones that contain the
+    required images.
 
     Args:
         folder: Path to the folder containing the images.
+        color_space: OpenCV color conversion code (e.g. cv2.COLOR_BGR2Lab).
+            If None, the images are kept in BGR.
 
     Returns:
         Tuple (ids, images) where ids[i] is the ID of images[i].
-        Images are stored in Lab color space.
     """
-
     ids: list[int] = []
     images: list[np.ndarray] = []
 
@@ -50,11 +52,17 @@ def load_images(folder: str, color_space: int = None) -> tuple[list[int], list[n
 # =============================================================================
 
 def denoise_image(image_bgr):
-    """Apply a 5x5 mean filter only when impulse-like noise is detected.
+    """
+    Apply a 3x3 median filter only when impulse-like noise is detected.
 
     The detector flags an image when more than 1% of its grayscale pixels
     differ by over 30 intensity levels from all eight neighboring pixels.
-    Otherwise, return an unchanged copy.
+
+    Args:
+        image_bgr: Input image in BGR format.
+
+    Returns:
+        Filtered BGR image, or an unchanged copy if no impulse noise is detected.
     """
     gray = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2GRAY).astype(np.int16)
     height, width = gray.shape
@@ -85,7 +93,18 @@ def denoise_image(image_bgr):
 
 
 def describe(img: np.ndarray, params: dict) -> np.ndarray:
-    """Preprocess one image and compute its descriptor with the given params."""
+    """
+    Preprocess one image and compute its descriptor.
+
+    Args:
+        img: Input image in BGR format.
+        params: Dictionary with the keys "color_code", "channels" and "size"
+            (passed to preprocess), "descriptor" (descriptor function) and
+            "kwargs" (keyword arguments of the descriptor).
+
+    Returns:
+        Float32 descriptor of the image.
+    """
     pre = preprocess(img, params["color_code"], params["channels"], params["size"])
     return params["descriptor"](pre, **params["kwargs"])
 
@@ -490,15 +509,18 @@ def get_distances(
     Compute pairwise distances between query and database descriptors.
 
     Args:
-        query_desc: (n_queries, n_features) o (n_queries, max_paintings, n_features).
-            missing paintings must be filled with NaN.
-        db_desc: (n_database, n_features).
-        metric: Distance metric to use.
+        query_desc: Array of shape (n_queries, n_features) or
+            (n_queries, max_paintings, n_features). Missing paintings must be
+            filled with NaN.
+        db_desc: 2D NumPy array of shape (n_database, n_features).
+        metric: Distance metric to use. Custom metrics are used for chi2,
+            hellinger, bhattacharyya, histogram_intersection and
+            total_variation; the rest are computed with scipy cdist.
 
     Returns:
-        (n_queries, n_database) si l'input és 2D, o
-        (n_queries, max_paintings, n_database) si és 3D, amb NaN a les
-        files corresponents a quadres inexistents.
+        Distance matrix of shape (n_queries, n_database) if the input is 2D, or
+        (n_queries, max_paintings, n_database) if it is 3D, with NaN in the rows
+        of missing paintings.
     """
     other_metrics = {
         "chi2": chi2,
@@ -544,7 +566,17 @@ PREWITT_Y = np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]], np.float32)
 
 
 def border_mask(h: int, w: int, b: int) -> np.ndarray:
-    """Boolean mask of shape (h, w), True on a frame of b pixels along the border."""
+    """
+    Build a mask of a frame along the image border.
+
+    Args:
+        h: Height of the mask.
+        w: Width of the mask.
+        b: Width of the frame in pixels, clipped to [1, min(h, w) // 2].
+
+    Returns:
+        Boolean mask of shape (h, w), True on the frame.
+    """
     b = max(1, min(b, h // 2, w // 2))
     m = np.zeros((h, w), bool)
     m[:b, :] = m[-b:, :] = True
@@ -553,25 +585,45 @@ def border_mask(h: int, w: int, b: int) -> np.ndarray:
 
 
 def square_kernel(frac: float, shape: tuple[int, int]) -> np.ndarray:
-    """Square structuring element whose side is a fraction of the smallest side."""
+    """
+    Build a square structuring element proportional to the image size.
+
+    Args:
+        frac: Side of the kernel as a fraction of the smallest side of the image.
+        shape: Shape (h, w) of the image.
+
+    Returns:
+        Rectangular structuring element of side max(2, int(frac * min(shape))).
+    """
     n = max(2, int(frac * min(shape)))
     return cv2.getStructuringElement(cv2.MORPH_RECT, (n, n))
 
 
 def fill_holes(mask: np.ndarray) -> np.ndarray:
-    """Fill the holes of every blob in a binary mask."""
+    """
+    Fill the holes of every blob in a binary mask.
+
+    Args:
+        mask: Binary mask (any non-zero value is foreground).
+
+    Returns:
+        uint8 mask of the same shape with the holes filled (1 inside).
+    """
     return ndi.binary_fill_holes(mask > 0).astype(np.uint8)
 
 
 def gradient_magnitude(img_bgr: np.ndarray) -> np.ndarray:
     """
-    Prewitt gradient magnitude of the HSV S and V channels.
+    Compute the Prewitt gradient magnitude of the HSV S and V channels.
 
     Each channel response is normalised to [0, 1] and the maximum over the
     channels is kept, so an edge visible in either channel is detected.
 
+    Args:
+        img_bgr: Input image in BGR format.
+
     Returns:
-        uint8 array of shape (h, w) in [0, 255].
+        uint8 array of shape (h, w) with values in [0, 255].
     """
     hsv = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
     mag = np.zeros(hsv.shape[:2], np.float32)
@@ -586,10 +638,16 @@ def gradient_magnitude(img_bgr: np.ndarray) -> np.ndarray:
 
 def edge_segmentation(grad: np.ndarray) -> np.ndarray:
     """
-    Binary edges: gradient above EDGE_K times its Otsu threshold.
+    Binarize a gradient image with EDGE_K times its Otsu threshold.
 
     Otsu alone is dominated by the strongest painting in the image, so a faint
     frame next to it would be lost. The image border is wall and is cleared.
+
+    Args:
+        grad: uint8 gradient magnitude of shape (h, w).
+
+    Returns:
+        uint8 binary edge map of shape (h, w), 1 on the edges.
     """
     t, _ = cv2.threshold(grad, 0, 1, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     edges = (grad > EDGE_K * t).astype(np.uint8)
@@ -599,11 +657,18 @@ def edge_segmentation(grad: np.ndarray) -> np.ndarray:
 
 def edges_to_regions(edges: np.ndarray) -> np.ndarray:
     """
-    Closing + Week 2 post-processing (fill holes, opening, fill holes).
+    Turn an edge map into solid regions with closing and Week 2 post-processing.
 
     The closing joins the gaps of each frame outline so that filling the holes
-    turns it into a solid painting. The opening removes thin structures and
-    separates paintings joined by a thin bridge.
+    turns it into a solid painting. Then holes are filled, an opening removes
+    thin structures and separates paintings joined by a thin bridge, and holes
+    are filled again.
+
+    Args:
+        edges: uint8 binary edge map of shape (h, w).
+
+    Returns:
+        uint8 binary mask of shape (h, w), 1 inside the regions.
     """
     mask = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, square_kernel(CLOSE_FRAC, edges.shape))
     mask = fill_holes(mask)
@@ -613,11 +678,18 @@ def edges_to_regions(edges: np.ndarray) -> np.ndarray:
 
 def painting_components(mask: np.ndarray) -> list[np.ndarray]:
     """
-    Keep up to MAX_PAINTINGS connected components, the largest first.
+    Select up to MAX_PAINTINGS connected components as painting candidates.
 
-    Week 2 kept only the largest component. Here a component is kept when it
-    is at least MIN_AREA_FRAC of the image, at least MIN_REL_AREA of the
-    largest component, and fills at least MIN_EXTENT of its bounding box.
+    A component is kept when it is at least MIN_AREA_FRAC of the image, at
+    least MIN_REL_AREA of the largest component, and fills at least MIN_EXTENT
+    of its bounding box. Week 2 kept only the largest component.
+
+    Args:
+        mask: uint8 binary region mask of shape (h, w).
+
+    Returns:
+        List of uint8 masks of shape (h, w), one per kept component, ordered
+        from largest to smallest area.
     """
     n, labels, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
     if n < 2:
@@ -638,12 +710,19 @@ def painting_components(mask: np.ndarray) -> list[np.ndarray]:
 
 def mask_to_rect(mask: np.ndarray) -> np.ndarray:
     """
-    Week 2 projection rectangle of ONE painting.
+    Compute the Week 2 projection rectangle of one painting.
 
     A column (row) belongs to the painting if its fraction of foreground pixels
     exceeds PROJ_FRAC times the maximum over all columns (rows). With two
     paintings it is applied to each one separately so their projections do not
     mix.
+
+    Args:
+        mask: Binary mask of one painting, shape (h, w).
+
+    Returns:
+        uint8 mask of shape (h, w), 1 inside the rectangle. All zeros if the
+        input mask is empty.
     """
     rect = np.zeros(mask.shape, np.uint8)
     if not mask.any():
@@ -658,7 +737,18 @@ def mask_to_rect(mask: np.ndarray) -> np.ndarray:
 
 
 def order_masks(masks: list[np.ndarray]) -> list[np.ndarray]:
-    """Order paintings left-to-right, or top-to-bottom when they are stacked."""
+    """
+    Order painting masks left-to-right, or top-to-bottom when they are stacked.
+
+    Two paintings are considered stacked when their horizontal overlap is more
+    than half the width of the narrower one.
+
+    Args:
+        masks: List of binary masks (at most two are compared).
+
+    Returns:
+        The same masks in reading order.
+    """
     if len(masks) < 2:
         return masks
     boxes = [cv2.boundingRect(m) for m in masks]
@@ -685,7 +775,16 @@ def detect_paintings(img_bgr: np.ndarray) -> list[np.ndarray]:
 
 
 def crop_to_mask(img: np.ndarray, mask: np.ndarray) -> np.ndarray:
-    """Crop the image to the bounding box of a mask."""
+    """
+    Crop an image to the bounding box of a mask.
+
+    Args:
+        img: Input image of shape (h, w) or (h, w, C).
+        mask: Binary mask of shape (h, w).
+
+    Returns:
+        Cropped image, or the whole image if the mask is empty.
+    """
     ys, xs = np.nonzero(mask)
     if ys.size == 0:
         return img
@@ -693,7 +792,19 @@ def crop_to_mask(img: np.ndarray, mask: np.ndarray) -> np.ndarray:
 
 
 def combined_mask(masks: list[np.ndarray], image_shape: tuple[int, ...]) -> np.ndarray:
-    """Combine separate painting masks into one binary image mask."""
+    """
+    Combine separate painting masks into one binary image mask.
+
+    Args:
+        masks: List of binary masks, each of shape image_shape[:2].
+        image_shape: Shape of the image the masks belong to.
+
+    Returns:
+        uint8 mask of shape image_shape[:2], 255 inside any painting.
+
+    Raises:
+        ValueError: If a mask does not match the image dimensions.
+    """
     result = np.zeros(image_shape[:2], dtype=np.uint8)
     for mask in masks:
         if np.asarray(mask).shape != result.shape:
@@ -708,20 +819,16 @@ def combined_mask(masks: list[np.ndarray], image_shape: tuple[int, ...]) -> np.n
 
 # APK and MAPK are adapted from https://github.com/benhamner/Metrics.
 # The ml_metrics package is no longer compatible with modern versions of setuptools, so the required functions are included here directly.
-def apk(actual: list[list[int]], predicted: list[list[int]], k: int = 10) -> float:
+def apk(actual: list[int], predicted: list[int], k: int = 10) -> float:
     """
-    Compute the average precision at k (AP@k) for retrieval results.
+    Compute the average precision at k (AP@k) for one query.
 
-    The metric compares the ranked retrieval results against the ground-truth
-    items for a query. The order of items in ``actual`` does not matter, while
-    the order in ``predicted`` determines the ranking used to compute the
-    average precision.
+    The order of items in ``actual`` does not matter, while the order in
+    ``predicted`` determines the ranking used to compute the average precision.
 
     Args:
-        actual: Ground-truth BBDD IDs for each query. Each inner list contains
-            the correct BBDD IDs for the corresponding query.
-        predicted: Ranked BBDD IDs retrieved for each query. The order of
-            elements determines their ranking.
+        actual: Ground-truth BBDD IDs of the query.
+        predicted: Ranked BBDD IDs retrieved for the query.
         k: Maximum number of top-ranked predictions to consider.
 
     Returns:
@@ -768,11 +875,20 @@ def mapk(actual: list[list[int]], predicted: list[list[int]], k: int = 10) -> fl
 
 def mapk_multi(actual: list, predicted: list[list[list[int]]], k: int) -> float:
     """
-    mAP@k computed per painting.
+    Compute the mean average precision at k (mAP@k) per painting.
 
-    actual[q] is the ground truth of query q, e.g. [120] or [120, 170]
-    (one BBDD id per painting, in the same order as the detections).
     A painting in the ground truth that was not detected gets AP = 0.
+
+    Args:
+        actual: Ground truth of each query, with one BBDD ID per painting in the
+            same order as the detections, e.g. [120] or [120, 170].
+        predicted: For each query, one ranked list of BBDD IDs per detected
+            painting.
+        k: Maximum number of top-ranked predictions to consider per painting.
+
+    Returns:
+        The mean of the AP@k over all ground-truth paintings, as a float
+        between 0 and 1.
     """
     aps = []
     for gt_q, pred_q in zip(actual, predicted):
@@ -787,23 +903,23 @@ def evaluate(actual: list[list[int]], predicted: list[list[int]], k: int):
     """
     Compute the mean average precision at k (mAP@k) for retrieval results.
 
-    The metric compares the ranked retrieval results against the ground-truth
-    items for each query. The order of items in ``actual`` does not matter,
-    while the order in ``predicted`` determines the ranking used to compute
-    average precision.
+    The query folder can have fewer images than the ground truth (qsd1_w1 has
+    24 images for 30 entries), so predictions can be given as a dict to match
+    them by query ID.
 
     Args:
-        actual: Ground-truth BBDD IDs for each query. Each inner list contains
-            the correct BBDD IDs for the corresponding query.
-        predicted: Ranked BBDD IDs retrieved for each query. The order of
-            elements determines their ranking.
+        actual: Ground-truth BBDD IDs for each query, indexed by query ID.
+        predicted: Ranked BBDD IDs retrieved for each query, as a list in the
+            same order as ``actual`` or as a dict {query_id: [ids]}.
         k: Maximum number of top-ranked predictions to consider for each query.
 
     Returns:
         The mean average precision at k (mAP@k), as a float between 0 and 1.
+
+    Raises:
+        ValueError: If ``predicted`` is a list whose length differs from
+            ``actual``.
     """
-    # The query folder can have fewer images than the ground truth
-    # (qsd1_w1 has 24 images for 30 entries), so match them by query id
     if isinstance(predicted, dict):
         query_ids = sorted(predicted)
         actual = [actual[qid] for qid in query_ids]
@@ -819,7 +935,17 @@ def evaluate(actual: list[list[int]], predicted: list[list[int]], k: int):
 
 
 def metrics(pred: np.ndarray, gt: np.ndarray) -> dict:
-    """Pixel-level precision, recall, F1, IoU and error rate of a mask."""
+    """
+    Compute pixel-level metrics of a predicted mask.
+
+    Args:
+        pred: Predicted binary mask.
+        gt: Ground-truth binary mask of the same shape.
+
+    Returns:
+        Dictionary with the keys "precision", "recall", "f1", "iou" and
+        "error_rate".
+    """
     pred, gt = pred.astype(bool), gt.astype(bool)
     tp = np.count_nonzero(pred & gt)
     fp = np.count_nonzero(pred & ~gt)
@@ -853,6 +979,10 @@ def retrieve(distances: np.ndarray, db_ids: list[int], k: int = 5) -> list[list[
     Returns:
         List of lists containing the top-k database image IDs
         for each query, ordered from smallest to largest distance.
+
+    Raises:
+        ValueError: If distances is not 2D, if its number of columns does not
+            match db_ids, or if k is not in [1, len(db_ids)].
     """
     if distances.ndim != 2:
         raise ValueError("distances must be a 2D array")
@@ -881,11 +1011,17 @@ def retrieve(distances: np.ndarray, db_ids: list[int], k: int = 5) -> list[list[
 
 def retrieve_multi(dists: np.ndarray, db_ids: list[int], k: int) -> list[list[list[int]]]:
     """
-    Top-k retrieval for a (n_queries, MAX_PAINTINGS, n_database) distance array.
+    Return the top-k closest database image IDs for each painting of each query.
+
+    Args:
+        dists: Distance array of shape (n_queries, MAX_PAINTINGS, n_database),
+            with NaN in the rows of missing paintings.
+        db_ids: Database image IDs corresponding to the last axis of dists.
+        k: Number of database images to retrieve per painting.
 
     Returns:
-        One list per query with one top-k list per existing painting:
-        [[[ids painting 1], [ids painting 2]], [[ids painting 1]], ...]
+        One list per query with one top-k list per existing painting, e.g.
+        [[[ids painting 1], [ids painting 2]], [[ids painting 1]], ...].
     """
     preds = []
     for q in dists:
@@ -901,7 +1037,17 @@ MASK_COLORS = [(60, 60, 255), (255, 160, 60)]  # BGR: painting 1 red, painting 2
 
 
 def overlay_masks(img_bgr: np.ndarray, masks: list[np.ndarray], alpha: float = 0.45) -> np.ndarray:
-    """Draw each painting mask in its own colour with its order number (BGR)."""
+    """
+    Draw each painting mask in its own colour with its order number.
+
+    Args:
+        img_bgr: Input image in BGR format.
+        masks: List of binary masks, one per painting, in detection order.
+        alpha: Opacity of the colour overlay, in [0, 1].
+
+    Returns:
+        BGR image with the masks, their contours and their numbers drawn.
+    """
     out = img_bgr.copy()
     for k, mask in enumerate(masks):
         mask = (np.asarray(mask) > 0).astype(np.uint8)
@@ -920,7 +1066,14 @@ def visualize_masks(
     masks_by_query: list[list[np.ndarray]],
     output_dir: Path,
 ) -> None:
-    """Save one overlay image per query with its detected painting masks."""
+    """
+    Save one overlay image per query with its detected painting masks.
+
+    Args:
+        query_images: Query images in BGR format.
+        masks_by_query: For each query, the list of its painting masks.
+        output_dir: Folder where the images are saved as 00000.png, 00001.png, ...
+    """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     for idx, (img, masks) in enumerate(zip(query_images, masks_by_query)):
@@ -933,7 +1086,14 @@ def visualize_painting_count(
     masks_by_query: list[list[np.ndarray]],
     output_dir: Path,
 ) -> None:
-    """Save a bar chart with how many queries have 0, 1 and 2 detected paintings."""
+    """
+    Save a bar chart with how many queries have 0, 1, ... MAX_PAINTINGS paintings.
+
+    Args:
+        query_images: Query images (only their number is used).
+        masks_by_query: For each query, the list of its painting masks.
+        output_dir: Folder where the chart is saved as painting_count.png.
+    """
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     counts = [len(masks) for masks in masks_by_query]
