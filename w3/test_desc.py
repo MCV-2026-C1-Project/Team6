@@ -47,12 +47,10 @@ if __name__ == "__main__":
         query_images = [random_shift(im, MAX_SHIFT, rng) for im in query_images]
 
     print("Computing BBDD descriptors...")
-    db_descs = compute_descriptors(PARAMS["descriptor"], db_images, PARAMS["color_code"],
-                                   PARAMS["channels"], PARAMS["size"], **PARAMS["kwargs"])
+    db_descs = np.vstack([describe(img, PARAMS) for img in tqdm(db_images, desc="BBDD")])
 
     print("Computing query descriptors...")
-    query_descs = compute_descriptors(PARAMS["descriptor"], query_images, PARAMS["color_code"],
-                                      PARAMS["channels"], PARAMS["size"], **PARAMS["kwargs"])
+    query_descs = np.vstack([describe(img, PARAMS) for img in tqdm(query_images, desc="Queries")])
 
     dists = get_distances(query_descs, db_descs, metric="histogram_intersection")
 

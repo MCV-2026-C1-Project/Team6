@@ -7,6 +7,7 @@ import scipy.spatial.distance as sd
 from typing import Literal
 import pywt
 from scipy import ndimage as ndi
+from tqdm import tqdm
 
 # =============================================================================
 # TOOLS
@@ -76,11 +77,41 @@ def denoise_image(image_bgr):
     if impulse_fraction <= 0.01:
         return image_bgr.copy()
 
-    return cv2.blur(image_bgr, (5, 5))
+    return cv2.median(image_bgr, (3, 3))
 
 # =============================================================================
 # DESCRIPTORS
 # =============================================================================
+
+
+def describe(img: np.ndarray, params: dict) -> np.ndarray:
+    """Preprocess one image and compute its descriptor with the given params."""
+    pre = preprocess(img, params["color_code"], params["channels"], params["size"])
+    return params["descriptor"](pre, **params["kwargs"])
+
+def describe_queries(query_images: list[np.ndarray], n_feat: int, params: dict):
+    """
+    Detect up to MAX_PAINTINGS paintings per query and describe each of them.
+
+    Returns:
+        descs: (n_queries, MAX_PAINTINGS, n_feat) array, NaN rows where a
+            painting does not exist.
+        masks_by_query: detected masks of each query (for visualization).
+    """
+    descs = np.full((len(query_images), MAX_PAINTINGS, n_feat), np.nan, np.float32)
+    masks_by_query = []
+
+    for i, img in enumerate(tqdm(query_images, desc="Queries")):
+        img = denoise_image(img)
+        masks = detect_paintings(img)
+        masks_by_query.append(masks)
+
+        # If nothing is detected, fall back to the whole image as one painting
+        paintings = [crop_to_mask(img, m) for m in masks] or [img]
+        for j, painting in enumerate(paintings[:MAX_PAINTINGS]):
+            descs[i, j] = describe(painting, params)
+
+    return descs, masks_by_query
 
 def preprocess(img_bgr, color_space=cv2.COLOR_BGR2HSV, channels=None, size=672):
     """
@@ -113,23 +144,6 @@ def preprocess(img_bgr, color_space=cv2.COLOR_BGR2HSV, channels=None, size=672):
     if channels is not None:
         img = img[:, :, channels]
     return img.astype(np.float32)
-
-def compute_descriptors(descriptor, images, color_code=cv2.COLOR_BGR2HSV, channels=[1,2], size=672, **kargs):
-    """
-    Preprocess a list of images and compute a descriptor for each of them.
-
-    Args:
-        descriptor: Descriptor function that takes a preprocessed image.
-        images: List of BGR images.
-        color_code: OpenCV color conversion code passed to preprocess.
-        channels: Indices of the channels to keep, passed to preprocess.
-        size: Side length of the preprocessed images.
-        **kargs: Extra keyword arguments passed to the descriptor.
-
-    Returns:
-        2D NumPy array of shape (n_images, n_features) with one descriptor per row.
-    """
-    return np.vstack([descriptor(preprocess(im, color_code, channels, size), **kargs) for im in images])
 
 def zigzag_indices(s=8, n=None):
     """

@@ -6,39 +6,39 @@ from tqdm import tqdm
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
-QUERY_DIR = DATA_DIR / "qsd2_w3"
+QUERY_DIR = DATA_DIR / "qsd2_w3" / "non_augmented"
 OUTPUT_DIR = Path(__file__).resolve().parent / "output"
 
-GROUND_TRUTH_DIR = QUERY_DIR / "gt_corresps.pkl"
+GROUND_TRUTH_DIR = QUERY_DIR.parent / "gt_corresps.pkl"
 
 SAVE_VISUALIZATIONS = True
 SAVE_RESULTS = True
 K = 10
 
-# PARAMS = {
-#     "descriptor": dct_block_descriptor,
-#     "color_code": cv2.COLOR_BGR2YCrCb,
-#     "channels": [0, 1, 2],
-#     "size": 672,
-#     "metric": "cityblock",
-#     "kwargs": {
-#         "n_blocks": 6,
-#         "n_coef": 20,
-#         "skip_dc": True,
-#     },
-# }
-
 PARAMS = {
-    "descriptor": dct_pyramid_descriptor,
+    "descriptor": dct_block_descriptor,
     "color_code": cv2.COLOR_BGR2YCrCb,
     "channels": [0, 1, 2],
     "size": 672,
-    "metric": "canberra",
+    "metric": "cityblock",
     "kwargs": {
-        "n_coef": 32,
-        "skip_dc": False,
+        "n_blocks": 6,
+        "n_coef": 20,
+        "skip_dc": True,
     },
 }
+
+# PARAMS = {
+#     "descriptor": dct_pyramid_descriptor,
+#     "color_code": cv2.COLOR_BGR2YCrCb,
+#     "channels": [0, 1, 2],
+#     "size": 672,
+#     "metric": "canberra",
+#     "kwargs": {
+#         "n_coef": 32,
+#         "skip_dc": False,
+#     },
+# }
 
 
 # =============================================================================
@@ -46,13 +46,7 @@ PARAMS = {
 # =============================================================================
 
 
-def describe(img: np.ndarray) -> np.ndarray:
-    """Preprocess one image and compute its descriptor with PARAMS."""
-    pre = preprocess(img, PARAMS["color_code"], PARAMS["channels"], PARAMS["size"])
-    return PARAMS["descriptor"](pre, **PARAMS["kwargs"])
-
-
-def describe_queries(query_images: list[np.ndarray], n_feat: int):
+def describe_queries(query_images: list[np.ndarray], n_feat: int, params: dict):
     """
     Detect up to MAX_PAINTINGS paintings per query and describe each of them.
 
@@ -72,7 +66,7 @@ def describe_queries(query_images: list[np.ndarray], n_feat: int):
         # If nothing is detected, fall back to the whole image as one painting
         paintings = [crop_to_mask(img, m) for m in masks] or [img]
         for j, painting in enumerate(paintings[:MAX_PAINTINGS]):
-            descs[i, j] = describe(painting)
+            descs[i, j] = describe(painting, params)
 
     return descs, masks_by_query
 
@@ -123,11 +117,10 @@ if __name__ == "__main__":
     ground_truth = [ground_truth[qid] for qid in query_ids]
 
     print("Computing BBDD descriptors...")
-    db_descs = compute_descriptors(PARAMS["descriptor"], db_images, PARAMS["color_code"],
-                                   PARAMS["channels"], PARAMS["size"], **PARAMS["kwargs"])
+    db_descs = np.vstack([describe(img, PARAMS) for img in tqdm(db_images, desc="BBDD")])
 
     print("Detecting paintings and computing query descriptors...")
-    query_descs, masks_by_query = describe_queries(query_images, db_descs.shape[1])
+    query_descs, masks_by_query = describe_queries(query_images, db_descs.shape[1], PARAMS)
     print(f"Query descriptors: {query_descs.shape}")  # (n_queries, 2, n_features)
 
     # (n_queries, MAX_PAINTINGS, n_database), NaN rows for missing paintings
