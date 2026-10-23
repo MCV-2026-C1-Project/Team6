@@ -60,11 +60,15 @@ def objective_dct_block(trial):
     skip_dc = trial.suggest_categorical("skip_dc", [True, False])
     metric = trial.suggest_categorical("metric", VECTOR_METRICS)
 
-    ch = [int(c) for c in channels]
-    db = compute_descriptors(dct_block_descriptor, db_images, COLOR_SPACES[color], ch, 672,
-                             n_blocks=n_blocks, n_coef=n_coef, skip_dc=skip_dc)
-    q = compute_descriptors(dct_block_descriptor, query_images, COLOR_SPACES[color], ch, 672,
-                            n_blocks=n_blocks, n_coef=n_coef, skip_dc=skip_dc)
+    params = {
+        "descriptor": dct_block_descriptor,
+        "color_code": COLOR_SPACES[color],
+        "channels": [int(c) for c in channels],
+        "size": 672,
+        "kwargs": dict(n_blocks=n_blocks, n_coef=n_coef, skip_dc=skip_dc),
+    }
+    db = np.stack([describe(im, params) for im in db_images])
+    q = np.stack([describe(im, params) for im in query_images])
 
     topk = retrieve(get_distances(q, db, metric), db_ids, k=5)
     trial.set_user_attr("mAP@1", mapk(ground_truth, topk, k=1))
@@ -85,13 +89,16 @@ def objective_dct_histogram(trial):
     skip_dc = trial.suggest_categorical("skip_dc", [True, False])
     metric = trial.suggest_categorical("metric", HIST_METRICS)
 
-    ch = [int(c) for c in channels]
-    db = compute_descriptors(dct_histogram_descriptor, db_images, COLOR_SPACES[color], ch, size,
-                             block_size=block_size, n_coef=n_coef, n_regions=n_regions,
-                             n_bins=n_bins, skip_dc=skip_dc)
-    q = compute_descriptors(dct_histogram_descriptor, query_images, COLOR_SPACES[color], ch, size,
-                            block_size=block_size, n_coef=n_coef, n_regions=n_regions,
-                            n_bins=n_bins, skip_dc=skip_dc)
+    params = {
+        "descriptor": dct_histogram_descriptor,
+        "color_code": COLOR_SPACES[color],
+        "channels": [int(c) for c in channels],
+        "size": size,
+        "kwargs": dict(block_size=block_size, n_coef=n_coef, n_regions=n_regions,
+                       n_bins=n_bins, skip_dc=skip_dc),
+    }
+    db = np.stack([describe(im, params) for im in db_images])
+    q = np.stack([describe(im, params) for im in query_images])
 
     topk = retrieve(get_distances(q, db, metric), db_ids, k=5)
     trial.set_user_attr("mAP@1", mapk(ground_truth, topk, k=1))
@@ -109,12 +116,16 @@ def objective_dct_pyramid(trial):
     skip_dc = trial.suggest_categorical("skip_dc", [True, False])
     metric = trial.suggest_categorical("metric", VECTOR_METRICS)
 
-    ch = [int(c) for c in channels]
-    lv = [int(n) for n in levels.split(",")]
-    db = compute_descriptors(dct_pyramid_descriptor, db_images, COLOR_SPACES[color], ch, 672,
-                             levels=lv, n_coef=n_coef, skip_dc=skip_dc)
-    q = compute_descriptors(dct_pyramid_descriptor, query_images, COLOR_SPACES[color], ch, 672,
-                            levels=lv, n_coef=n_coef, skip_dc=skip_dc)
+    params = {
+        "descriptor": dct_pyramid_descriptor,
+        "color_code": COLOR_SPACES[color],
+        "channels": [int(c) for c in channels],
+        "size": 672,
+        "kwargs": dict(levels=[int(n) for n in levels.split(",")],
+                       n_coef=n_coef, skip_dc=skip_dc),
+    }
+    db = np.stack([describe(im, params) for im in db_images])
+    q = np.stack([describe(im, params) for im in query_images])
 
     topk = retrieve(get_distances(q, db, metric), db_ids, k=5)
     trial.set_user_attr("mAP@1", mapk(ground_truth, topk, k=1))
@@ -133,11 +144,15 @@ def objective_dwt_block(trial):
     levels = trial.suggest_int("levels", 1, 3)
     metric = trial.suggest_categorical("metric", VECTOR_METRICS)
 
-    ch = [int(c) for c in channels]
-    db = compute_descriptors(dwt_block_descriptor, db_images, COLOR_SPACES[color], ch, size,
-                             n_blocks=n_blocks, wavelet=wavelet, levels=levels)
-    q = compute_descriptors(dwt_block_descriptor, query_images, COLOR_SPACES[color], ch, size,
-                            n_blocks=n_blocks, wavelet=wavelet, levels=levels)
+    params = {
+        "descriptor": dwt_block_descriptor,
+        "color_code": COLOR_SPACES[color],
+        "channels": [int(c) for c in channels],
+        "size": size,
+        "kwargs": dict(n_blocks=n_blocks, wavelet=wavelet, levels=levels),
+    }
+    db = np.stack([describe(im, params) for im in db_images])
+    q = np.stack([describe(im, params) for im in query_images])
 
     topk = retrieve(get_distances(q, db, metric), db_ids, k=5)
     trial.set_user_attr("mAP@1", mapk(ground_truth, topk, k=1))
@@ -157,11 +172,15 @@ def objective_dwt_histogram(trial):
     n_bins = trial.suggest_categorical("n_bins", [8, 16])
     metric = trial.suggest_categorical("metric", HIST_METRICS)
 
-    ch = [int(c) for c in channels]
-    db = compute_descriptors(dwt_histogram_descriptor, db_images, COLOR_SPACES[color], ch, size,
-                             n_blocks=n_blocks, wavelet=wavelet, levels=levels, n_bins=n_bins)
-    q = compute_descriptors(dwt_histogram_descriptor, query_images, COLOR_SPACES[color], ch, size,
-                            n_blocks=n_blocks, wavelet=wavelet, levels=levels, n_bins=n_bins)
+    params = {
+        "descriptor": dwt_histogram_descriptor,
+        "color_code": COLOR_SPACES[color],
+        "channels": [int(c) for c in channels],
+        "size": size,
+        "kwargs": dict(n_blocks=n_blocks, wavelet=wavelet, levels=levels, n_bins=n_bins),
+    }
+    db = np.stack([describe(im, params) for im in db_images])
+    q = np.stack([describe(im, params) for im in query_images])
 
     topk = retrieve(get_distances(q, db, metric), db_ids, k=5)
     trial.set_user_attr("mAP@1", mapk(ground_truth, topk, k=1))
@@ -186,11 +205,15 @@ def objective_lbp_block(trial):
     scales = trial.suggest_categorical("scales", list(LBP_SCALES))
     metric = trial.suggest_categorical("metric", HIST_METRICS)
 
-    ch = [int(c) for c in channels]
-    db = compute_descriptors(lbp_block_descriptor, db_images, COLOR_SPACES[color], ch, size,
-                             n_blocks=n_blocks, scales=LBP_SCALES[scales], method="uniform")
-    q = compute_descriptors(lbp_block_descriptor, query_images, COLOR_SPACES[color], ch, size,
-                            n_blocks=n_blocks, scales=LBP_SCALES[scales], method="uniform")
+    params = {
+        "descriptor": lbp_block_descriptor,
+        "color_code": COLOR_SPACES[color],
+        "channels": [int(c) for c in channels],
+        "size": size,
+        "kwargs": dict(n_blocks=n_blocks, scales=LBP_SCALES[scales], method="uniform"),
+    }
+    db = np.stack([describe(im, params) for im in db_images])
+    q = np.stack([describe(im, params) for im in query_images])
 
     topk = retrieve(get_distances(q, db, metric), db_ids, k=5)
     trial.set_user_attr("mAP@1", mapk(ground_truth, topk, k=1))

@@ -89,29 +89,6 @@ def describe(img: np.ndarray, params: dict) -> np.ndarray:
     pre = preprocess(img, params["color_code"], params["channels"], params["size"])
     return params["descriptor"](pre, **params["kwargs"])
 
-def describe_queries(query_images: list[np.ndarray], n_feat: int, params: dict):
-    """
-    Detect up to MAX_PAINTINGS paintings per query and describe each of them.
-
-    Returns:
-        descs: (n_queries, MAX_PAINTINGS, n_feat) array, NaN rows where a
-            painting does not exist.
-        masks_by_query: detected masks of each query (for visualization).
-    """
-    descs = np.full((len(query_images), MAX_PAINTINGS, n_feat), np.nan, np.float32)
-    masks_by_query = []
-
-    for i, img in enumerate(tqdm(query_images, desc="Queries")):
-        img = denoise_image(img)
-        masks = detect_paintings(img)
-        masks_by_query.append(masks)
-
-        # If nothing is detected, fall back to the whole image as one painting
-        paintings = [crop_to_mask(img, m) for m in masks] or [img]
-        for j, painting in enumerate(paintings[:MAX_PAINTINGS]):
-            descs[i, j] = describe(painting, params)
-
-    return descs, masks_by_query
 
 def preprocess(img_bgr, color_space=cv2.COLOR_BGR2HSV, channels=None, size=672):
     """
@@ -256,7 +233,7 @@ def dct_histogram_descriptor(img, block_size=8, n_coef=12, n_regions=4, n_bins=1
     return np.concatenate(feats).astype(np.float32)
 
 
-def dct_pyramid_descriptor(img, levels=(1, 2, 3, 4), n_coef=10, skip_dc=True, weights=None):
+def dct_pyramid_descriptor(img, levels=(1, 3, 4), n_coef=10, skip_dc=True, weights=None):
     """
     Compute a spatial pyramid of block-based DCT descriptors.
 
@@ -552,25 +529,6 @@ def get_distances(
 # SEGMENTATION
 # =============================================================================
 
-
-# =============================================================================
-# PAINTING DETECTION (QSD2-W3: up to 2 paintings per image)
-# =============================================================================
-#
-# Edges-only pipeline (images are assumed to be already denoised), selected in
-# w3/edges_no_hysteresis.ipynb:
-#   1. Gradient: Prewitt on the HSV S and V channels (no blur), keeping the
-#      maximum of the normalised channel responses.
-#   2. Edge segmentation: threshold at EDGE_K * Otsu, so that faint frames
-#      next to a strong painting are not lost.
-#   3. Closing, so that every frame becomes a closed outline.
-#   4. Week 2 post-processing: fill holes, opening (separates paintings joined
-#      by thin bridges) and fill holes again.
-#   5. Connected components: keep up to 2 big components that fill their
-#      bounding box.
-#   6. Week 2 projection rectangle for each painting, ordered left-to-right
-#      (top-to-bottom when stacked).
-
 EDGE_CHANNELS = [1, 2]   # HSV channels used for the gradient (S, V)
 EDGE_K = 0.5             # edge threshold = EDGE_K * Otsu threshold
 CLOSE_FRAC = 0.02        # closing kernel, fraction of the smallest image side
@@ -808,6 +766,23 @@ def mapk(actual: list[list[int]], predicted: list[list[int]], k: int = 10) -> fl
     return np.mean([apk(a,p,k) for a,p in zip(actual, predicted)])
 
 
+def mapk_multi(actual: list, predicted: list[list[list[int]]], k: int) -> float:
+    """
+    mAP@k computed per painting.
+
+    actual[q] is the ground truth of query q, e.g. [120] or [120, 170]
+    (one BBDD id per painting, in the same order as the detections).
+    A painting in the ground truth that was not detected gets AP = 0.
+    """
+    aps = []
+    for gt_q, pred_q in zip(actual, predicted):
+        for j, gt_painting in enumerate(gt_q):
+            gt_painting = list(gt_painting) if isinstance(gt_painting, (list, tuple)) else [gt_painting]
+            pred = pred_q[j] if j < len(pred_q) else []
+            aps.append(apk(gt_painting, pred, k))
+    return float(np.mean(aps)) if aps else 0.0
+
+
 def evaluate(actual: list[list[int]], predicted: list[list[int]], k: int):
     """
     Compute the mean average precision at k (mAP@k) for retrieval results.
@@ -904,6 +879,19 @@ def retrieve(distances: np.ndarray, db_ids: list[int], k: int = 5) -> list[list[
 
     return results
 
+def retrieve_multi(dists: np.ndarray, db_ids: list[int], k: int) -> list[list[list[int]]]:
+    """
+    Top-k retrieval for a (n_queries, MAX_PAINTINGS, n_database) distance array.
+
+    Returns:
+        One list per query with one top-k list per existing painting:
+        [[[ids painting 1], [ids painting 2]], [[ids painting 1]], ...]
+    """
+    preds = []
+    for q in dists:
+        valid = ~np.isnan(q).all(axis=1)
+        preds.append(retrieve(q[valid], db_ids, k) if valid.any() else [])
+    return preds
 
 # =============================================================================
 # VISUALIZATION
