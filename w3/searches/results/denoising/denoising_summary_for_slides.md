@@ -3,9 +3,9 @@
 ## Experiment
 
 - Matched QSD1-W3 images: **30**.
-- Flagged noisy IDs: **[5, 6, 16, 18, 20, 23, 29]** (7 images).
+- Images flagged as noisy: **[5, 6, 16, 18, 20, 23, 29]**.
 - Filters were evaluated only on flagged images.
-- Quality was measured against each image's matched clean reference.
+- Each filtered result was compared with its matched clean reference.
 - Metrics: PSNR (higher is better) and SSIM (higher is better).
 
 ## Best results
@@ -13,7 +13,7 @@
 - Highest mean PSNR: **Median 3x3** (30.78 dB).
 - Highest mean SSIM: **Median 3x3** (0.792).
 
-## Comparison table
+## Filter comparison
 
 | Type | Filter | Mean PSNR (dB) | Δ PSNR | Mean SSIM | Δ SSIM | PSNR wins |
 |---|---|---:|---:|---:|---:|---:|
@@ -25,9 +25,8 @@
 | Nonlinear | Median 3x3 | 30.78 | +7.05 | 0.792 | +0.307 | 7/7 |
 | Nonlinear | Median 5x5 | 30.27 | +6.54 | 0.770 | +0.285 | 6/7 |
 
-## Interpretation and limitation
+## Limitation
 
-The paired clean references make PSNR and SSIM comparisons possible.
-The residual-sigma noise check also uses those references; it is a
-development-set analysis step, not a detector that can be applied
-to future images when their clean references are unavailable.
+The residual-sigma detector uses the paired clean references. It is
+useful for this development-set analysis but cannot be applied as-is
+to future test images that do not have clean references.
