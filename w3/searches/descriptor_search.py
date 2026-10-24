@@ -1,5 +1,10 @@
+import sys
+from pathlib import Path
+
 import optuna
 import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from utils import *
 import pickle
 
