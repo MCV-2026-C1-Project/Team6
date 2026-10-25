@@ -1,146 +1,79 @@
-"""Compare denoising filters on the QSD1-W3 development images.
+"""Compare denoising filters by their effect on QSD1 retrieval.
 
-The script matches QSD1-W3 images with clean references by numeric ID,
-flags noisy images, evaluates candidate filters using PSNR and SSIM, and
-saves tables, charts, example images, and slide notes.
+The script detects impulse-like noise in QSD1 queries, filters only flagged
+queries, and evaluates retrieval against QSD1 ground truth. BBDD images remain
+unchanged for every comparison.
 
-The additive-noise estimate uses each image's clean reference. It is for
-development-set analysis and cannot be used unchanged on test images that
-have no clean references.
+Outputs are written to w3/results/denoising/.
 """
 
 from pathlib import Path
 import csv
+import math
+import pickle
+import sys
 
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-from skimage.metrics import peak_signal_noise_ratio, structural_similarity
 
 
-# -----------------------------------------------------------------------------
-# Paths and experiment settings
-# -----------------------------------------------------------------------------
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(ROOT_DIR))
 
-# This script is in w3/searches/, so parents[2] is the repository root.
-ROOT_DIR = Path(__file__).resolve().parents[2]
+from w2.utils import (  # noqa: E402
+    color_light_block_descriptors,
+    get_distances,
+    mapk,
+    retrieve,
+)
 
+
+BBDD_DIR = ROOT_DIR / "data" / "BBDD"
 QSD1_DIR = ROOT_DIR / "data" / "qsd1_w3"
-CLEAN_DIR = QSD1_DIR / "non_augmented"
-RESULTS_DIR = ROOT_DIR / "w3" / "searches" / "results" / "denoising"
+RESULTS_DIR = ROOT_DIR / "w3" / "results" / "denoising"
 
-# An image is impulse-flagged if more than 1% of pixels are isolated outliers.
-IMPULSE_FRACTION_THRESHOLD = 0.01
-IMPULSE_INTENSITY_DIFFERENCE = 30
+METRIC = "histogram_intersection"
+DESCRIPTOR_PARAMS = {"grid": 4, "ab_bins": 48, "l_bins": 16}
+NOISE_THRESHOLD = 0.01
+K = 5
 
-# Paired-reference residual threshold for the additive-noise check.
-ADDITIVE_NOISE_SIGMA_THRESHOLD = 8.0
-
-# Mean and Gaussian filters are linear. Median filters are nonlinear.
+# Ordered from simpler filters to more complex ones. This order is used only
+# to break ties when retrieval scores are identical.
 FILTERS = [
-    ("no_filter", "No filter", "Baseline"),
-    ("mean_3", "Mean 3x3", "Linear"),
-    ("mean_5", "Mean 5x5", "Linear"),
-    ("gaussian_3", "Gaussian 3x3", "Linear"),
-    ("gaussian_5", "Gaussian 5x5", "Linear"),
-    ("median_3", "Median 3x3", "Nonlinear"),
-    ("median_5", "Median 5x5", "Nonlinear"),
+    ("mean_5", "Mean 5x5"),
+    ("gaussian_3", "Gaussian 3x3"),
+    ("median_3", "Median 3x3"),
+    ("bilateral_5", "Bilateral d=5"),
+    ("bilateral_9", "Bilateral d=9"),
+    ("nlm_5", "Non-local means h=5"),
+    ("nlm_10", "Non-local means h=10"),
+    ("nlm_15", "Non-local means h=15"),
 ]
 
-COLORS = {
-    "Baseline": "#8A8F98",
-    "Linear": "#3977B8",
-    "Nonlinear": "#D9822B",
-    "Median 3x3": "#168A68",
-    "Flagged": "#D9534F",
-    "Not flagged": "#BCC3CC",
-}
 
-
-# -----------------------------------------------------------------------------
-# Image loading and matching
-# -----------------------------------------------------------------------------
-
-def image_id_from_path(path):
-    """Get the numeric ID from a filename such as 00005.jpg."""
-    return int(path.stem.split("_")[-1])
-
-
-def load_images_by_id(folder):
-    """Load JPGs from a folder into a dictionary keyed by numeric image ID.
-
-    Images are returned as OpenCV BGR arrays.
-    """
-    if not folder.exists():
-        raise FileNotFoundError(f"Folder not found: {folder}")
-
+def load_images(folder):
+    """Load JPG images and their numeric IDs from a dataset folder."""
     paths = sorted(folder.glob("*.jpg"))
     if not paths:
-        raise FileNotFoundError(f"No JPG images found in: {folder}")
+        raise FileNotFoundError(f"No JPG images found in {folder}")
 
-    images = {}
+    ids = []
+    images = []
+
     for path in paths:
-        image_id = image_id_from_path(path)
         image = cv2.imread(str(path))
-
         if image is None:
             raise ValueError(f"Could not read image: {path}")
-        if image_id in images:
-            raise ValueError(f"Duplicate image ID {image_id} in {folder}")
 
-        images[image_id] = image
+        ids.append(int(path.stem.split("_")[-1]))
+        images.append(image)
 
-    return images
+    return ids, images
 
-
-def load_matched_pairs():
-    """Load QSD1-W3 images and their clean references, matched by ID."""
-    noisy_images = load_images_by_id(QSD1_DIR)
-    clean_images = load_images_by_id(CLEAN_DIR)
-
-    matched_ids = sorted(set(noisy_images) & set(clean_images))
-    if not matched_ids:
-        raise ValueError(
-            f"No matching image IDs between {QSD1_DIR} and {CLEAN_DIR}"
-        )
-
-    missing_clean = sorted(set(noisy_images) - set(clean_images))
-    if missing_clean:
-        raise ValueError(
-            "QSD1-W3 images are missing clean references for IDs: "
-            f"{missing_clean}"
-        )
-
-    pairs = []
-    for image_id in matched_ids:
-        noisy = noisy_images[image_id]
-        clean = clean_images[image_id]
-
-        if noisy.shape != clean.shape:
-            raise ValueError(
-                f"Image {image_id} has mismatched shapes: "
-                f"QSD1={noisy.shape}, clean={clean.shape}"
-            )
-
-        pairs.append({
-            "image_id": image_id,
-            "noisy": noisy,
-            "clean": clean,
-        })
-
-    return pairs
-
-
-# -----------------------------------------------------------------------------
-# Noise detection
-# -----------------------------------------------------------------------------
 
 def impulse_noise_fraction(image_bgr):
-    """Estimate the fraction of isolated, impulse-like grayscale pixels.
-
-    A pixel counts as isolated if it differs by more than the configured
-    intensity threshold from all eight neighboring pixels.
-    """
+    """Estimate the fraction of isolated grayscale pixels in an image."""
     gray = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2GRAY).astype(np.int16)
     height, width = gray.shape
     padded = np.pad(gray, 1, mode="edge")
@@ -152,705 +85,454 @@ def impulse_noise_fraction(image_bgr):
                 continue
 
             neighbor = padded[
-                1 + dy:1 + dy + height,
-                1 + dx:1 + dx + width,
+                1 + dy : 1 + dy + height,
+                1 + dx : 1 + dx + width,
             ]
-            isolated &= (
-                np.abs(gray - neighbor) > IMPULSE_INTENSITY_DIFFERENCE
-            )
+            isolated &= np.abs(gray - neighbor) > 30
 
     return float(isolated.mean())
 
 
-def estimate_residual_sigma(noisy_bgr, clean_bgr):
-    """Estimate residual noise strength from a matched noisy/clean pair.
+def apply_candidate_filter(image_bgr, filter_name):
+    """Apply one candidate filter used in this experiment."""
+    if filter_name == "mean_5":
+        return cv2.blur(image_bgr, (5, 5))
 
-    The median absolute deviation (MAD) reduces the effect of outlier pixels.
-    The estimate requires a clean reference, so it is for development analysis.
-    """
-    noisy_gray = cv2.cvtColor(
-        noisy_bgr, cv2.COLOR_BGR2GRAY
-    ).astype(np.float32)
-    clean_gray = cv2.cvtColor(
-        clean_bgr, cv2.COLOR_BGR2GRAY
-    ).astype(np.float32)
+    if filter_name == "gaussian_3":
+        return cv2.GaussianBlur(image_bgr, (3, 3), 0)
 
-    residual = noisy_gray - clean_gray
-    centered_residual = residual - np.median(residual)
-    mad = np.median(np.abs(centered_residual))
+    if filter_name == "median_3":
+        return cv2.medianBlur(image_bgr, 3)
 
-    # For Gaussian-like residuals, MAD / 0.6745 estimates standard deviation.
-    return float(mad / 0.6745)
+    if filter_name == "bilateral_5":
+        return cv2.bilateralFilter(image_bgr, 5, 75, 75)
 
+    if filter_name == "bilateral_9":
+        return cv2.bilateralFilter(image_bgr, 9, 75, 75)
 
-def detect_noisy_pairs(pairs):
-    """Measure both noise signals and flag an image if either threshold fires."""
-    detections = []
-
-    for pair in pairs:
-        impulse_fraction = impulse_noise_fraction(pair["noisy"])
-        residual_sigma = estimate_residual_sigma(
-            pair["noisy"], pair["clean"]
+    if filter_name.startswith("nlm_"):
+        strength = int(filter_name.split("_")[1])
+        return cv2.fastNlMeansDenoisingColored(
+            image_bgr,
+            None,
+            strength,
+            strength,
+            templateWindowSize=7,
+            searchWindowSize=21,
         )
 
-        impulse_flag = impulse_fraction > IMPULSE_FRACTION_THRESHOLD
-        additive_flag = residual_sigma > ADDITIVE_NOISE_SIGMA_THRESHOLD
-
-        detections.append({
-            "image_id": pair["image_id"],
-            "impulse_fraction": impulse_fraction,
-            "residual_sigma": residual_sigma,
-            "impulse_flag": impulse_flag,
-            "additive_flag": additive_flag,
-            "noisy_flag": impulse_flag or additive_flag,
-        })
-
-    return detections
+    raise ValueError(f"Unknown filter: {filter_name}")
 
 
-# -----------------------------------------------------------------------------
-# Filters and quality metrics
-# -----------------------------------------------------------------------------
+def make_filtered_queries(query_images, noisy_indices, filter_name=None):
+    """Filter flagged queries, or return the original queries for the baseline."""
+    processed = list(query_images)
 
-def apply_filter(image_bgr, filter_key):
-    """Apply the requested filter and return the resulting BGR image."""
-    if filter_key == "no_filter":
-        return image_bgr.copy()
-    if filter_key == "mean_3":
-        return cv2.blur(image_bgr, (3, 3))
-    if filter_key == "mean_5":
-        return cv2.blur(image_bgr, (5, 5))
-    if filter_key == "gaussian_3":
-        return cv2.GaussianBlur(image_bgr, (3, 3), 0)
-    if filter_key == "gaussian_5":
-        return cv2.GaussianBlur(image_bgr, (5, 5), 0)
-    if filter_key == "median_3":
-        return cv2.medianBlur(image_bgr, 3)
-    if filter_key == "median_5":
-        return cv2.medianBlur(image_bgr, 5)
+    if filter_name is None:
+        return processed
 
-    raise ValueError(f"Unknown filter: {filter_key}")
+    for index in noisy_indices:
+        processed[index] = apply_candidate_filter(
+            query_images[index],
+            filter_name,
+        )
+
+    return processed
 
 
-def calculate_psnr_and_ssim(predicted_bgr, clean_bgr):
-    """Calculate PSNR and color SSIM against the clean reference."""
-    psnr = peak_signal_noise_ratio(
-        clean_bgr,
-        predicted_bgr,
-        data_range=255,
+def compute_distances_in_batches(query_descriptors, db_descriptors):
+    """Compute distances in small batches to limit temporary memory use."""
+    batches = []
+    batch_size = 2
+
+    for start in range(0, len(query_descriptors), batch_size):
+        batches.append(
+            get_distances(
+                query_descriptors[start : start + batch_size],
+                db_descriptors,
+                metric=METRIC,
+            )
+        )
+
+    return np.vstack(batches)
+
+
+def evaluate_retrieval(query_ids, query_images, db_ids, db_descriptors, ground_truth):
+    """Return mAP@1, mAP@5, and ranked database IDs for these queries."""
+    query_descriptors = color_light_block_descriptors(
+        query_images,
+        **DESCRIPTOR_PARAMS,
     )
 
-    # SSIM needs an odd window no larger than the image dimensions.
-    smallest_dimension = min(clean_bgr.shape[:2])
-    win_size = min(7, smallest_dimension)
-    if win_size % 2 == 0:
-        win_size -= 1
-    if win_size < 3:
-        raise ValueError("Images must be at least 3 pixels wide and tall.")
+    distances = compute_distances_in_batches(query_descriptors, db_descriptors)
+    ranked_ids = retrieve(distances, db_ids, k=K)
+    actual = [ground_truth[query_id] for query_id in query_ids]
 
-    ssim = structural_similarity(
-        clean_bgr,
-        predicted_bgr,
-        data_range=255,
-        channel_axis=2,
-        win_size=win_size,
+    return (
+        float(mapk(actual, ranked_ids, 1)),
+        float(mapk(actual, ranked_ids, K)),
+        ranked_ids,
     )
 
-    return float(psnr), float(ssim)
 
-
-def evaluate_filters(pairs, detections):
-    """Evaluate candidate filters only on images flagged as noisy."""
-    detection_by_id = {
-        row["image_id"]: row for row in detections
-    }
-    flagged_pairs = [
-        pair for pair in pairs
-        if detection_by_id[pair["image_id"]]["noisy_flag"]
+def save_results_csv(rows):
+    """Save the baseline and filter scores to a CSV file."""
+    path = RESULTS_DIR / "filter_results.csv"
+    fields = [
+        "filter",
+        "mAP@1",
+        "mAP@5",
+        "flagged_query_mAP@5",
+        "change_vs_baseline_mAP@5",
     ]
 
-    if not flagged_pairs:
-        raise ValueError("The noise detectors did not flag any images.")
-
-    per_image_rows = []
-
-    for pair in flagged_pairs:
-        for filter_key, label, filter_type in FILTERS:
-            if filter_key == "no_filter":
-                result = pair["noisy"]
-            else:
-                result = apply_filter(pair["noisy"], filter_key)
-
-            psnr, ssim = calculate_psnr_and_ssim(result, pair["clean"])
-            per_image_rows.append({
-                "image_id": pair["image_id"],
-                "filter_key": filter_key,
-                "method": label,
-                "filter_type": filter_type,
-                "psnr_db": psnr,
-                "ssim": ssim,
-            })
-
-    return flagged_pairs, per_image_rows
-
-
-def summarize_metrics(per_image_rows):
-    """Calculate average scores, variation, and per-image wins per filter."""
-    baseline_by_id = {
-        row["image_id"]: row
-        for row in per_image_rows
-        if row["filter_key"] == "no_filter"
-    }
-
-    baseline_psnr = np.mean([
-        row["psnr_db"] for row in baseline_by_id.values()
-    ])
-    baseline_ssim = np.mean([
-        row["ssim"] for row in baseline_by_id.values()
-    ])
-
-    summary = []
-    for filter_key, label, filter_type in FILTERS:
-        rows = [
-            row for row in per_image_rows
-            if row["filter_key"] == filter_key
-        ]
-        psnr_values = np.array([row["psnr_db"] for row in rows])
-        ssim_values = np.array([row["ssim"] for row in rows])
-
-        psnr_wins = sum(
-            row["psnr_db"] > baseline_by_id[row["image_id"]]["psnr_db"]
-            for row in rows
-        )
-        ssim_wins = sum(
-            row["ssim"] > baseline_by_id[row["image_id"]]["ssim"]
-            for row in rows
-        )
-
-        summary.append({
-            "filter_key": filter_key,
-            "method": label,
-            "filter_type": filter_type,
-            "mean_psnr_db": float(np.mean(psnr_values)),
-            "std_psnr_db": float(np.std(psnr_values)),
-            "mean_ssim": float(np.mean(ssim_values)),
-            "std_ssim": float(np.std(ssim_values)),
-            "images_evaluated": len(rows),
-            "psnr_wins_vs_no_filter": int(psnr_wins),
-            "ssim_wins_vs_no_filter": int(ssim_wins),
-            "delta_mean_psnr_db": float(
-                np.mean(psnr_values) - baseline_psnr
-            ),
-            "delta_mean_ssim": float(
-                np.mean(ssim_values) - baseline_ssim
-            ),
-        })
-
-    return summary
-
-
-# -----------------------------------------------------------------------------
-# CSV and written report outputs
-# -----------------------------------------------------------------------------
-
-def write_csv(path, rows, fields):
-    """Write dictionaries to a CSV file with the requested column order."""
-    with path.open("w", newline="", encoding="utf-8") as file:
+    with open(path, "w", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=fields)
         writer.writeheader()
-        writer.writerows(rows)
+
+        baseline_map5 = rows[0]["mAP@5"]
+        for row in rows:
+            writer.writerow({
+                "filter": row["label"],
+                "mAP@1": f"{row['mAP@1']:.4f}",
+                "mAP@5": f"{row['mAP@5']:.4f}",
+                "flagged_query_mAP@5": (
+                    f"{row['flagged_query_mAP@5']:.4f}"
+                    if row["flagged_query_mAP@5"] is not None else ""
+                ),
+                "change_vs_baseline_mAP@5": (
+                    f"{row['mAP@5'] - baseline_map5:+.4f}"
+                ),
+            })
 
 
-def save_csv_outputs(detections, per_image_rows, summary):
-    """Save detector results and filter metrics in three CSV tables."""
-    write_csv(
-        RESULTS_DIR / "noise_detection.csv",
-        detections,
-        [
-            "image_id",
-            "impulse_fraction",
-            "residual_sigma",
-            "impulse_flag",
-            "additive_flag",
-            "noisy_flag",
-        ],
-    )
+def save_detection_csv(query_ids, noise_fractions):
+    """Save each query's detector score and whether it passed the threshold."""
+    path = RESULTS_DIR / "noise_detection.csv"
 
-    write_csv(
-        RESULTS_DIR / "filter_metrics_per_image.csv",
-        per_image_rows,
-        [
-            "image_id",
-            "filter_key",
-            "method",
-            "filter_type",
-            "psnr_db",
-            "ssim",
-        ],
-    )
-
-    write_csv(
-        RESULTS_DIR / "filter_metrics_summary.csv",
-        summary,
-        [
-            "filter_key",
-            "method",
-            "filter_type",
-            "mean_psnr_db",
-            "std_psnr_db",
-            "mean_ssim",
-            "std_ssim",
-            "images_evaluated",
-            "psnr_wins_vs_no_filter",
-            "ssim_wins_vs_no_filter",
-            "delta_mean_psnr_db",
-            "delta_mean_ssim",
-        ],
-    )
-
-
-def save_slide_notes(detections, summary):
-    """Write a slide-friendly summary of the experiment and results."""
-    flagged_ids = [
-        row["image_id"] for row in detections if row["noisy_flag"]
-    ]
-    best_psnr = max(summary, key=lambda row: row["mean_psnr_db"])
-    best_ssim = max(summary, key=lambda row: row["mean_ssim"])
-
-    lines = [
-        "# Denoising experiment summary",
-        "",
-        "## Experiment",
-        "",
-        f"- Matched QSD1-W3 images: **{len(detections)}**.",
-        f"- Images flagged as noisy: **{flagged_ids}**.",
-        "- Filters were evaluated only on flagged images.",
-        "- Each filtered result was compared with its matched clean reference.",
-        "- Metrics: PSNR (higher is better) and SSIM (higher is better).",
-        "",
-        "## Best results",
-        "",
-        f"- Highest mean PSNR: **{best_psnr['method']}** "
-        f"({best_psnr['mean_psnr_db']:.2f} dB).",
-        f"- Highest mean SSIM: **{best_ssim['method']}** "
-        f"({best_ssim['mean_ssim']:.3f}).",
-        "",
-        "## Filter comparison",
-        "",
-        "| Type | Filter | Mean PSNR (dB) | Δ PSNR | Mean SSIM | Δ SSIM | PSNR wins |",
-        "|---|---|---:|---:|---:|---:|---:|",
-    ]
-
-    for row in summary:
-        lines.append(
-            f"| {row['filter_type']} | {row['method']} "
-            f"| {row['mean_psnr_db']:.2f} "
-            f"| {row['delta_mean_psnr_db']:+.2f} "
-            f"| {row['mean_ssim']:.3f} "
-            f"| {row['delta_mean_ssim']:+.3f} "
-            f"| {row['psnr_wins_vs_no_filter']}/"
-            f"{row['images_evaluated']} |"
+    with open(path, "w", newline="") as file:
+        writer = csv.DictWriter(
+            file,
+            fieldnames=["query_id", "impulse_fraction", "flagged"],
         )
+        writer.writeheader()
 
-    lines.extend([
-        "",
-        "## Limitation",
-        "",
-        "The residual-sigma detector uses the paired clean references. It is",
-        "useful for this development-set analysis but cannot be applied as-is",
-        "to future test images that do not have clean references.",
-        "",
-    ])
-
-    (RESULTS_DIR / "denoising_summary_for_slides.md").write_text(
-        "\n".join(lines),
-        encoding="utf-8",
-    )
+        for query_id, fraction in zip(query_ids, noise_fractions):
+            writer.writerow({
+                "query_id": query_id,
+                "impulse_fraction": f"{fraction:.6f}",
+                "flagged": fraction > NOISE_THRESHOLD,
+            })
 
 
-# -----------------------------------------------------------------------------
-# Charts and visual examples
-# -----------------------------------------------------------------------------
+def save_map_chart(rows, selected_label):
+    """Save a ranked mAP@5 chart with the unfiltered baseline marked."""
+    ranked = sorted(rows, key=lambda row: row["mAP@5"])
+    labels = [row["label"] for row in ranked]
+    scores = [row["mAP@5"] for row in ranked]
+    baseline_score = rows[0]["mAP@5"]
 
-def to_rgb(image_bgr):
-    """Convert an OpenCV BGR image to RGB for Matplotlib."""
-    return cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
-
-
-def save_detection_chart(detections):
-    """Chart the two noise signals for every QSD1-W3 image."""
-    ids = [row["image_id"] for row in detections]
-    positions = np.arange(len(ids))
-    colors = [
-        COLORS["Flagged"] if row["noisy_flag"]
-        else COLORS["Not flagged"]
-        for row in detections
-    ]
-
-    fig, axes = plt.subplots(2, 1, figsize=(14, 8), sharex=True)
-
-    axes[0].bar(
-        positions,
-        [row["impulse_fraction"] * 100 for row in detections],
-        color=colors,
-    )
-    axes[0].axhline(
-        IMPULSE_FRACTION_THRESHOLD * 100,
-        color="black",
-        linestyle="--",
-        label=f"Threshold: {IMPULSE_FRACTION_THRESHOLD * 100:.1f}%",
-    )
-    axes[0].set_ylabel("Impulse-like pixels (%)")
-    axes[0].set_title("Noise detection signals across QSD1-W3")
-    axes[0].legend()
-
-    axes[1].bar(
-        positions,
-        [row["residual_sigma"] for row in detections],
-        color=colors,
-    )
-    axes[1].axhline(
-        ADDITIVE_NOISE_SIGMA_THRESHOLD,
-        color="black",
-        linestyle="--",
-        label=f"Threshold: {ADDITIVE_NOISE_SIGMA_THRESHOLD:.1f}",
-    )
-    axes[1].set_ylabel("Paired residual sigma")
-    axes[1].set_xlabel("QSD1-W3 image ID")
-    axes[1].set_xticks(positions)
-    axes[1].set_xticklabels(ids, rotation=45)
-    axes[1].legend()
-
-    fig.tight_layout()
-    fig.savefig(RESULTS_DIR / "01_noise_detection.png", dpi=180)
-    plt.close(fig)
-
-
-def save_filter_scorecard(summary):
-    """Compare filter means and standard deviations for PSNR and SSIM."""
-    labels = [row["method"] for row in summary]
-    positions = np.arange(len(summary))
     colors = []
-
-    for row in summary:
-        if row["filter_type"] == "Baseline":
-            colors.append(COLORS["Baseline"])
-        elif row["method"] == "Median 3x3":
-            colors.append(COLORS["Median 3x3"])
+    for row in ranked:
+        if row["label"] == selected_label:
+            colors.append("#E6863B")
+        elif row["label"] == "No filter":
+            colors.append("#777777")
         else:
-            colors.append(COLORS[row["filter_type"]])
+            colors.append("#6B9AC4")
 
-    fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+    figure_height = max(4.5, 0.42 * len(ranked))
+    fig, axis = plt.subplots(figsize=(9, figure_height))
+    bars = axis.barh(labels, scores, color=colors)
 
-    axes[0].bar(
-        positions,
-        [row["mean_psnr_db"] for row in summary],
-        yerr=[row["std_psnr_db"] for row in summary],
-        capsize=4,
-        color=colors,
+    axis.axvline(
+        baseline_score,
+        color="#555555",
+        linestyle="--",
+        linewidth=1.5,
+        label=f"No-filter baseline: {baseline_score:.3f}",
     )
-    axes[0].set_title("PSNR against clean references")
-    axes[0].set_ylabel("Mean PSNR (dB)")
-    axes[0].set_xticks(positions)
-    axes[0].set_xticklabels(labels, rotation=35, ha="right")
-    axes[0].grid(axis="y", alpha=0.25)
+    axis.set_xlim(0, 1)
+    axis.set_xlabel("mAP@5 across all QSD1 queries (higher is better)")
+    axis.set_title("Retrieval score by denoising filter")
+    axis.grid(axis="x", alpha=0.2)
+    axis.legend(loc="lower right", frameon=False)
 
-    axes[1].bar(
-        positions,
-        [row["mean_ssim"] for row in summary],
-        yerr=[row["std_ssim"] for row in summary],
-        capsize=4,
-        color=colors,
-    )
-    axes[1].set_title("SSIM against clean references")
-    axes[1].set_ylabel("Mean SSIM")
-    axes[1].set_xticks(positions)
-    axes[1].set_xticklabels(labels, rotation=35, ha="right")
-    axes[1].grid(axis="y", alpha=0.25)
-
-    fig.suptitle(
-        "Filter comparison on detected noisy images "
-        "(bars show mean ± standard deviation)",
-        fontsize=14,
-    )
-    fig.tight_layout()
-    fig.savefig(RESULTS_DIR / "02_filter_scorecard.png", dpi=180)
-    plt.close(fig)
-
-
-def save_ssim_gain_heatmap(flagged_pairs, per_image_rows):
-    """Plot each filter's per-image SSIM change relative to no filter."""
-    image_ids = [pair["image_id"] for pair in flagged_pairs]
-    filter_labels = [label for _, label, _ in FILTERS]
-
-    lookup = {
-        (row["image_id"], row["filter_key"]): row["ssim"]
-        for row in per_image_rows
-    }
-    values = np.zeros((len(image_ids), len(FILTERS)), dtype=float)
-
-    for image_index, image_id in enumerate(image_ids):
-        baseline = lookup[(image_id, "no_filter")]
-        for filter_index, (filter_key, _, _) in enumerate(FILTERS):
-            values[image_index, filter_index] = (
-                lookup[(image_id, filter_key)] - baseline
-            )
-
-    limit = max(float(np.max(np.abs(values))), 0.001)
-    fig, ax = plt.subplots(
-        figsize=(12, max(4, 0.65 * len(image_ids) + 2))
-    )
-    heatmap = ax.imshow(
-        values,
-        cmap="RdYlGn",
-        vmin=-limit,
-        vmax=limit,
-        aspect="auto",
-    )
-
-    ax.set_xticks(np.arange(len(filter_labels)))
-    ax.set_xticklabels(filter_labels, rotation=35, ha="right")
-    ax.set_yticks(np.arange(len(image_ids)))
-    ax.set_yticklabels([f"ID {image_id}" for image_id in image_ids])
-    ax.set_title("Per-image SSIM change compared with no filter")
-
-    for row_index in range(values.shape[0]):
-        for column_index in range(values.shape[1]):
-            ax.text(
-                column_index,
-                row_index,
-                f"{values[row_index, column_index]:+.2f}",
-                ha="center",
-                va="center",
-                fontsize=8,
-            )
-
-    colorbar = fig.colorbar(heatmap, ax=ax)
-    colorbar.set_label("SSIM gain (green means improvement)")
-    fig.tight_layout()
-    fig.savefig(
-        RESULTS_DIR / "03_per_image_ssim_heatmap.png",
-        dpi=180,
-    )
-    plt.close(fig)
-
-
-def save_metric_tradeoff(summary):
-    """Plot mean PSNR versus mean SSIM for all candidate filters."""
-    fig, ax = plt.subplots(figsize=(9, 7))
-
-    for row in summary:
-        if row["filter_type"] == "Baseline":
-            color = COLORS["Baseline"]
-        elif row["method"] == "Median 3x3":
-            color = COLORS["Median 3x3"]
-        else:
-            color = COLORS[row["filter_type"]]
-
-        size = 180 if row["method"] == "Median 3x3" else 90
-        ax.scatter(
-            row["mean_psnr_db"],
-            row["mean_ssim"],
-            color=color,
-            s=size,
-            edgecolor="black",
-            linewidth=0.8,
-            zorder=3,
-        )
-        ax.annotate(
-            row["method"],
-            (row["mean_psnr_db"], row["mean_ssim"]),
-            xytext=(7, 6),
-            textcoords="offset points",
+    for bar, score in zip(bars, scores):
+        axis.text(
+            min(score + 0.015, 0.96),
+            bar.get_y() + bar.get_height() / 2,
+            f"{score:.3f}",
+            va="center",
             fontsize=9,
         )
 
-    ax.set_title("Filter quality map: PSNR and SSIM together")
-    ax.set_xlabel("Mean PSNR (dB), higher is better")
-    ax.set_ylabel("Mean SSIM, higher is better")
-    ax.grid(alpha=0.25)
-
-    legend_handles = []
-    for label, color in [
-        ("Baseline", COLORS["Baseline"]),
-        ("Linear", COLORS["Linear"]),
-        ("Nonlinear", COLORS["Nonlinear"]),
-    ]:
-        legend_handles.append(
-            plt.Line2D(
-                [0],
-                [0],
-                marker="o",
-                color="w",
-                label=label,
-                markerfacecolor=color,
-                markeredgecolor="black",
-                markersize=9,
-            )
-        )
-
-    ax.legend(handles=legend_handles)
     fig.tight_layout()
-    fig.savefig(
-        RESULTS_DIR / "04_psnr_ssim_quality_map.png",
-        dpi=180,
-    )
+    fig.savefig(RESULTS_DIR / "map_at_5_comparison.png", dpi=160)
     plt.close(fig)
 
 
-def choose_example_ids(flagged_pairs, per_image_rows):
-    """Pick best, typical, and weakest Median 3x3 SSIM-gain examples."""
-    baseline_ssim = {
-        row["image_id"]: row["ssim"]
-        for row in per_image_rows
-        if row["filter_key"] == "no_filter"
-    }
-    median_rows = [
-        row for row in per_image_rows
-        if row["filter_key"] == "median_3"
-    ]
+def save_visual_grid(query_id, image_bgr):
+    """Save a side-by-side comparison for one detected noisy query."""
+    panels = [("Original", image_bgr)]
 
-    gains = sorted(
-        (
-            row["ssim"] - baseline_ssim[row["image_id"]],
-            row["image_id"],
-        )
-        for row in median_rows
-    )
+    for filter_name, label in FILTERS:
+        panels.append((
+            label,
+            apply_candidate_filter(image_bgr, filter_name),
+        ))
 
-    candidates = [
-        gains[0][1],
-        gains[len(gains) // 2][1],
-        gains[-1][1],
-    ]
-
-    chosen = []
-    for image_id in candidates:
-        if image_id not in chosen:
-            chosen.append(image_id)
-
-    return chosen
-
-
-def save_before_after_examples(flagged_pairs, per_image_rows):
-    """Save input/filter/reference panels for selected noisy images."""
-    pair_by_id = {
-        pair["image_id"]: pair for pair in flagged_pairs
-    }
-    metric_by_id_and_filter = {
-        (row["image_id"], row["filter_key"]): row
-        for row in per_image_rows
-    }
-    example_ids = choose_example_ids(flagged_pairs, per_image_rows)
-
+    columns = 3
+    row_count = math.ceil(len(panels) / columns)
     fig, axes = plt.subplots(
-        len(example_ids),
-        3,
-        figsize=(15, 4.5 * len(example_ids)),
-        squeeze=False,
+        row_count,
+        columns,
+        figsize=(12, 4 * row_count),
     )
+    axes = np.asarray(axes).reshape(-1)
 
-    for row_index, image_id in enumerate(example_ids):
-        pair = pair_by_id[image_id]
-        original = pair["noisy"]
-        filtered = apply_filter(original, "median_3")
-        clean = pair["clean"]
+    for axis, (title, image) in zip(axes, panels):
+        axis.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        axis.set_title(title)
+        axis.axis("off")
 
-        baseline_metrics = metric_by_id_and_filter[
-            (image_id, "no_filter")
-        ]
-        filtered_metrics = metric_by_id_and_filter[
-            (image_id, "median_3")
-        ]
+    for axis in axes[len(panels):]:
+        axis.axis("off")
 
-        panels = [
-            ("QSD1-W3 input", original),
-            (
-                "Median 3x3\n"
-                f"PSNR {filtered_metrics['psnr_db']:.2f} dB | "
-                f"SSIM {filtered_metrics['ssim']:.3f}",
-                filtered,
-            ),
-            (
-                "Clean reference\n"
-                f"Input PSNR {baseline_metrics['psnr_db']:.2f} dB | "
-                f"SSIM {baseline_metrics['ssim']:.3f}",
-                clean,
-            ),
-        ]
-
-        for column_index, (title, image) in enumerate(panels):
-            axes[row_index, column_index].imshow(to_rgb(image))
-            axes[row_index, column_index].set_title(
-                f"Image ID {image_id}: {title}"
-            )
-            axes[row_index, column_index].axis("off")
-
-    fig.suptitle(
-        "Visual examples: input, selected filter, and clean reference",
-        fontsize=15,
-    )
+    fig.suptitle(f"Query {query_id}: original and filter examples")
     fig.tight_layout()
-    fig.savefig(
-        RESULTS_DIR / "05_before_after_examples.png",
-        dpi=180,
-    )
+    fig.savefig(RESULTS_DIR / "filter_visual_comparison.png", dpi=160)
     plt.close(fig)
 
-    return example_ids
 
+def save_slide_decision(rows, selected, noisy_ids, query_count):
+    """Write a slide-ready explanation using the results from this run."""
+    baseline = rows[0]
+    delta_map5 = selected["mAP@5"] - baseline["mAP@5"]
+    delta_map1 = selected["mAP@1"] - baseline["mAP@1"]
 
-# -----------------------------------------------------------------------------
-# Run the experiment
-# -----------------------------------------------------------------------------
+    tied = [
+        row for row in rows[1:]
+        if np.isclose(row["mAP@5"], selected["mAP@5"])
+        and np.isclose(row["mAP@1"], selected["mAP@1"])
+    ]
+
+    lines = [
+        "# Week 3 denoising: decision for slides",
+        "",
+        "## Decision",
+        "",
+    ]
+
+    if selected["label"] == "No filter":
+        lines += [
+            "**Decision: do not apply a denoising filter.**",
+            "",
+            "No candidate improved all-query mAP@5 over the unfiltered baseline.",
+        ]
+    else:
+        lines += [
+            f"**Selected filter: {selected['label']}.**",
+            "",
+            f"On this QSD1 run, it achieved mAP@1 = "
+            f"**{selected['mAP@1']:.4f}** and mAP@5 = "
+            f"**{selected['mAP@5']:.4f}**.",
+            "",
+            f"The unfiltered baseline was mAP@1 = {baseline['mAP@1']:.4f} "
+            f"and mAP@5 = {baseline['mAP@5']:.4f}. "
+            f"The selected setup changed the scores by "
+            f"{delta_map1:+.4f} mAP@1 and {delta_map5:+.4f} mAP@5.",
+        ]
+
+        if len(tied) > 1:
+            tied_labels = ", ".join(row["label"] for row in tied)
+            lines += [
+                "",
+                f"Several filters tied on both retrieval scores: {tied_labels}. "
+                f"The simpler filter, {selected['label']}, was selected as the "
+                "tie-break.",
+            ]
+
+    lines += [
+        "",
+        "## Test method",
+        "",
+        f"- Dataset: {query_count} QSD1 development queries with correspondence "
+        "ground truth.",
+        f"- Noise detector: flag a query when more than {NOISE_THRESHOLD:.0%} "
+        "of grayscale pixels differ by more than 30 intensity levels from "
+        "all eight neighbors.",
+        f"- Flagged query IDs in this run: {noisy_ids}.",
+        "- Each candidate filter was applied only to flagged queries. "
+        "Unflagged queries and BBDD images were left unchanged.",
+        "- The Week 2 color-light descriptor and histogram-intersection "
+        "distance were kept fixed. The comparison metric was retrieval mAP.",
+        "",
+        "## Limitation",
+        "",
+        "This experiment measures retrieval performance; it does not calculate "
+        "PSNR or SSIM. Those pixelwise measures require paired clean reference "
+        "images. The comparison uses the Week 2 descriptor, so repeat the "
+        "evaluation with the final Week 3 descriptor before reporting the "
+        "team's final result.",
+        "",
+        "## Short presentation wording",
+        "",
+    ]
+
+    if selected["label"] == "No filter":
+        lines.append(
+            "“We compared the unfiltered baseline with several denoising "
+            "filters on the detected noisy development queries. Filtering did "
+            "not improve mAP@5, so we kept the images unchanged.”"
+        )
+    else:
+        lines.append(
+            f"“We compared the unfiltered baseline with eight filters on the "
+            f"{len(noisy_ids)} detected noisy development queries. "
+            f"{selected['label']} gave the best retrieval result "
+            f"(mAP@5 {selected['mAP@5']:.4f} versus "
+            f"{baseline['mAP@5']:.4f} without filtering). We selected it "
+            "because it improved retrieval and, where scores tied, it was "
+            "the simpler option.”"
+        )
+
+    path = RESULTS_DIR / "decision_for_slides.md"
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
 
 def main():
-    """Run detection, filter evaluation, reporting, and visualization."""
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    pairs = load_matched_pairs()
-    detections = detect_noisy_pairs(pairs)
-    flagged_pairs, per_image_rows = evaluate_filters(pairs, detections)
-    summary = summarize_metrics(per_image_rows)
+    db_ids, db_images = load_images(BBDD_DIR)
+    query_ids, query_images = load_images(QSD1_DIR)
 
-    save_csv_outputs(detections, per_image_rows, summary)
-    save_slide_notes(detections, summary)
+    gt_path = QSD1_DIR / "gt_corresps.pkl"
+    if not gt_path.exists():
+        raise FileNotFoundError(f"Ground truth not found: {gt_path}")
 
-    save_detection_chart(detections)
-    save_filter_scorecard(summary)
-    save_ssim_gain_heatmap(flagged_pairs, per_image_rows)
-    save_metric_tradeoff(summary)
-    example_ids = save_before_after_examples(
-        flagged_pairs,
-        per_image_rows,
+    with open(gt_path, "rb") as file:
+        gt_list = pickle.load(file)
+
+    if len(query_ids) != len(gt_list):
+        raise ValueError(
+            f"Found {len(query_ids)} queries but {len(gt_list)} "
+            "ground-truth entries."
+        )
+
+    ground_truth = {query_id: gt_list[query_id] for query_id in query_ids}
+
+    noise_fractions = [
+        impulse_noise_fraction(image)
+        for image in query_images
+    ]
+    noisy_indices = [
+        index for index, fraction in enumerate(noise_fractions)
+        if fraction > NOISE_THRESHOLD
+    ]
+    noisy_ids = [query_ids[index] for index in noisy_indices]
+
+    print(f"QSD1 queries: {len(query_ids)}")
+    print(f"Flagged noisy queries: {noisy_ids}")
+    print(f"Noise threshold: {NOISE_THRESHOLD:.1%}")
+
+    save_detection_csv(query_ids, noise_fractions)
+
+    # The database is described once and stays identical in every comparison.
+    db_descriptors = color_light_block_descriptors(
+        db_images,
+        **DESCRIPTOR_PARAMS,
     )
 
-    impulse_ids = [
-        row["image_id"] for row in detections if row["impulse_flag"]
-    ]
-    additive_ids = [
-        row["image_id"] for row in detections if row["additive_flag"]
-    ]
-    flagged_ids = [
-        row["image_id"] for row in detections if row["noisy_flag"]
-    ]
-    best_psnr = max(summary, key=lambda row: row["mean_psnr_db"])
-    best_ssim = max(summary, key=lambda row: row["mean_ssim"])
+    # Evaluate the unfiltered baseline.
+    map1, map5, _ = evaluate_retrieval(
+        query_ids,
+        query_images,
+        db_ids,
+        db_descriptors,
+        ground_truth,
+    )
+    rows = [{
+        "filter": "no_filter",
+        "label": "No filter",
+        "mAP@1": map1,
+        "mAP@5": map5,
+        "flagged_query_mAP@5": None,
+        "order": -1,
+    }]
+    print(f"{'No filter':20s} mAP@1={map1:.4f}  mAP@5={map5:.4f}")
 
-    print(f"Matched QSD1-W3 images: {len(pairs)}")
-    print(f"Impulse detector IDs: {impulse_ids}")
-    print(f"Additive detector IDs: {additive_ids}")
-    print(f"Flagged by either detector: {flagged_ids}")
-    print(f"Images evaluated per filter: {len(flagged_pairs)}")
-    print(
-        f"Best mean PSNR: {best_psnr['method']} "
-        f"({best_psnr['mean_psnr_db']:.2f} dB)"
+    # Evaluate each candidate with the same detection and retrieval setup.
+    for order, (filter_name, label) in enumerate(FILTERS):
+        processed_queries = make_filtered_queries(
+            query_images,
+            noisy_indices,
+            filter_name,
+        )
+
+        map1, map5, _ = evaluate_retrieval(
+            query_ids,
+            processed_queries,
+            db_ids,
+            db_descriptors,
+            ground_truth,
+        )
+
+        flagged_map5 = None
+        if noisy_indices:
+            flagged_ids = [query_ids[index] for index in noisy_indices]
+            flagged_images = [
+                processed_queries[index] for index in noisy_indices
+            ]
+            _, flagged_map5, _ = evaluate_retrieval(
+                flagged_ids,
+                flagged_images,
+                db_ids,
+                db_descriptors,
+                ground_truth,
+            )
+
+        rows.append({
+            "filter": filter_name,
+            "label": label,
+            "mAP@1": map1,
+            "mAP@5": map5,
+            "flagged_query_mAP@5": flagged_map5,
+            "order": order,
+        })
+
+        output = (
+            f"{label:20s} mAP@1={map1:.4f}  mAP@5={map5:.4f}"
+        )
+        if flagged_map5 is not None:
+            output += f"  flagged mAP@5={flagged_map5:.4f}"
+        print(output)
+
+    # Select by all-query mAP@5, then mAP@1, then simpler filter order.
+    best_candidate = max(
+        rows[1:],
+        key=lambda row: (
+            row["mAP@5"],
+            row["mAP@1"],
+            -row["order"],
+        ),
     )
-    print(
-        f"Best mean SSIM: {best_ssim['method']} "
-        f"({best_ssim['mean_ssim']:.3f})"
-    )
-    print(f"Visual example IDs: {example_ids}")
+
+    # Do not select a filter if it fails to beat the unfiltered baseline.
+    if best_candidate["mAP@5"] > rows[0]["mAP@5"]:
+        selected = best_candidate
+    else:
+        selected = rows[0]
+
+    save_results_csv(rows)
+    save_map_chart(rows, selected["label"])
+    save_slide_decision(rows, selected, noisy_ids, len(query_ids))
+
+    if noisy_indices:
+        first_index = noisy_indices[0]
+        save_visual_grid(query_ids[first_index], query_images[first_index])
+
+    print(f"\nSelected setup: {selected['label']}")
     print(f"Results saved to: {RESULTS_DIR}")
 
 
