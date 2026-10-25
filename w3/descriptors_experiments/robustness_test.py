@@ -4,18 +4,18 @@ import pandas as pd
 from pathlib import Path
 
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
-QUERY_DIR = DATA_DIR / "qsd1_w3"                 # amb noise
-CLEAN_DIR = QUERY_DIR / "non_augmented"          # sense noise
+QUERY_DIR = DATA_DIR / "qsd1_w3"                 # with noise
+CLEAN_DIR = QUERY_DIR / "non_augmented"          # without noise
 
-MAX_SHIFT = 0.05      # fracció de la mida de la imatge
-MAX_HUE_SHIFT = 40    # graus
+MAX_SHIFT = 0.05      # fraction of the image size
+MAX_HUE_SHIFT = 40    # degrees
 SEED = 42
-DEFAULT_SIZE = 672    # per als descriptors on bayes_summary no fixa "size"
+DEFAULT_SIZE = 672    # for descriptors where bayes_summary does not set "size"
 
-# Millors paràmetres de bayes_summary.csv.
-# Comprova que els noms de les funcions i dels kwargs coincideixen amb utils.py.
+# Best parameters from bayes_summary.csv.
+# Check that the function and kwarg names match utils.py.
 CONFIGS = {
     "dct_block": {
         "descriptor": dct_block_descriptor,
@@ -69,7 +69,7 @@ CONFIGS = {
 
 
 def random_shift(img, max_shift, rng):
-    """Desplaça la imatge un nombre aleatori de píxels en x i y (màx. max_shift * mida)."""
+    """Shift the image by a random number of pixels in x and y (max. max_shift * size)."""
     h, w = img.shape[:2]
     dx = int(rng.integers(-int(max_shift * w), int(max_shift * w) + 1))
     dy = int(rng.integers(-int(max_shift * h), int(max_shift * h) + 1))
@@ -78,8 +78,8 @@ def random_shift(img, max_shift, rng):
 
 
 def random_hue_shift(img, max_deg, rng):
-    """Gira el hue de la imatge un angle aleatori entre -max_deg i max_deg graus."""
-    shift = int(rng.integers(-max_deg // 2, max_deg // 2 + 1))  # OpenCV: 1 unitat = 2 graus
+    """Rotate the image hue by a random angle between -max_deg and max_deg degrees."""
+    shift = int(rng.integers(-max_deg // 2, max_deg // 2 + 1))  # OpenCV: 1 unit = 2 degrees
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     hsv[..., 0] = ((hsv[..., 0].astype(np.int16) + shift) % 180).astype(np.uint8)
     return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
@@ -93,8 +93,8 @@ if __name__ == "__main__":
     with open(QUERY_DIR / "gt_corresps.pkl", "rb") as f:
         ground_truth = pickle.load(f)
 
-    # Hue i shift s'apliquen sobre les imatges SENSE noise, cadascun amb el seu rng
-    # perquè els resultats no depenguin de l'ordre.
+    # Hue and shift are applied to the images WITHOUT noise, each with its own rng
+    # so that the results do not depend on the order.
     rng_hue = np.random.default_rng(SEED)
     hue_images = [random_hue_shift(im, MAX_HUE_SHIFT, rng_hue) for im in clean_images]
     rng_shift = np.random.default_rng(SEED)
@@ -124,5 +124,3 @@ if __name__ == "__main__":
     print(df.to_string(float_format="{:.4f}".format))
 
     df.to_csv("robustness_map1.csv", float_format="%.4f")
-    with open("robustness_map1.md", "w") as f:
-        f.write(df.to_markdown(floatfmt=".4f"))

@@ -4,7 +4,7 @@ import pandas as pd
 from pathlib import Path
 
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
 QUERY_DIR = DATA_DIR / "qsd1_w3"
 
