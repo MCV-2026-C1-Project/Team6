@@ -9,15 +9,15 @@ BBDD_DIR = DATA_DIR / "BBDD"
 QUERY_DIR = DATA_DIR / "qsd1_w3"
 
 PARAMS = {
-    "descriptor": dct_block_descriptor,
+    "descriptor": dct_pyramid_descriptor,
     "color_code": cv2.COLOR_BGR2YCrCb,
     "channels": [0, 1, 2],
     "size": 672,
-    "metric": "cityblock",
+    "metric": "canberra",
     "kwargs": {
-        "n_blocks": 6,
-        "n_coef": 20,
-        "skip_dc": True,
+        "levels": [1,2,3],
+        "n_coef": 32,
+        "skip_dc": False,
     },
 }
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     print("Computing query descriptors...")
     query_descs = np.vstack([describe(img, PARAMS) for img in tqdm(query_images, desc="Queries")])
 
-    dists = get_distances(query_descs, db_descs, metric="histogram_intersection")
+    dists = get_distances(query_descs, db_descs, metric=PARAMS["metric"])
 
     # Retrieve the top-5 results and compute mAP@1 and mAP@5.
     topk5 = retrieve(dists, db_ids, k=5)

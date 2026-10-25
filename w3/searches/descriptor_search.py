@@ -1,7 +1,13 @@
 import optuna
 import pandas as pd
-from utils import *
 import pickle
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(PROJECT_ROOT))
+
+from w3.utils import *
 
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
