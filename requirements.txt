@@ -3,7 +3,8 @@ numpy==2.5.4
 opencv_python==5.0.0.93
 optuna==5.0.0
 pandas==3.1.0
+PyWavelets==1.8.0
+scikit_image==0.26.0
 scikit_learn==1.9.1
 scipy==1.18.1
-skimage==0.0
 tqdm==4.70.1
