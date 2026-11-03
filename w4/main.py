@@ -1,127 +1,98 @@
-from utils import *
+"""Demo: image descriptor (keypoints + local descriptors) -> matching -> retrieval -> map@k.
+
+    python main.py --museum data/BBDD --queries data/qsd1_w4 [--gt data/qsd1_w4/gt_corresps.pkl] [--k 5]
+
+Several configurations are compared (max 3 descriptors, as required)."""
+import argparse
+import glob
 import pickle
-from pathlib import Path
-from tqdm import tqdm
+from typing import Dict, List, Optional, Sequence, Tuple
 
+import cv2
+import numpy as np
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-BBDD_DIR = DATA_DIR / "BBDD"
-QUERY_DIR = DATA_DIR / "qsd1_w4"
-RESULTS_DIR = Path(__file__).resolve().parent / "results"
-GROUND_TRUTH_DIR = QUERY_DIR / "gt_corresps.pkl"
+from keypoints import resize_max_side
+from local_descriptors import extract
 
-RUN_TESTS = True
-TEST1_DIR = DATA_DIR / "qst1_w4"
-TEST2_DIR = DATA_DIR / "qst2_w4"
-K = 10
+Feat = Tuple[np.ndarray, np.ndarray]  # (keypoint coordinates Nx2, descriptors NxD)
 
-DESC_PARAMS = {
-    "descriptor": dct_pyramid_descriptor,
-    "color_code": cv2.COLOR_BGR2YCrCb,
-    "channels": [0, 1, 2],
-    "size": 672,
-    "metric": "canberra",
-    "kwargs": {
-        "levels": [1,2,3],
-        "n_coef": 32,
-        "skip_dc": False,
-    },
+# name -> (detector, descriptor, detector kwargs, descriptor kwargs)
+CONFIGS: Dict[str, Tuple[str, str, dict, dict]] = {
+    "dog+rootsift": ("dog", "sift", {"max_kps": 1500}, {}),
+    "hybrid+colorsift": ("hybrid", "color_sift", {"max_kps": 2000}, {}),
+    "harlap+orb": ("harris_laplace", "orb", {"max_kps": 1500}, {}),
 }
 
-def process_queries(query_images: list[np.ndarray], n_feat: int, params: dict):
-    """
-    Detect up to MAX_PAINTINGS paintings per query and describe each of them.
 
-    Each query is denoised, its paintings are detected and every painting is
-    cropped to its mask and described with the given params.
+def load_features(paths: Sequence[str], det: str, desc: str, det_kw: dict, desc_kw: dict,
+                  max_side: int = 800) -> List[Feat]:
+    """Extract (points, descriptors) for every image. Images are resized so scales/thresholds are consistent."""
+    feats = []
+    for p in paths:
+        kps, des = extract(resize_max_side(cv2.imread(p), max_side), det, desc, det_kw, desc_kw)
+        feats.append((np.float32([k.pt for k in kps]).reshape(-1, 2), des))
+    return feats
 
-    Args:
-        query_images: Query images in BGR format.
-        n_feat: Length of the descriptor returned by describe.
-        params: Descriptor parameters passed to describe.
 
-    Returns:
-        Tuple (descs, masks_by_query) where descs is a float32 array of shape
-        (n_queries, MAX_PAINTINGS, n_feat) with NaN in the rows of missing
-        paintings (all NaN if nothing is detected), and masks_by_query[i] is
-        the list of detected masks of query i.
-    """
-    descs = np.full((len(query_images), MAX_PAINTINGS, n_feat), np.nan, np.float32)
-    masks_by_query = []
+def match_score(q: Feat, m: Feat, norm: int, ratio: float = 0.75, reproj: float = 5.0) -> int:
+    """Similarity = number of geometrically consistent matches.
+    1) Lowe's ratio test on 2-NN matches (appearance), 2) RANSAC homography (paintings are planar) -> inlier count."""
+    (pq, dq), (pm, dm) = q, m
+    if len(dq) < 4 or len(dm) < 2:
+        return 0
+    knn = cv2.BFMatcher(norm).knnMatch(dq, dm, k=2)
+    good = [a for a, b in (x for x in knn if len(x) == 2) if a.distance < ratio * b.distance]
+    if len(good) < 4:
+        return 0
+    src = pq[[g.queryIdx for g in good]]
+    dst = pm[[g.trainIdx for g in good]]
+    _, inl = cv2.findHomography(src, dst, cv2.RANSAC, reproj)
+    return int(inl.sum()) if inl is not None else 0
 
-    for i, img in enumerate(tqdm(query_images, desc="Queries")):
-        img = denoise_image(img)
-        masks = detect_paintings(img)
-        masks_by_query.append(masks)
 
-        for j, mask in enumerate(masks[:MAX_PAINTINGS]):
-            descs[i, j] = describe(crop_to_mask(img, mask), params)
+def retrieve(q: Feat, museum: Sequence[Feat], norm: int, k: int = 5, min_inliers: int = 15) -> List[int]:
+    """Top-k museum indices by score. If even the best has < min_inliers the painting is assumed
+    not to be in the museum -> [-1]. Tune min_inliers (and `ratio`) on QSD1: it is the key to unknown queries."""
+    scores = np.array([match_score(q, m, norm) for m in museum])
+    top = np.argsort(-scores)[:k]
+    return [-1] if scores[top[0]] < min_inliers else top.tolist()
 
-    return descs, masks_by_query
+
+def apk(actual: List[int], pred: List[int], k: int) -> float:
+    """Average precision at k for one query."""
+    pred, hits, score = pred[:k], 0, 0.0
+    for i, p in enumerate(pred):
+        if p in actual and p not in pred[:i]:
+            hits += 1
+            score += hits / (i + 1)
+    return score / min(len(actual), k) if actual else 0.0
+
+
+def mapk(actual: List[List[int]], pred: List[List[int]], k: int) -> float:
+    """Mean average precision at k over all queries."""
+    return float(np.mean([apk(a, p, k) for a, p in zip(actual, pred)]))
+
+
+def main(museum_dir: str, query_dir: str, gt_path: Optional[str], k: int) -> None:
+    mus_paths = sorted(glob.glob(f"{museum_dir}/*.jpg"))
+    qry_paths = sorted(glob.glob(f"{query_dir}/*.jpg"))
+    gt = pickle.load(open(gt_path, "rb")) if gt_path else None
+    for name, (det, desc, det_kw, desc_kw) in CONFIGS.items():
+        norm = cv2.NORM_HAMMING if desc == "orb" else cv2.NORM_L2
+        museum = load_features(mus_paths, det, desc, det_kw, desc_kw)
+        queries = load_features(qry_paths, det, desc, det_kw, desc_kw)
+        pred = [retrieve(q, museum, norm, k) for q in queries]
+        if gt:
+            print(f"{name:18s} map@1={mapk(gt, pred, 1):.3f}  map@{k}={mapk(gt, pred, k):.3f}")
+        else:
+            print(name, pred[:5])
 
 
 if __name__ == "__main__":
-    db_ids, db_images = load_images(BBDD_DIR)
-    query_ids, query_images = load_images(QUERY_DIR)
-
-    with open(GROUND_TRUTH_DIR, "rb") as f:
-        ground_truth = pickle.load(f)
-
-    ground_truth = [ground_truth[qid] for qid in query_ids]
-
-    print("Computing BBDD descriptors...")
-    db_descs = np.vstack([describe(img, DESC_PARAMS) for img in tqdm(db_images, desc="BBDD")])
-
-    print("Detecting paintings and computing query descriptors...")
-    query_descs, masks_by_query = process_queries(query_images, db_descs.shape[1], DESC_PARAMS)
-    print(f"Query descriptors: {query_descs.shape}")
-
-    # (n_queries, MAX_PAINTINGS, n_database), NaN rows for missing paintings
-    dists = get_distances(query_descs, db_descs, metric=DESC_PARAMS["metric"])
-
-    predictions = retrieve_multi(dists, db_ids, k=K)
-    mapk1 = mapk_multi(ground_truth, predictions, k=1)
-    mapk5 = mapk_multi(ground_truth, predictions, k=5)
-
-    n_detected = [len(m) for m in masks_by_query]
-    print("\nResults:")
-    sep = "-" * 32
-    print(sep)
-    print(f"Metric: {DESC_PARAMS['metric']}")
-    print(f"Detections: 0 -> {n_detected.count(0)}, 1 -> {n_detected.count(1)}, "
-          f"2 -> {n_detected.count(2)}")
-    print(f"{'mAP@1':>10}{'mAP@5':>10}")
-    print(sep)
-    print(f"{mapk1:>10.4f}{mapk5:>10.4f}")
-    print(sep)
-
-    if RUN_TESTS:
-        tests = [
-            ("QST1", TEST1_DIR, False),
-            ("QST2", TEST2_DIR, True),
-        ]
-
-        for name, test_dir, save_masks in tests:
-            print(f"\nRunning test {name}...")
-            test_ids, test_images = load_images(test_dir)
-
-            test_descs, test_masks = process_queries(test_images, db_descs.shape[1], DESC_PARAMS)
-            test_dists = get_distances(test_descs, db_descs, metric=DESC_PARAMS["metric"])
-            test_predictions = retrieve_multi(test_dists, db_ids, k=K)
-
-            n_detected_test = [len(m) for m in test_masks]
-            print(f"{name} detections: 0 -> {n_detected_test.count(0)}, "
-                  f"1 -> {n_detected_test.count(1)}, 2 -> {n_detected_test.count(2)}")
-
-            out_test = RESULTS_DIR / name / "method1"
-            out_test.mkdir(parents=True, exist_ok=True)
-            with open(out_test / "result.pkl", "wb") as f:
-                pickle.dump(test_predictions, f)
-
-            if save_masks:
-                for i, (qid, img, masks) in enumerate(zip(test_ids, test_images, test_masks)):
-                    stem = Path(str(qid)).stem
-                    idx = int(stem) if stem.isdigit() else i
-                    cv2.imwrite(str(out_test / f"{idx:05d}.png"), combined_mask(masks, img.shape))
-
-            print(f"{name} results saved to {out_test}")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--museum", required=True)
+    ap.add_argument("--queries", required=True)
+    ap.add_argument("--gt", default=None, help="pickle with a list of lists of ground-truth museum ids")
+    ap.add_argument("--k", type=int, default=5)
+    a = ap.parse_args()
+    main(a.museum, a.queries, a.gt, a.k)
