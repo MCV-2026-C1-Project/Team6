@@ -18,8 +18,13 @@ Datasets:
               painting counts as AP = 0. Mask F1 is also reported, because the
               denoiser runs before painting detection.
     QSD1-W3 - one cropped painting per query: denoise -> describe -> retrieve.
+    QSD1-W4 - same full pipeline as QSD2-W3 (background, up to 2 paintings).
+              Its ground truth marks paintings that are not in the BBDD with
+              -1. The Week 3 pipeline cannot answer "not in the database", so
+              these always get AP = 0; mAP is also reported on known paintings only.
 
-Neither dataset was used to tune the Week 4 denoiser (it was tuned on QSD1-W4).
+The Week 4 denoiser was tuned (PSNR/SSIM) on QSD1-W4 but never on retrieval;
+the Week 3 sets were not used to tune it at all.
 
 Output: results/denoising_pipeline_eval.csv (AP per painting and method) and
 a summary printed to the console / saved to results/denoising_pipeline_summary.csv.
@@ -47,6 +52,9 @@ DB_DIR = DATA_DIR / "BBDD"
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
 PARAMS = w3_main.DESC_PARAMS
 KS = (1, 5, 10)
+
+# "detect": full Week 3 pipeline with painting detection; "crop": one cropped painting per query
+DATASETS = {"qsd2_w3": "detect", "qsd1_w3": "crop", "qsd1_w4": "detect"}
 
 
 def identity(image_bgr: np.ndarray) -> np.ndarray:
@@ -109,16 +117,20 @@ def ap_rows(dataset, method, ids, gt, impulse, predictions):
         for j, gt_painting in enumerate(gt_q):
             pred = pred_q[j] if j < len(pred_q) else []
             row = {"dataset": dataset, "method": method, "query": qid, "painting": j,
-                   "impulse": is_impulse, "detected": j < len(pred_q)}
+                   "impulse": is_impulse, "known": gt_painting != -1, "detected": j < len(pred_q)}
             row.update({f"ap@{k}": w3_utils.apk([gt_painting], pred, k) for k in KS})
             rows.append(row)
     return rows
 
 
-def mask_f1(ids, images, masks):
+def mask_f1(dataset, ids, images, masks):
+    """Mask F1 per query (NaN when the annotation does not match the image orientation)."""
     scores = {}
     for qid, img, m in zip(ids, images, masks):
-        gt_mask = cv2.imread(str(DATA_DIR / "qsd2_w3" / f"{qid:05d}.png"), cv2.IMREAD_GRAYSCALE)
+        gt_mask = cv2.imread(str(DATA_DIR / dataset / f"{qid:05d}.png"), cv2.IMREAD_GRAYSCALE)
+        if gt_mask is None or gt_mask.shape != img.shape[:2]:
+            scores[qid] = np.nan
+            continue
         scores[qid] = w3_utils.metrics(w3_utils.combined_mask(m, img.shape) > 0, gt_mask > 0)["f1"]
     return scores
 
@@ -134,7 +146,7 @@ def main() -> None:
     db_descs = np.vstack([w3_utils.describe(img, PARAMS) for img in db_images])
 
     rows, f1_rows = [], []
-    for dataset in ("qsd2_w3", "qsd1_w3"):
+    for dataset, pipeline in DATASETS.items():
         ids, images, gt, impulse, oracle = load_query_set(dataset)
         flagged = [qid for qid, img in zip(ids, images) if has_impulse_noise(img)]
         print(f"\n{dataset}: impulse-noise queries {[q for q, i in zip(ids, impulse) if i]}, "
@@ -144,10 +156,10 @@ def main() -> None:
         runs["oracle"] = (oracle, identity)
         for method, (query_images, denoise) in runs.items():
             print(f"  running {method}...")
-            if dataset == "qsd2_w3":
+            if pipeline == "detect":
                 predictions, masks = run_qsd2(query_images, db_ids, db_descs, denoise)
-                f1 = mask_f1(ids, query_images, masks)
-                f1_rows += [{"method": method, "query": q, "impulse": imp, "f1": f1[q],
+                f1 = mask_f1(dataset, ids, query_images, masks)
+                f1_rows += [{"dataset": dataset, "method": method, "query": q, "impulse": imp, "f1": f1[q],
                              "n_detected": len(m)} for q, imp, m in zip(ids, impulse, masks)]
             else:
                 predictions = run_qsd1(query_images, db_ids, db_descs, denoise)
@@ -158,20 +170,27 @@ def main() -> None:
     ap_cols = [f"ap@{k}" for k in KS]
     order = ["none", "week3", "week4", "oracle"]
 
-    summary = (df.groupby(["dataset", "method"])[ap_cols].mean()
-                 .rename(columns=lambda c: c.replace("ap", "mAP")).reindex(order, level=1))
-    noisy_only = (df[df["impulse"]].groupby(["dataset", "method"])[ap_cols].mean()
-                    .rename(columns=lambda c: c.replace("ap", "mAP")).reindex(order, level=1))
-    summary.to_csv(RESULTS_DIR / "denoising_pipeline_summary.csv")
+    def map_table(subset):
+        return (subset.groupby(["dataset", "method"])[ap_cols].mean()
+                      .rename(columns=lambda c: c.replace("ap", "mAP")).reindex(order, level=1))
+
+    summary = map_table(df)
+    known_only = map_table(df[df["known"]])
+    noisy_only = map_table(df[df["impulse"] & df["known"]])
+    pd.concat({"all": summary, "known": known_only, "noisy_known": noisy_only}).to_csv(
+        RESULTS_DIR / "denoising_pipeline_summary.csv")
 
     f1 = pd.DataFrame(f1_rows)
     with pd.option_context("display.width", 200, "display.max_rows", 200):
-        print("\n=== mAP over all paintings ===")
+        print("\n=== mAP over all paintings (unknown -1 paintings count as AP = 0) ===")
         print(summary.round(4))
-        print("\n=== mAP over the paintings of impulse-noise queries only ===")
+        print("\n=== mAP over known paintings only (excluding -1) ===")
+        print(known_only.round(4))
+        print("\n=== mAP over known paintings of impulse-noise queries only ===")
         print(noisy_only.round(4))
-        print("\n=== QSD2-W3 painting detection (mask F1) ===")
-        print(f1.groupby(["method", "impulse"])["f1"].mean().unstack().reindex(order).round(4))
+        print("\n=== Painting detection (mask F1) ===")
+        print(f1.groupby(["dataset", "method", "impulse"])["f1"].mean().unstack()
+                .reindex(order, level=1).round(4))
 
         print("\n=== Per painting, impulse-noise queries (AP@5) ===")
         noisy = df[df["impulse"]].pivot_table(index=["dataset", "query", "painting"], columns="method",
