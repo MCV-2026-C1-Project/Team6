@@ -8,6 +8,7 @@ from tqdm import tqdm
 import descriptors as desc_lib
 from denoising import denoise_image
 from keypoints import detect, resize_max_side
+from segmentation import crop_to_mask
 
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
