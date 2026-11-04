@@ -1,224 +1,37 @@
 from utils import *
 import os
 import pickle
-from multiprocessing import Pool
 from pathlib import Path
 from tqdm import tqdm
 
-import descriptors as desc_lib
 from denoising import denoise_image
-from keypoints import detect, resize_max_side
+from descriptors import NORMS, describe
 from segmentation import crop_to_mask
 
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
 QUERY_DIR = DATA_DIR / "qsd1_w4"
+GROUND_TRUTH_PATH = QUERY_DIR / "gt_corresps.pkl"
+FRAMES_PATH = QUERY_DIR / "frames.pkl"
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
-GROUND_TRUTH_DIR = QUERY_DIR / "gt_corresps.pkl"
 
 RUN_TESTS = True
 TEST_DIR = DATA_DIR / "qst1_w4"
-K = 10
 N_WORKERS = os.cpu_count()
 
-UNKNOWN = -1  # prediction for a painting that is not in the database
-
 PARAMS = {
-    "descriptor": "rootsift",   # key of descriptors.DESCRIPTORS
-    "keypoints": None,          # key of keypoints.DETECTORS, None = descriptor's own detector
-    "color": "gray",            # one of descriptors.COLORS
+    "descriptor": "rootsift",
+    "detector": None,
+    "color": "gray",
     "clahe": True,
-    "max_kps": 1000,
-    "max_side": 800,            # images are resized so the scales are comparable
-    "ratio": 0.75,              # Lowe's ratio test
-    "reproj": 5.0,              # RANSAC reprojection threshold (px)
-    "threshold": 25,            # min inliers of the best match, below it -> UNKNOWN
+    "max_keypoints": 1000,
+    "max_side": 800,
+    "lowe_ratio": 0.75,
+    "ransac_reproj_px": 5.0,
+    "min_inliers": 25,
+    "k": 10,
 }
-
-
-# =============================================================================
-# DESCRIPTION
-# =============================================================================
-
-def describe(img: np.ndarray, params: dict) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Compute the local features of an image.
-
-    Args:
-        img: BGR image.
-        params: Pipeline parameters (descriptor, keypoints, color, clahe,
-            max_kps, max_side).
-
-    Returns:
-        Tuple (points, descriptors): keypoint coordinates (N, 2) and their
-        descriptors (N, D), or None descriptors if no keypoint was found.
-    """
-    img = resize_max_side(img, params["max_side"])
-    name, kp = params["descriptor"], params["keypoints"]
-    color, clahe, max_kps = params["color"], params["clahe"], params["max_kps"]
-
-    if kp is None:
-        return desc_lib.DESCRIPTORS[name](img, max_kps, color, clahe)
-    if name != "rootsift":
-        raise ValueError("A custom keypoint detector is only supported with rootsift")
-    kps = detect(img, kp, max_kps=max_kps, clahe=clahe)
-    return desc_lib.rootsift(img, max_kps, color, clahe, kps=kps)
-
-
-def describe_database(db_images: list[np.ndarray], params: dict) -> list:
-    """Local features of every database image."""
-    return [describe(img, params) for img in tqdm(db_images, desc="BBDD")]
-
-
-def process_queries(query_images: list[np.ndarray], params: dict):
-    """
-    Detect up to MAX_PAINTINGS paintings per query and describe each of them.
-
-    Each query is denoised, its paintings are detected and every painting is
-    cropped to its mask and described with the given params.
-
-    Args:
-        query_images: Query images in BGR format.
-        params: Pipeline parameters passed to describe.
-
-    Returns:
-        Tuple (feats_by_query, masks_by_query) where feats_by_query[i] is the
-        list of features (one per detected painting) of query i, and
-        masks_by_query[i] is the list of detected masks of query i.
-    """
-    feats_by_query, masks_by_query = [], []
-
-    with open(QUERY_DIR / "frames.pkl", "rb") as f:  # TEMPORARY: GT frames
-        gt_frames = pickle.load(f)
-
-    for i, img in enumerate(tqdm(query_images, desc="Queries")):
-        img = denoise_image(img)
-        # masks = detect_paintings(img)[:MAX_PAINTINGS]
-        # TEMPORARY: ground-truth segmentation.
-        # frames.pkl: one [angle, 4 corners] per painting -> filled binary mask
-        masks = []
-        for _, quad in gt_frames[i]:
-            mask = np.zeros(img.shape[:2], np.uint8)
-            cv2.fillPoly(mask, [np.int32(quad).reshape(-1, 1, 2)], 1)
-            masks.append(mask)
-        masks_by_query.append(masks)
-        feats_by_query.append([describe(crop_to_mask(img, m), params) for m in masks])
-
-    return feats_by_query, masks_by_query
-
-
-# =============================================================================
-# MATCHING
-# =============================================================================
-
-def match_score(q, m, norm: int, ratio: float = 0.75, reproj: float = 5.0) -> int:
-    """
-    Number of geometrically consistent matches between two images.
-
-    1) Lowe's ratio test on the 2-NN matches, 2) RANSAC homography (paintings
-    are planar) on the surviving matches.
-
-    Args:
-        q, m: Features (points, descriptors) of the query and database image.
-        norm: OpenCV norm for the descriptors (NORM_L2 / NORM_HAMMING).
-
-    Returns:
-        RANSAC inlier count (0 if there are not enough matches).
-    """
-    (pq, dq), (pm, dm) = q, m
-    if dq is None or dm is None or len(dq) < 4 or len(dm) < 2:
-        return 0
-    knn = cv2.BFMatcher(norm).knnMatch(dq, dm, k=2)
-    good = [a for a, b in (x for x in knn if len(x) == 2) if a.distance < ratio * b.distance]
-    if len(good) < 4:
-        return 0
-    src = pq[[g.queryIdx for g in good]]
-    dst = pm[[g.trainIdx for g in good]]
-    _, inliers = cv2.findHomography(src, dst, cv2.RANSAC, reproj)
-    return int(inliers.sum()) if inliers is not None else 0
-
-
-def _init_worker(db_feats, norm, ratio, reproj):
-    global _DB, _NORM, _RATIO, _REPROJ
-    _DB, _NORM, _RATIO, _REPROJ = db_feats, norm, ratio, reproj
-    cv2.setNumThreads(1)
-
-
-def _score_row(q):
-    return [match_score(q, m, _NORM, _RATIO, _REPROJ) for m in _DB]
-
-
-def score_matrix(query_feats: list, db_feats: list, params: dict, n_workers: int = N_WORKERS) -> np.ndarray:
-    """
-    S[i, j] = inliers between painting i and database image j.
-
-    Args:
-        query_feats: Flat list of painting features.
-        db_feats: Features of the database images.
-        params: Pipeline parameters (descriptor, ratio, reproj).
-        n_workers: Number of processes (1 = no multiprocessing).
-
-    Returns:
-        Integer array of shape (len(query_feats), len(db_feats)).
-    """
-    if not query_feats:
-        return np.zeros((0, len(db_feats)), int)
-
-    init_args = (db_feats, desc_lib.NORMS[params["descriptor"]], params["ratio"], params["reproj"])
-    if n_workers == 1:
-        _init_worker(*init_args)
-        rows = [_score_row(q) for q in tqdm(query_feats, desc="Matching")]
-    else:
-        with Pool(n_workers, _init_worker, init_args) as pool:
-            rows = list(tqdm(pool.imap(_score_row, query_feats), total=len(query_feats), desc="Matching"))
-    return np.array(rows, int)
-
-
-def query_scores(feats_by_query: list, db_feats: list, params: dict, n_workers: int = N_WORKERS) -> list:
-    """
-    Score every detected painting of every query against the database.
-
-    Returns:
-        One array of shape (n_paintings_i, n_database) per query.
-    """
-    flat = [f for feats in feats_by_query for f in feats]
-    S = score_matrix(flat, db_feats, params, n_workers)
-    splits = np.cumsum([len(f) for f in feats_by_query])[:-1]
-    return np.split(S, splits)
-
-
-# =============================================================================
-# RETRIEVAL
-# =============================================================================
-
-def retrieve_unknown(scores_by_query: list, db_ids: list[int], k: int, threshold: float) -> list:
-    """
-    Top-k database IDs per painting, or [UNKNOWN] if the painting is not in it.
-
-    A painting is considered unknown when its best score is below threshold.
-
-    Args:
-        scores_by_query: One array (n_paintings_i, n_database) per query
-            (higher is better).
-        db_ids: Database IDs of the score columns.
-        k: Number of IDs retrieved per painting.
-        threshold: Min best score to accept the retrieval.
-
-    Returns:
-        [[[ids painting 1], [ids painting 2]], [[-1]], ...]
-    """
-    db_ids = np.asarray(db_ids)
-    preds = []
-    for S in scores_by_query:
-        pred_q = []
-        for row in S:
-            if row.max() < threshold:
-                pred_q.append([UNKNOWN])
-            else:
-                pred_q.append(db_ids[np.argsort(-row, kind="stable")[:k]].tolist())
-        preds.append(pred_q)
-    return preds
 
 
 # =============================================================================
@@ -229,87 +42,144 @@ def run_pipeline(
     query_images: list[np.ndarray],
     db_images: list[np.ndarray],
     db_ids: list[int],
-    params: dict,
-    k: int = K,
-    ground_truth: list | None = None,
-    db_feats: list | None = None,
+    *,
+    descriptor: str,
+    detector: str | None,
+    color: str,
+    clahe: bool,
+    max_keypoints: int,
+    max_side: int,
+    lowe_ratio: float,
+    ransac_reproj_px: float,
+    min_inliers: int,
+    k: int,
     n_workers: int = N_WORKERS,
+    predictions: bool = True,
 ) -> dict:
     """
-    Full W4 pipeline: denoise -> detect paintings -> local features ->
-    matching (ratio test + RANSAC) -> retrieval with unknowns (-1) -> mAP@k.
+    Full W4 pipeline: denoise -> crop paintings -> resize -> local features ->
+    matching (Lowe's ratio + RANSAC) -> retrieval with unknowns (-1).
 
-    Reusable from the grid search: pass db_feats to avoid recomputing the
-    database when only the matching/threshold params change, and reuse the
-    returned "scores" with retrieve_unknown to sweep the threshold for free.
+    Reusable from the grid search: with predictions=False it stops at the
+    matching, and the returned "inliers" can be passed to retrieve_with_unknowns
+    to sweep min_inliers and k without matching again.
 
     Args:
         query_images: Query images in BGR format.
         db_images: Database images in BGR format.
         db_ids: Database IDs.
-        params: Pipeline parameters (see PARAMS).
+        descriptor: Key of descriptors.DESCRIPTORS.
+        detector: Key of keypoints.DETECTORS, or None for the descriptor's own detector.
+        color: One of descriptors.COLORS.
+        clahe: Equalise the local contrast before detecting and describing.
+        max_keypoints: Maximum number of keypoints per image.
+        max_side: Longest side of every painting before describing it.
+        lowe_ratio: Max ratio of Lowe's ratio test.
+        ransac_reproj_px: RANSAC reprojection threshold, in pixels.
+        min_inliers: Inliers the best database image needs, below it -> -1.
         k: Number of IDs retrieved per painting.
-        ground_truth: Optional GT per query (e.g. [[-1], [150], [48, 251]]).
-        db_feats: Optional precomputed database features for these params.
         n_workers: Number of processes for the matching.
+        predictions: Retrieve the top-k IDs of every painting.
 
     Returns:
-        Dict with "predictions", "scores", "masks", "db_feats" and, if
-        ground_truth is given, "map1" and "map5".
+        Dict with "inliers", "masks" and, if predictions is True, "predictions".
     """
-    if db_feats is None:
-        db_feats = describe_database(db_images, params)
+    # ---------------------------------------------------------------- database
+    db_features = []
+    for image in tqdm(db_images, desc="BBDD"):
+        painting = resize_max_side(image, max_side)
+        db_features.append(describe(painting, descriptor, detector, color, clahe, max_keypoints))
 
-    feats_by_query, masks_by_query = process_queries(query_images, params)
-    scores = query_scores(feats_by_query, db_feats, params, n_workers)
-    predictions = retrieve_unknown(scores, db_ids, k, params["threshold"])
+    # ---------------------------------------------------------------- queries
+    frames_by_query = load_pickle(FRAMES_PATH)
+    query_features, query_masks = [], []
 
-    out = {"predictions": predictions, "scores": scores, "masks": masks_by_query, "db_feats": db_feats}
-    if ground_truth is not None:
-        out["map1"] = mapk_multi(ground_truth, predictions, k=1)
-        out["map5"] = mapk_multi(ground_truth, predictions, k=5)
-    return out
+    for query, frames in zip(tqdm(query_images, desc="Queries"), frames_by_query):
+        query = denoise_image(query)
+        masks = [cv2.fillPoly(np.zeros(query.shape[:2], np.uint8), [np.int32(corners).reshape(-1, 1, 2)], 1)
+                 for _angle, corners in frames]
+
+        feats = []
+        for mask in masks:
+            cropped = crop_to_mask(query, mask)
+            resized = resize_max_side(cropped, max_side)
+            descr = describe(resized, descriptor, detector, color, clahe, max_keypoints)
+            feats.append(descr)
+
+        query_masks.append(masks)
+        query_features.append(feats)
+
+    # ---------------------------------------------------------------- matching
+    inliers = inliers_by_query(query_features, db_features, NORMS[descriptor],
+                               lowe_ratio, ransac_reproj_px, n_workers)
+
+    results = {"inliers": inliers, "masks": query_masks}
+
+    # ---------------------------------------------------------------- retrieval
+    if predictions:
+        results["predictions"] = retrieve_with_unknowns(inliers, db_ids, k, min_inliers)
+
+    return results
+
+
+# =============================================================================
+# REPORT
+# =============================================================================
+
+def print_results(results: dict, ground_truth: list, params: dict):
+    """
+    Print the configuration of a run, its painting counts compared with the
+    ground truth and its mAP.
+    """
+    predicted_counts = [len(masks) for masks in results["masks"]]
+    ground_truth_counts = [len(paintings) for paintings in ground_truth]
+    predicted_unknown = sum(painting == [UNKNOWN] for query in results["predictions"] for painting in query)
+    ground_truth_unknown = sum(painting == UNKNOWN for query in ground_truth for painting in query)
+
+    print("\nResults:")
+    print(f"Descriptor: {params['descriptor']} ({params['detector'] or 'own'} keypoints)")
+
+    separator = "-" * 52
+    print(separator)
+    print(f"{'':<14}{'0 paint.':>9}{'1 paint.':>9}{'2 paint.':>9}{'Unknown':>11}")
+    print(separator)
+    for name, counts, n_unknown in [("Predicted", predicted_counts, predicted_unknown),
+                                    ("Ground truth", ground_truth_counts, ground_truth_unknown)]:
+        print(f"{name:<14}{counts.count(0):>9}{counts.count(1):>9}{counts.count(2):>9}{n_unknown:>11}")
+    print(separator)
+    print(f"Total paintings (ground truth): {sum(ground_truth_counts)}")
+
+    separator = "-" * 20
+    print(separator)
+    print(f"{'mAP@1':>10}{'mAP@5':>10}")
+    print(separator)
+    print(f"{results['map1']:>10.4f}{results['map5']:>10.4f}")
+    print(separator)
+
+
+def save_predictions(predictions: list, output_dir: Path):
+    """Save the predictions as output_dir/result.pkl."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    with open(output_dir / "result.pkl", "wb") as f:
+        pickle.dump(predictions, f)
+    print(f"Results saved to {output_dir}")
 
 
 if __name__ == "__main__":
     db_ids, db_images = load_images(BBDD_DIR)
     query_ids, query_images = load_images(QUERY_DIR)
 
-    with open(GROUND_TRUTH_DIR, "rb") as f:
-        ground_truth = pickle.load(f)
+    ground_truth_by_id = load_pickle(GROUND_TRUTH_PATH)
+    ground_truth = [ground_truth_by_id[query_id] for query_id in query_ids]
 
-    ground_truth = [ground_truth[qid] for qid in query_ids]
+    results = run_pipeline(query_images, db_images, db_ids, **PARAMS)
 
-    res = run_pipeline(query_images, db_images, db_ids, PARAMS, K, ground_truth)
-
-    n_detected = [len(m) for m in res["masks"]]
-    n_unknown = sum(p == [UNKNOWN] for q in res["predictions"] for p in q)
-    n_gt = [len(g) for g in ground_truth]
-    n_gt_unknown = sum(p == UNKNOWN for g in ground_truth for p in g)
-    print("\nResults:")
-    sep = "-" * 32
-    print(sep)
-    print(f"Descriptor: {PARAMS['descriptor']} ({PARAMS['keypoints'] or 'own'} keypoints)")
-    print(f"Detections:   0 -> {n_detected.count(0)}, 1 -> {n_detected.count(1)}, "
-          f"2 -> {n_detected.count(2)}")
-    print(f"Ground truth: 0 -> {n_gt.count(0)}, 1 -> {n_gt.count(1)}, "
-          f"2 -> {n_gt.count(2)}")
-    print(f"Unknown: predicted {n_unknown} / ground truth {n_gt_unknown} "
-          f"(of {sum(n_gt)} paintings)")
-    print(f"{'mAP@1':>10}{'mAP@5':>10}")
-    print(sep)
-    print(f"{res['map1']:>10.4f}{res['map5']:>10.4f}")
-    print(sep)
+    results["map1"] = mapk_multi(ground_truth, results["predictions"], k=1)
+    results["map5"] = mapk_multi(ground_truth, results["predictions"], k=5)
+    print_results(results, ground_truth, PARAMS)
 
     if RUN_TESTS and TEST_DIR.exists():
-        name = "QST1"
-        print(f"\nRunning test {name}...")
-        test_ids, test_images = load_images(TEST_DIR)
-        test = run_pipeline(test_images, db_images, db_ids, PARAMS, K, db_feats=res["db_feats"])
-
-        out_test = RESULTS_DIR / name / "method1"
-        out_test.mkdir(parents=True, exist_ok=True)
-        with open(out_test / "result.pkl", "wb") as f:
-            pickle.dump(test["predictions"], f)
-
-        print(f"{name} results saved to {out_test}")
+        print("\nRunning test QST1...")
+        _, test_images = load_images(TEST_DIR)
+        test_results = run_pipeline(test_images, db_images, db_ids, **PARAMS)
+        save_predictions(test_results["predictions"], RESULTS_DIR / "QST1" / "method1")

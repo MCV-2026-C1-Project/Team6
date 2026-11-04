@@ -1,6 +1,49 @@
+import os
+import pickle
+from multiprocessing import Pool
 from pathlib import Path
 import numpy as np
 import cv2
+from tqdm import tqdm
+
+# =============================================================================
+# PREPROCESSING
+# =============================================================================
+
+def to_gray(image: np.ndarray, clahe: bool = True) -> np.ndarray:
+    """
+    Convert an image to gray, optionally equalising its local contrast.
+
+    Args:
+        image: BGR or gray image.
+        clahe: Apply CLAHE (clip limit 2, 8x8 tiles) to the gray image.
+
+    Returns:
+        uint8 gray image.
+    """
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if image.ndim == 3 else image
+    if not clahe:
+        return gray
+    return cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8)).apply(gray)
+
+
+def resize_max_side(image: np.ndarray, max_side: int = 800) -> np.ndarray:
+    """
+    Downscale an image so its longest side is at most max_side.
+
+    Args:
+        image: Input image.
+        max_side: Maximum length of the longest side, in pixels.
+
+    Returns:
+        The resized image, or the same image if it is already small enough
+        (it is never upscaled).
+    """
+    scale = max_side / max(image.shape[:2])
+    if scale >= 1:
+        return image
+    return cv2.resize(image, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
+
 
 # =============================================================================
 # TOOLS
@@ -39,6 +82,12 @@ def load_images(folder: str, color_space: int = None) -> tuple[list[int], list[n
         images.append(img)
 
     return ids, images
+
+
+def load_pickle(path: str | Path):
+    """Load a pickle file."""
+    with open(path, "rb") as f:
+        return pickle.load(f)
 
 # =============================================================================
 # EVALUATION
@@ -189,6 +238,61 @@ def metrics(pred: np.ndarray, gt: np.ndarray) -> dict:
 
 
 # =============================================================================
+# MATCHING
+# =============================================================================
+
+def count_inliers(query_features, db_features, norm, lowe_ratio=0.75, ransac_reproj_px=5.0) -> int:
+    """Inliers of a RANSAC homography fitted on the matches that pass Lowe's ratio test."""
+    query_points, query_descriptors = query_features
+    db_points, db_descriptors = query_features, db_features
+
+    if query_descriptors is None or db_descriptors is None:
+        return 0
+    if len(query_descriptors) < 4 or len(db_descriptors) < 2:
+        return 0
+
+    pairs = cv2.BFMatcher(norm).knnMatch(query_descriptors, db_descriptors, k=2)
+    good = [best for best, second in (pair for pair in pairs if len(pair) == 2)
+            if best.distance < lowe_ratio * second.distance]
+    if len(good) < 4:
+        return 0
+
+    _, inliers = cv2.findHomography(query_points[[match.queryIdx for match in good]],
+                                    db_points[[match.trainIdx for match in good]],
+                                    cv2.RANSAC, ransac_reproj_px)
+    return int(inliers.sum()) if inliers is not None else 0
+
+
+def _init_worker(db_features, norm, lowe_ratio, ransac_reproj_px):
+    global DB_FEATURES, MATCH_ARGS
+    DB_FEATURES, MATCH_ARGS = db_features, (norm, lowe_ratio, ransac_reproj_px)
+    cv2.setNumThreads(1)
+
+
+def _inliers_row(query_features):
+    return [count_inliers(query_features, db, *MATCH_ARGS) for db in DB_FEATURES]
+
+
+def inlier_matrix(paintings_features, db_features, norm, lowe_ratio=0.75, ransac_reproj_px=5.0,
+                  n_workers=None) -> np.ndarray:
+    """M[i, j] = inliers between painting i and database image j (in parallel)."""
+    init_args = (db_features, norm, lowe_ratio, ransac_reproj_px)
+    with Pool(n_workers or os.cpu_count(), _init_worker, init_args) as pool:
+        rows = list(tqdm(pool.imap(_inliers_row, paintings_features),
+                         total=len(paintings_features), desc="Matching"))
+    return np.array(rows, int).reshape(len(paintings_features), len(db_features))
+
+
+def inliers_by_query(features_by_query, db_features, norm, lowe_ratio=0.75, ransac_reproj_px=5.0,
+                     n_workers=None) -> list[np.ndarray]:
+    """Inlier matrix (n_paintings, n_database) of every query."""
+    paintings = [painting for query in features_by_query for painting in query]
+    inliers = inlier_matrix(paintings, db_features, norm, lowe_ratio, ransac_reproj_px, n_workers)
+    query_starts = np.cumsum([len(query) for query in features_by_query])[:-1]
+    return np.split(inliers, query_starts)
+
+
+# =============================================================================
 # RETRIEVAL
 # =============================================================================
 
@@ -255,3 +359,19 @@ def retrieve_multi(dists: np.ndarray, db_ids: list[int], k: int) -> list[list[li
         valid = ~np.isnan(q).all(axis=1)
         preds.append(retrieve(q[valid], db_ids, k) if valid.any() else [])
     return preds
+
+
+UNKNOWN = -1
+
+
+def rank_painting(painting_inliers, db_ids, k, min_inliers) -> list[int]:
+    """Top-k database IDs of a painting, or [UNKNOWN] if its best match has < min_inliers."""
+    if painting_inliers.max() < min_inliers:
+        return [UNKNOWN]
+    return [db_ids[i] for i in np.argsort(-painting_inliers, kind="stable")[:k]]
+
+
+def retrieve_with_unknowns(inliers_by_query, db_ids, k, min_inliers) -> list[list[list[int]]]:
+    """[[[ids painting 1], [ids painting 2]], [[-1]], ...] for every query."""
+    return [[rank_painting(painting, db_ids, k, min_inliers) for painting in query]
+            for query in inliers_by_query]

@@ -19,21 +19,9 @@ from typing import Callable, Dict, List, Optional
 import cv2
 import numpy as np
 
+from utils import to_gray
+
 KPs = List[cv2.KeyPoint]
-
-
-def resize_max_side(img: np.ndarray, max_side: int = 800) -> np.ndarray:
-    """Downscale an image so its longest side is at most max_side (never upscales)."""
-    scale = max_side / max(img.shape[:2])
-    if scale >= 1:
-        return img
-    return cv2.resize(img, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
-
-
-def to_gray(img: np.ndarray, clahe: bool = True) -> np.ndarray:
-    """BGR -> gray, optionally with CLAHE (local contrast equalisation)."""
-    g = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img.ndim == 3 else img
-    return cv2.createCLAHE(2.0, (8, 8)).apply(g) if clahe else g
 
 
 # ---------------------------------------------------------------- DoG

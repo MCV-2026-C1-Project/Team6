@@ -1,8 +1,8 @@
 """OpenCV local descriptors: (img, max_kps, color, clahe) -> (points Nx2, descriptors NxD)."""
 import cv2
 import numpy as np
-
-from keypoints import to_gray
+from keypoints import detect
+from utils import to_gray
 
 try:
     AKAZE_create = cv2.AKAZE_create
@@ -52,3 +52,28 @@ def orb(img, max_kps=1000, color="gray", clahe=True):
 
 DESCRIPTORS = {"rootsift": rootsift, "akaze": akaze, "orb": orb}
 NORMS = {"rootsift": cv2.NORM_L2, "akaze": cv2.NORM_HAMMING, "orb": cv2.NORM_HAMMING}
+
+
+def describe(image: np.ndarray, descriptor: str = "rootsift", detector: str | None = None,
+             color: str = "gray", clahe: bool = True, max_keypoints: int = 1000):
+    """
+    Local features of an image, described as given (no resizing).
+
+    Args:
+        image: BGR image.
+        descriptor: Key of DESCRIPTORS.
+        detector: Key of keypoints.DETECTORS, or None for the descriptor's own detector.
+        color: One of COLORS.
+        clahe: Equalise the local contrast before detecting and describing.
+        max_keypoints: Maximum number of keypoints.
+
+    Returns:
+        Tuple (points, descriptors): keypoint coordinates (N, 2) and their
+        descriptors (N, D), or None descriptors if no keypoint was found.
+    """
+    if detector is None:
+        return DESCRIPTORS[descriptor](image, max_keypoints, color, clahe)
+    if descriptor != "rootsift":
+        raise ValueError("A custom keypoint detector is only supported with rootsift")
+    keypoints = detect(image, detector, max_kps=max_keypoints, clahe=clahe)
+    return rootsift(image, max_keypoints, color, clahe, kps=keypoints)
