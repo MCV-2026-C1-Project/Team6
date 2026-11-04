@@ -244,7 +244,7 @@ def metrics(pred: np.ndarray, gt: np.ndarray) -> dict:
 def count_inliers(query_features, db_features, norm, lowe_ratio=0.75, ransac_reproj_px=5.0) -> int:
     """Inliers of a RANSAC homography fitted on the matches that pass Lowe's ratio test."""
     query_points, query_descriptors = query_features
-    db_points, db_descriptors = query_features, db_features
+    db_points, db_descriptors = db_features
 
     if query_descriptors is None or db_descriptors is None:
         return 0
