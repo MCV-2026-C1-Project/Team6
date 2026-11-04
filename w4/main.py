@@ -6,14 +6,13 @@ from tqdm import tqdm
 
 from denoising import denoise_image
 from descriptors import NORMS, describe
-from segmentation import crop_to_mask
+from segmentation import MAX_PAINTINGS, detect_paintings
 
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 BBDD_DIR = DATA_DIR / "BBDD"
 QUERY_DIR = DATA_DIR / "qsd1_w4"
 GROUND_TRUTH_PATH = QUERY_DIR / "gt_corresps.pkl"
-FRAMES_PATH = QUERY_DIR / "frames.pkl"
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
 
 RUN_TESTS = True
@@ -29,7 +28,7 @@ PARAMS = {
     "max_side": 800,
     "lowe_ratio": 0.75,
     "ransac_reproj_px": 5.0,
-    "min_inliers": 25,
+    "min_inliers": 40,
     "k": 10,
 }
 
@@ -86,18 +85,16 @@ def run_pipeline(
     """
     # ---------------------------------------------------------------- database
     db_features = []
-    for image in tqdm(db_images, desc="BBDD", leave=False):
+    for image in tqdm(db_images, desc="BBDD"):
         painting = resize_max_side(image, max_side)
         db_features.append(describe(painting, descriptor, detector, color, clahe, max_keypoints))
 
     # ---------------------------------------------------------------- queries
-    frames_by_query = load_pickle(FRAMES_PATH)
     query_features, query_masks = [], []
 
-    for query, frames in zip(tqdm(query_images, desc="Queries", leave=False), frames_by_query):
+    for query in tqdm(query_images, desc="Queries"):
         query = denoise_image(query)
-        masks = [cv2.fillPoly(np.zeros(query.shape[:2], np.uint8), [np.int32(corners).reshape(-1, 1, 2)], 1)
-                 for _angle, corners in frames]
+        masks = detect_paintings(query)
 
         feats = []
         for mask in masks:
@@ -137,15 +134,16 @@ def print_results(results: dict, ground_truth: list, params: dict):
     ground_truth_unknown = sum(painting == UNKNOWN for query in ground_truth for painting in query)
 
     print("\nResults:")
-    print(f"Descriptor: {params['descriptor']} ({params['detector'] or 'own'} keypoints)")
+    print(f"Descriptor: {params['descriptor']} ({params['detector'] or 'default'} keypoints)")
 
-    separator = "-" * 52
+    n_paintings = range(MAX_PAINTINGS + 1)
+    separator = "-" * (14 + 9 * len(n_paintings) + 11)
     print(separator)
-    print(f"{'':<14}{'0 paint.':>9}{'1 paint.':>9}{'2 paint.':>9}{'Unknown':>11}")
+    print(f"{'':<14}" + "".join(f"{f'{n} paint.':>9}" for n in n_paintings) + f"{'Unknown':>11}")
     print(separator)
     for name, counts, n_unknown in [("Predicted", predicted_counts, predicted_unknown),
                                     ("Ground truth", ground_truth_counts, ground_truth_unknown)]:
-        print(f"{name:<14}{counts.count(0):>9}{counts.count(1):>9}{counts.count(2):>9}{n_unknown:>11}")
+        print(f"{name:<14}" + "".join(f"{counts.count(n):>9}" for n in n_paintings) + f"{n_unknown:>11}")
     print(separator)
     print(f"Total paintings (ground truth): {sum(ground_truth_counts)}")
 

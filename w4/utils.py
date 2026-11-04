@@ -45,6 +45,23 @@ def resize_max_side(image: np.ndarray, max_side: int = 800) -> np.ndarray:
     return cv2.resize(image, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
 
 
+def crop_to_mask(image: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """
+    Crop an image to the bounding box of a mask.
+
+    Args:
+        image: Input image of shape (h, w) or (h, w, C).
+        mask: Binary mask of shape (h, w).
+
+    Returns:
+        Cropped image, or the whole image if the mask is empty.
+    """
+    ys, xs = np.nonzero(mask)
+    if ys.size == 0:
+        return image
+    return image[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+
+
 # =============================================================================
 # TOOLS
 # =============================================================================
@@ -279,7 +296,7 @@ def inlier_matrix(paintings_features, db_features, norm, lowe_ratio=0.75, ransac
     init_args = (db_features, norm, lowe_ratio, ransac_reproj_px)
     with Pool(n_workers or os.cpu_count(), _init_worker, init_args) as pool:
         rows = list(tqdm(pool.imap(_inliers_row, paintings_features),
-                         total=len(paintings_features), desc="Matching", leave=False))
+                         total=len(paintings_features), desc="Matching"))
     return np.array(rows, int).reshape(len(paintings_features), len(db_features))
 
 
