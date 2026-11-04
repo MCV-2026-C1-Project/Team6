@@ -4,6 +4,7 @@ import pickle
 from multiprocessing import Pool
 from pathlib import Path
 from tqdm import tqdm
+from segmentation import detect_paintings
 
 import descriptors as desc_lib
 from denoising import denoise_image
@@ -91,16 +92,9 @@ def process_queries(query_images: list[np.ndarray], params: dict):
     with open(QUERY_DIR / "frames.pkl", "rb") as f:  # TEMPORARY: GT frames
         gt_frames = pickle.load(f)
 
-    for i, img in enumerate(tqdm(query_images, desc="Queries")):
+    for img in tqdm(query_images, desc="Queries"):
         img = denoise_image(img)
-        # masks = detect_paintings(img)[:MAX_PAINTINGS]
-        # TEMPORARY: ground-truth segmentation.
-        # frames.pkl: one [angle, 4 corners] per painting -> filled binary mask
-        masks = []
-        for _, quad in gt_frames[i]:
-            mask = np.zeros(img.shape[:2], np.uint8)
-            cv2.fillPoly(mask, [np.int32(quad).reshape(-1, 1, 2)], 1)
-            masks.append(mask)
+        masks = detect_paintings(img)
         masks_by_query.append(masks)
         feats_by_query.append([describe(crop_to_mask(img, m), params) for m in masks])
 
