@@ -17,8 +17,8 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-import cv_descriptors as cvd
-from cv_descriptors import COLORS
+import w4.descriptors as desc
+from w4.descriptors import COLORS
 from keypoints import detect, resize_max_side
 
 DESCRIPTORS = ["rootsift", "akaze", "orb"]
@@ -66,8 +66,8 @@ def grid():
 
 def features(img, desc, color, clahe, kp):
     if kp is None:
-        return cvd.DESCRIPTORS[desc](img, MAX_KPS, color, clahe)
-    return cvd.rootsift(img, MAX_KPS, color, clahe, kps=detect(img, kp, max_kps=MAX_KPS, clahe=clahe))
+        return desc.DESCRIPTORS[desc](img, MAX_KPS, color, clahe)
+    return desc.rootsift(img, MAX_KPS, color, clahe, kps=detect(img, kp, max_kps=MAX_KPS, clahe=clahe))
 
 
 # ---------------------------------------------------------------- matching (in parallel)
@@ -126,7 +126,7 @@ def main():
     for desc, color, clahe, kp in grid():
         museum = [features(im, desc, color, clahe, kp) for im in museum_imgs]
         queries = [features(im, desc, color, clahe, kp) for im in query_imgs]
-        S = score_matrix(queries, museum, cvd.NORMS[desc])
+        S = score_matrix(queries, museum, desc.NORMS[desc])
         map5, map5_all, thr = evaluate(S, labels)
         row = dict(descriptor=desc, color=color, clahe=clahe, keypoints=kp or "own",
                    map5=round(map5, 3), map5_unknowns=round(map5_all, 3), threshold=thr)
