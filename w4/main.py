@@ -86,7 +86,7 @@ def run_pipeline(
     """
     # ---------------------------------------------------------------- database
     db_features = []
-    for image in tqdm(db_images, desc="BBDD"):
+    for image in tqdm(db_images, desc="BBDD", leave=False):
         painting = resize_max_side(image, max_side)
         db_features.append(describe(painting, descriptor, detector, color, clahe, max_keypoints))
 
@@ -94,7 +94,7 @@ def run_pipeline(
     frames_by_query = load_pickle(FRAMES_PATH)
     query_features, query_masks = [], []
 
-    for query, frames in zip(tqdm(query_images, desc="Queries"), frames_by_query):
+    for query, frames in zip(tqdm(query_images, desc="Queries", leave=False), frames_by_query):
         query = denoise_image(query)
         masks = [cv2.fillPoly(np.zeros(query.shape[:2], np.uint8), [np.int32(corners).reshape(-1, 1, 2)], 1)
                  for _angle, corners in frames]

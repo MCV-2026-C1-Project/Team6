@@ -279,7 +279,7 @@ def inlier_matrix(paintings_features, db_features, norm, lowe_ratio=0.75, ransac
     init_args = (db_features, norm, lowe_ratio, ransac_reproj_px)
     with Pool(n_workers or os.cpu_count(), _init_worker, init_args) as pool:
         rows = list(tqdm(pool.imap(_inliers_row, paintings_features),
-                         total=len(paintings_features), desc="Matching"))
+                         total=len(paintings_features), desc="Matching", leave=False))
     return np.array(rows, int).reshape(len(paintings_features), len(db_features))
 
 
