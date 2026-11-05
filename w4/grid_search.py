@@ -29,8 +29,9 @@ CACHE_PATH = RESULTS_DIR / "inliers.pkl"
 
 DESCRIPTORS = ["rootsift", "akaze", "orb"]
 DETECTORS = [None, "dog", "harris_laplace", "hessian_laplace", "fast"]
+COLOR_OPTIONS = ["gray", "gray_saturation", "opponent"]
 CLAHE = [True, False]
-MAX_KEYPOINTS = [500, 1000, 2000]
+MAX_KEYPOINTS = [500, 1000]
 
 N_PLOTTED = 5
 COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"]
@@ -38,14 +39,15 @@ COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"]
 
 def configurations() -> list[dict]:
     """Custom detectors only exist for rootsift."""
-    return [dict(descriptor=descriptor, detector=detector, clahe=clahe, max_keypoints=max_keypoints)
-            for descriptor, clahe, max_keypoints in product(DESCRIPTORS, CLAHE, MAX_KEYPOINTS)
+    return [dict(descriptor=descriptor, detector=detector, color=color, clahe=clahe, max_keypoints=max_keypoints)
+            for descriptor, color, clahe, max_keypoints in product(DESCRIPTORS, COLOR_OPTIONS, CLAHE, MAX_KEYPOINTS)
             for detector in (DETECTORS if descriptor == "rootsift" else [None])]
 
 
 def name(config: dict) -> str:
     detector = f"+{config['detector']}" if config["detector"] else ""
-    return f"{config['descriptor']}{detector} clahe={config['clahe']} kps={config['max_keypoints']}"
+    return (f"{config['descriptor']}{detector} color={config['color']} "
+            f"clahe={config['clahe']} kps={config['max_keypoints']}")
 
 
 def search(query_images, db_images, db_ids, cache_path=CACHE_PATH) -> dict:
@@ -112,7 +114,7 @@ if __name__ == "__main__":
     evaluations = {config_name: evaluate(inliers, labels, db_ids)
                    for config_name, inliers in inliers_by_config.items()}
 
-    table = pd.DataFrame([{"name": name(config), **config, "detector": config["detector"] or "own",
+    table = pd.DataFrame([{"name": name(config), **config, "detector": config["detector"] or "default",
                            "map5_unknowns": round(evaluations[name(config)]["best_map5"], 4),
                            "threshold": int(evaluations[name(config)]["threshold"]),
                            "roc_auc": round(evaluations[name(config)]["auc"], 4)}
