@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from denoising import denoise_image
 from descriptors import NORMS, describe
-from segmentation import MAX_PAINTINGS, detect_paintings
+from segmentation import MAX_PAINTINGS, detect_paintings, resize_max_side
 
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -21,14 +21,14 @@ N_WORKERS = os.cpu_count()
 
 PARAMS = {
     "descriptor": "rootsift",
-    "detector": None,
+    "detector": "hessian_laplace",
     "color": "gray",
-    "clahe": True,
+    "clahe": False,
     "max_keypoints": 1000,
     "max_side": 800,
     "lowe_ratio": 0.75,
     "ransac_reproj_px": 5.0,
-    "min_inliers": 40,
+    "min_inliers": 28,
     "k": 10,
 }
 
