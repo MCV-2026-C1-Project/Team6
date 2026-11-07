@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from denoising import denoise_image
 from descriptors import NORMS, describe
-from segmentation import MAX_PAINTINGS, detect_paintings
+from segmentation import MAX_PAINTINGS, detect_paintings, resize_max_side
 
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
