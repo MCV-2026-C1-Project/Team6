@@ -19,16 +19,17 @@ RUN_TESTS = True
 TEST_DIR = DATA_DIR / "qst1_w4"
 N_WORKERS = os.cpu_count()
 
+
 PARAMS = {
     "descriptor": "rootsift",
-    "detector": None,
+    "detector": "hessian_laplace",
     "color": "gray",
-    "clahe": True,
+    "clahe": False,
     "max_keypoints": 1000,
     "max_side": 800,
     "lowe_ratio": 0.75,
     "ransac_reproj_px": 5.0,
-    "min_inliers": 40,
+    "min_inliers": 28,
     "k": 10,
 }
 
