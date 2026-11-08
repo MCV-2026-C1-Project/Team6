@@ -126,6 +126,14 @@ def evaluate(edges_by_image: list[np.ndarray], data, close_frac, open_frac, proj
 
 
 def main() -> None:
+    """
+    Run the painting detection grid search on the dataset.
+
+    Evaluates every combination of colour option, edge threshold and
+    morphology/projection fractions, writes each result to grid_search.csv
+    as it runs, and prints the 10 best configurations by painting count
+    and F1.
+    """
     data = load_data()
     print(f"{len(data)} images loaded from {IMAGE_DIR}")
 

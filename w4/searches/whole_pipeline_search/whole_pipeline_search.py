@@ -45,6 +45,15 @@ def configurations() -> list[dict]:
 
 
 def name(config: dict) -> str:
+    """
+    Build a readable label for a configuration.
+
+    Args:
+        config: Configuration with descriptor, detector, color, clahe and max_keypoints.
+
+    Returns:
+        Label such as "rootsift+dog color=gray clahe=True kps=500".
+    """
     detector = f"+{config['detector']}" if config["detector"] else ""
     return (f"{config['descriptor']}{detector} color={config['color']} "
             f"clahe={config['clahe']} kps={config['max_keypoints']}")

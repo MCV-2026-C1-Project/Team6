@@ -66,13 +66,33 @@ PREWITT_Y = PREWITT_X.T.copy()
 # =============================================================================
 
 def resize_max_side(img: np.ndarray, max_side: int = WORK_SIDE) -> np.ndarray:
-    """Downscale an image so its longest side is at most max_side (never upscale)."""
+    """
+    Downscale an image so its longest side is at most max_side (never upscale).
+
+    Args:
+        img: Input image of shape (h, w) or (h, w, C).
+        max_side: Maximum length in pixels of the longest side.
+
+    Returns:
+        The same image if it already fits, otherwise a copy resized with
+        INTER_AREA keeping the aspect ratio.
+    """
     s = max_side / max(img.shape[:2])
     return img if s >= 1 else cv2.resize(img, None, fx=s, fy=s, interpolation=cv2.INTER_AREA)
 
 
 def border_mask(h: int, w: int, b: int) -> np.ndarray:
-    """Boolean mask of a frame of width b along the image border."""
+    """
+    Boolean mask of a frame of width b along the image border.
+
+    Args:
+        h: Image height.
+        w: Image width.
+        b: Frame width in pixels, clipped to [1, min(h, w) // 2].
+
+    Returns:
+        bool array of shape (h, w), True on the frame.
+    """
     b = max(1, min(b, h // 2, w // 2))
     m = np.zeros((h, w), bool)
     m[:b, :] = m[-b:, :] = True
@@ -81,13 +101,30 @@ def border_mask(h: int, w: int, b: int) -> np.ndarray:
 
 
 def square_kernel(frac: float, shape: tuple[int, int]) -> np.ndarray:
-    """Square structuring element with side frac * smallest image side (at least 2 px)."""
+    """
+    Square structuring element with side frac * smallest image side (at least 2 px).
+
+    Args:
+        frac: Kernel side as a fraction of the smallest image side.
+        shape: Image shape (h, w).
+
+    Returns:
+        uint8 rectangular structuring element of shape (n, n), all ones.
+    """
     n = max(2, int(frac * min(shape)))
     return cv2.getStructuringElement(cv2.MORPH_RECT, (n, n))
 
 
 def fill_holes(mask: np.ndarray) -> np.ndarray:
-    """Fill the holes of every blob of a binary mask (uint8, 1 inside)."""
+    """
+    Fill the holes of every blob of a binary mask.
+
+    Args:
+        mask: Mask of shape (h, w); any value > 0 counts as foreground.
+
+    Returns:
+        uint8 mask of shape (h, w) (1 inside) with the holes filled.
+    """
     return ndi.binary_fill_holes(mask > 0).astype(np.uint8)
 
 
@@ -101,6 +138,9 @@ def gradient_magnitude(img_bgr: np.ndarray) -> np.ndarray:
 
     Each channel response is normalised to [0, 1] and the maximum over the
     channels is kept, so an edge visible in either channel is detected.
+
+    Args:
+        img_bgr: Input BGR uint8 image of shape (h, w, 3).
 
     Returns:
         uint8 array of shape (h, w) with values in [0, 255].
@@ -121,8 +161,11 @@ def edge_segmentation(grad: np.ndarray) -> np.ndarray:
     Otsu alone is dominated by the strongest painting, so a faint frame next to
     it would be lost. The image border is wall and is cleared.
 
+    Args:
+        grad: uint8 gradient magnitude of shape (h, w), values in [0, 255].
+
     Returns:
-        uint8 edge map (1 on the edges).
+        uint8 edge map of shape (h, w) (1 on the edges, 0 elsewhere).
     """
     t, _ = cv2.threshold(grad, 0, 1, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     edges = (grad > EDGE_K * t).astype(np.uint8)
@@ -138,8 +181,11 @@ def edges_to_regions(edges: np.ndarray) -> np.ndarray:
     it into a solid painting; the opening removes thin structures (wires,
     labels) and the holes are filled again.
 
+    Args:
+        edges: uint8 edge map of shape (h, w) (1 on the edges).
+
     Returns:
-        uint8 mask (1 inside the regions).
+        uint8 mask of shape (h, w) (1 inside the regions).
     """
     mask = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, square_kernel(CLOSE_FRAC, edges.shape))
     mask = fill_holes(mask)
@@ -159,6 +205,9 @@ def wall_distance(img_bgr: np.ndarray) -> np.ndarray:
     pixels. The WALL_TRIM border pixels farthest from the median are dropped
     first, so a painting touching the border does not spoil the model.
 
+    Args:
+        img_bgr: Input BGR uint8 image of shape (h, w, 3).
+
     Returns:
         float32 array of shape (h, w): small on the wall, large elsewhere.
     """
@@ -175,7 +224,16 @@ def wall_distance(img_bgr: np.ndarray) -> np.ndarray:
 
 
 def content_map(edges: np.ndarray, wall_dist: np.ndarray) -> np.ndarray:
-    """Pixels that are painting evidence: not wall-coloured, or on an edge (uint8, 1 = content)."""
+    """
+    Pixels that are painting evidence: not wall-coloured, or on an edge.
+
+    Args:
+        edges: uint8 edge map of shape (h, w) (1 on the edges).
+        wall_dist: float32 Mahalanobis distance to the wall colour, shape (h, w).
+
+    Returns:
+        uint8 mask of shape (h, w): 1 where wall_dist > WALL_THR or on an edge.
+    """
     return ((wall_dist > WALL_THR) | (edges > 0)).astype(np.uint8)
 
 
@@ -188,6 +246,14 @@ def cut_range(n: int, other: int) -> tuple[int, int]:
     Positions [lo, hi) where a region of length n (and length `other` along the
     other axis) may be cut: both parts at least SPLIT_MARGIN of n and not more
     elongated than SPLIT_MAX_ASPECT.
+
+    Args:
+        n: Length of the region along the cut axis, in pixels.
+        other: Length of the region along the other axis, in pixels.
+
+    Returns:
+        (lo, hi) with lo the minimum part length and hi = n - lo; the range
+        is empty if hi <= lo.
     """
     min_part = max(1, int(SPLIT_MARGIN * n), int(np.ceil(other / SPLIT_MAX_ASPECT)))
     return min_part, n - min_part
@@ -203,6 +269,10 @@ def find_cut(region: np.ndarray, content: np.ndarray):
     The minimum is searched away from the borders: each part must be at least
     SPLIT_MARGIN of the region and not more elongated than SPLIT_MAX_ASPECT
     (so e.g. the plain top band of a frame is not cut off as a painting).
+
+    Args:
+        region: Non-empty binary uint8 mask of shape (h, w) (1 inside).
+        content: uint8 content map of shape (h, w) (see content_map).
 
     Returns:
         (axis, index) with axis 0 for a row and 1 for a column, in image
@@ -230,8 +300,14 @@ def split_region(region: np.ndarray, content: np.ndarray, depth: int = SPLIT_DEP
     """
     Recursively cut a region into the paintings it contains (XY-cut).
 
+    Args:
+        region: Binary uint8 mask of shape (h, w) (1 inside).
+        content: uint8 content map of shape (h, w) (see content_map).
+        depth: Remaining recursion depth; at most 2**depth parts are returned.
+
     Returns:
-        List of uint8 masks; [region] if no cut is found.
+        List of uint8 masks of shape (h, w); [region] if no cut is found
+        (or depth is 0, or the region is empty).
     """
     if depth == 0 or not region.any():
         return [region]
@@ -248,7 +324,19 @@ def split_region(region: np.ndarray, content: np.ndarray, depth: int = SPLIT_DEP
 
 
 def split_regions(regions: np.ndarray, content: np.ndarray) -> list[np.ndarray]:
-    """Split every large enough connected region; returns the list of parts."""
+    """
+    Split every large enough connected region.
+
+    Connected components (8-connectivity) smaller than MIN_AREA_FRAC of the
+    image are dropped; the others are passed to split_region.
+
+    Args:
+        regions: uint8 region mask of shape (h, w) (1 inside).
+        content: uint8 content map of shape (h, w) (see content_map).
+
+    Returns:
+        List of uint8 masks of shape (h, w), one per part.
+    """
     n, labels, stats, _ = cv2.connectedComponentsWithStats(regions, connectivity=8)
     parts = []
     for label in range(1, n):
@@ -269,8 +357,12 @@ def select_paintings(parts: list[np.ndarray]) -> list[np.ndarray]:
     kept when it is at least MIN_AREA_FRAC of the image, at least MIN_REL_AREA
     of the largest part and fills at least MIN_EXTENT of its bounding box.
 
+    Args:
+        parts: List of uint8 masks of shape (h, w) (1 inside).
+
     Returns:
-        List of uint8 masks, largest first.
+        List of at most MAX_PAINTINGS uint8 masks of shape (h, w), largest
+        first; empty if no part is kept.
     """
     blobs = []
     for part in parts:
@@ -297,6 +389,13 @@ def mask_to_rect(mask: np.ndarray) -> np.ndarray:
     A column (row) belongs to the painting if its fraction of foreground pixels
     exceeds PROJ_FRAC times the maximum over all columns (rows), which ignores
     thin protrusions that a plain bounding box would include.
+
+    Args:
+        mask: Binary mask of shape (h, w) (1 inside).
+
+    Returns:
+        uint8 mask of shape (h, w) with 1 inside the rectangle; all zeros if
+        the mask is empty.
     """
     rect = np.zeros(mask.shape, np.uint8)
     if not mask.any():
@@ -309,17 +408,44 @@ def mask_to_rect(mask: np.ndarray) -> np.ndarray:
 
 
 def stacked(a: tuple, b: tuple) -> bool:
-    """Week 3 rule: two boxes (x, y, w, h) are stacked if they overlap horizontally > 50% of the narrower."""
+    """
+    Week 3 rule: two boxes are stacked if they overlap horizontally > 50% of the narrower.
+
+    Args:
+        a: First box (x, y, w, h).
+        b: Second box (x, y, w, h).
+
+    Returns:
+        True if the horizontal overlap exceeds half the narrower width.
+    """
     return min(a[0] + a[2], b[0] + b[2]) - max(a[0], b[0]) > 0.5 * min(a[2], b[2])
 
 
 def side_by_side(a: tuple, b: tuple) -> bool:
-    """Two boxes (x, y, w, h) are side by side if they overlap vertically > 50% of the shorter."""
+    """
+    Two boxes are side by side if they overlap vertically > 50% of the shorter.
+
+    Args:
+        a: First box (x, y, w, h).
+        b: Second box (x, y, w, h).
+
+    Returns:
+        True if the vertical overlap exceeds half the shorter height.
+    """
     return min(a[1] + a[3], b[1] + b[3]) - max(a[1], b[1]) > 0.5 * min(a[3], b[3])
 
 
 def groups(items: list[int], related) -> list[list[int]]:
-    """Connected components of a relation: items related directly or through a chain are grouped."""
+    """
+    Connected components of a relation: items related directly or through a chain are grouped.
+
+    Args:
+        items: Items (indices) to group.
+        related: Callable related(i, j) -> bool, assumed symmetric.
+
+    Returns:
+        List of groups (lists of items), in the order of their first item.
+    """
     left, out = list(items), []
     while left:
         group, todo = [], [left.pop(0)]
@@ -342,6 +468,12 @@ def order_masks(masks: list[np.ndarray]) -> list[np.ndarray]:
     paintings go from top to bottom, and side-by-side ones (one painting above
     two) from left to right. With 2 masks this is the Week 3 order: the upper
     one first if they are stacked, the left one first otherwise.
+
+    Args:
+        masks: List of binary uint8 masks of shape (h, w) (1 inside).
+
+    Returns:
+        The same masks, reordered.
     """
     boxes = [cv2.boundingRect(m) for m in masks]
     order = []

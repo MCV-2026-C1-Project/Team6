@@ -14,6 +14,25 @@ COLORS = ("gray", "gray_saturation", "opponent")
 
 
 def color_channels(img, color="gray", clahe=True):
+    """
+    Split an image into the uint8 channels that are described.
+
+    "gray" gives the gray image, "gray_saturation" adds the HSV saturation
+    and "opponent" gives the opponent colour channels (r - g, r + g - 2b,
+    r + g + b), rescaled to [0, 255].
+
+    Args:
+        img: BGR image.
+        color: One of COLORS.
+        clahe: Apply CLAHE to the gray channel.
+
+    Returns:
+        List of uint8 channels of shape (h, w); the first one is used to
+        compute the keypoints.
+
+    Raises:
+        ValueError: If color is not one of COLORS.
+    """
     if color == "gray":
         return [to_gray(img, clahe)]
     if color == "gray_saturation":
@@ -25,6 +44,27 @@ def color_channels(img, color="gray", clahe=True):
 
 
 def _describe(img, f, max_kps, color, clahe, root=False, kps=None):
+    """
+    Detect and describe keypoints with an OpenCV feature object.
+
+    The descriptors of every colour channel are concatenated. With root=True,
+    each channel's descriptors are L1-normalised and square-rooted (RootSIFT)
+    and the result is divided by sqrt(n_channels).
+
+    Args:
+        img: BGR image.
+        f: OpenCV Feature2D (SIFT, AKAZE, ORB...).
+        max_kps: Maximum number of keypoints, keeping the strongest responses.
+        color: One of COLORS.
+        clahe: Equalise the local contrast before detecting and describing.
+        root: Apply the RootSIFT transform.
+        kps: Precomputed keypoints. If None, f detects them.
+
+    Returns:
+        Tuple (points, descriptors): keypoint coordinates (N, 2) float32 and
+        descriptors (N, D * n_channels), or an empty (0, 2) array and None if
+        no keypoint was found.
+    """
     if kps is None:
         kps = sorted(f.detect(to_gray(img, clahe)), key=lambda k: -k.response)[:max_kps]
     chans = color_channels(img, color, clahe)
@@ -39,14 +79,57 @@ def _describe(img, f, max_kps, color, clahe, root=False, kps=None):
 
 
 def rootsift(img, max_kps=1000, color="gray", clahe=True, contrast=0.04, kps=None):
+    """
+    Compute RootSIFT features of an image.
+
+    Args:
+        img: BGR image.
+        max_kps: Maximum number of keypoints.
+        color: One of COLORS.
+        clahe: Equalise the local contrast before detecting and describing.
+        contrast: SIFT contrast threshold (lower -> more keypoints).
+        kps: Precomputed keypoints (e.g. from keypoints.detect). If None, the
+            SIFT detector is used.
+
+    Returns:
+        Tuple (points (N, 2), descriptors (N, 128 * n_channels) float32), or
+        None descriptors if no keypoint was found.
+    """
     return _describe(img, cv2.SIFT_create(contrastThreshold=contrast), max_kps, color, clahe, root=True, kps=kps)
 
 
 def akaze(img, max_kps=1000, color="gray", clahe=True, threshold=5e-4):
+    """
+    Compute AKAZE features (binary descriptors, Hamming norm) of an image.
+
+    Args:
+        img: BGR image.
+        max_kps: Maximum number of keypoints.
+        color: One of COLORS.
+        clahe: Equalise the local contrast before detecting and describing.
+        threshold: AKAZE detector response threshold (lower -> more keypoints).
+
+    Returns:
+        Tuple (points (N, 2), descriptors (N, D) uint8), or None descriptors
+        if no keypoint was found.
+    """
     return _describe(img, AKAZE_create(threshold=threshold), max_kps, color, clahe)
 
 
 def orb(img, max_kps=1000, color="gray", clahe=True):
+    """
+    Compute ORB features (binary descriptors, Hamming norm) of an image.
+
+    Args:
+        img: BGR image.
+        max_kps: Maximum number of keypoints (also ORB's nfeatures).
+        color: One of COLORS.
+        clahe: Equalise the local contrast before detecting and describing.
+
+    Returns:
+        Tuple (points (N, 2), descriptors (N, 32 * n_channels) uint8), or None
+        descriptors if no keypoint was found.
+    """
     return _describe(img, cv2.ORB_create(nfeatures=max_kps), max_kps, color, clahe)
 
 
