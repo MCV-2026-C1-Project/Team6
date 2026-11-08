@@ -32,6 +32,7 @@ project/
 ├── w2/
 │   ├── utils.py
 │   ├── main.py
+│   ├── grid_search.py
 │   ├── segmentation.ipynb
 │   ├── gridsearches/
 │   │   ├── 2d_descriptor.py
@@ -65,13 +66,19 @@ project/
 │   ├── segmentation.py
 │   ├── utils.py
 │   ├── searches/
-│   │   ├── ...
-│   │   └── whole_pipeline/
+│   │   ├── denoising/
+│   │   ├── segmentation/
+│   │   └── whole_pipeline_search/
 │   │       ├── whole_pipeline_search.py
 │   │       └── results/
-│   └── visualizations/
-│       ├── ...
-│       └── figures/
+│   ├── visualizations/
+│   │   ├── denoising.ipynb
+│   │   ├── segmentation.ipynb
+│   │   ├── keypoints.ipynb
+│   │   ├── descriptors.ipynb
+│   │   └── figures/
+│   └── results/
+│       └── QST1/
 ├── README.md
 └── requirements.txt
 ```
