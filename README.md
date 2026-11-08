@@ -64,22 +64,13 @@ project/
 │   ├── keypoints.py
 │   ├── segmentation.py
 │   ├── utils.py
-│   ├── denoising.ipynb
-│   ├── descriptors.ipynb
-│   ├── keypoints.ipynb
-│   ├── segmentation.ipynb
 │   ├── searches/
-│   │   ├── denoising/
-│   │   │   ├── denoising_search.py
-│   │   │   └── results/
-│   │   ├── segmentation/
-│   │   │   ├── segmentation_search.py
-│   │   │   ├── segmentation_3paintings_test.py
-│   │   │   └── results/
+│   │   ├── ...
 │   │   └── whole_pipeline/
 │   │       ├── whole_pipeline_search.py
 │   │       └── results/
 │   └── visualizations/
+│       ├── ...
 │       └── figures/
 ├── README.md
 └── requirements.txt
@@ -309,6 +300,8 @@ The general utilities also contain the evaluation functions used to compute AP a
 The `searches/` directory contains the experiments and parameter searches carried out during Week 4.
 
 These scripts are used to compare different configurations of the pipeline and determine the parameters and methods that provide the best retrieval performance.
+
+**The grid search used to decide the final model parameters can be found in the script `w4\searches\whole_pipeline_search\whole_pipeline_search.py`**
 
 The results produced by the searches are stored in the corresponding results directories.
 
