@@ -21,15 +21,15 @@ N_WORKERS = os.cpu_count()
 
 
 PARAMS = {
-    "descriptor": "rootsift",
-    "detector": "hessian_laplace",
+    "descriptor": "akaze",
+    "detector": None,
     "color": "gray",
-    "clahe": False,
+    "clahe": True,
     "max_keypoints": 1000,
     "max_side": 800,
     "lowe_ratio": 0.75,
     "ransac_reproj_px": 5.0,
-    "min_inliers": 28,
+    "min_inliers": 19, # Not 12 to avoid false positives in QST1, but 12 is enough for QSD1.
     "k": 10,
 }
 
