@@ -9,7 +9,7 @@
 
 ## Presentation
 
-The Week 4 project presentation is available [here](https://canva.link/o0fzwaxwwr2q2xv).
+The Week 4 project presentation is available [here](https://canva.link/kfogfjt3f2ccrza).
 
 ## Structure
 
