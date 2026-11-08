@@ -49,6 +49,14 @@ def read_bgr(path: Path) -> np.ndarray:
 
 
 def load_impulse_pairs() -> dict[int, tuple[np.ndarray, np.ndarray]]:
+    """
+    Load the noisy/clean image pairs of the queries with impulse noise.
+
+    The queries are selected from augmentations.pkl by the "ImpulseNoise" tag.
+
+    Returns:
+        Dictionary {query id: (noisy BGR image, clean BGR image)}.
+    """
     with open(NOISY_DIR / "augmentations.pkl", "rb") as f:
         augmentations = pickle.load(f)
     ids = [i for i, aug in enumerate(augmentations) if "ImpulseNoise" in aug]
@@ -59,11 +67,31 @@ def load_impulse_pairs() -> dict[int, tuple[np.ndarray, np.ndarray]]:
 # Metrics
 # -----------------------------------------------------------------------------
 def psnr(img: np.ndarray, ref: np.ndarray) -> float:
+    """
+    Compute the PSNR of an image against a reference.
+
+    Args:
+        img: Image to evaluate (uint8, any number of channels).
+        ref: Reference image of the same shape.
+
+    Returns:
+        PSNR in dB, with a peak value of 255.
+    """
     mse = np.mean((img.astype(np.float64) - ref.astype(np.float64)) ** 2)
     return 10 * np.log10(255 ** 2 / mse)
 
 
 def ssim(img: np.ndarray, ref: np.ndarray) -> float:
+    """
+    Compute the SSIM of an image against a reference, on their grayscale versions.
+
+    Args:
+        img: BGR image to evaluate.
+        ref: BGR reference image of the same shape.
+
+    Returns:
+        SSIM value.
+    """
     return structural_similarity(cv2.cvtColor(ref, cv2.COLOR_BGR2GRAY),
                                  cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), data_range=255)
 
@@ -117,10 +145,28 @@ def road_switching_median(img: np.ndarray, threshold: int = 100) -> np.ndarray:
 # Two-stage and luma/chroma filters
 # -----------------------------------------------------------------------------
 def median3(img):
+    """
+    Apply a 3x3 median filter.
+
+    Args:
+        img: Input image.
+
+    Returns:
+        Filtered image.
+    """
     return cv2.medianBlur(img, 3)
 
 
 def to_uint8(img_float: np.ndarray) -> np.ndarray:
+    """
+    Convert a float image in [0, 1] to uint8.
+
+    Args:
+        img_float: Float image, clipped to [0, 1] before the conversion.
+
+    Returns:
+        uint8 image in [0, 255].
+    """
     return (np.clip(img_float, 0, 1) * 255).round().astype(np.uint8)
 
 
@@ -131,10 +177,30 @@ def luma_chroma(img, luma_fn, chroma_fn):
 
 
 def luma_nlm(h, search=11):
+    """
+    Build a luma filter: 3x3 median followed by NL-means.
+
+    Args:
+        h: NL-means filter strength.
+        search: NL-means search window size.
+
+    Returns:
+        Function that filters a single-channel image.
+    """
     return lambda y: cv2.fastNlMeansDenoising(cv2.medianBlur(y, 3), None, h, 7, search)
 
 
 def chroma_median_gauss(k, sigma_k):
+    """
+    Build a chroma filter: k x k median followed by a Gaussian blur.
+
+    Args:
+        k: Median kernel size.
+        sigma_k: Gaussian kernel size, or 0 to skip the Gaussian blur.
+
+    Returns:
+        Function that filters a single-channel image.
+    """
     return lambda c: cv2.GaussianBlur(cv2.medianBlur(c, k), (sigma_k, sigma_k), 0) if sigma_k else cv2.medianBlur(c, k)
 
 
@@ -189,6 +255,13 @@ METHODS = {
 # Search
 # -----------------------------------------------------------------------------
 def main() -> None:
+    """
+    Run every method of METHODS on the impulse-noise images.
+
+    Saves the per-image PSNR, SSIM and time to results/denoising_search.csv and a
+    per-method summary (means, wins against BASELINE, seconds per megapixel) to
+    results/denoising_search_summary.csv, which is also printed.
+    """
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     pairs = load_impulse_pairs()
     print(f"Impulse images: {list(pairs)}")

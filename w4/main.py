@@ -128,6 +128,13 @@ def print_results(results: dict, ground_truth: list, params: dict):
     """
     Print the configuration of a run, its painting counts compared with the
     ground truth and its mAP.
+
+    Args:
+        results: Output of run_pipeline with "masks" and "predictions", plus
+            the "map1" and "map5" scores.
+        ground_truth: For each query, the BBDD ID of each painting (UNKNOWN = -1
+            for paintings not in the database).
+        params: Pipeline parameters; "descriptor" and "detector" are printed.
     """
     predicted_counts = [len(masks) for masks in results["masks"]]
     ground_truth_counts = [len(paintings) for paintings in ground_truth]
@@ -157,7 +164,15 @@ def print_results(results: dict, ground_truth: list, params: dict):
 
 
 def save_predictions(predictions: list, output_dir: Path):
-    """Save the predictions as output_dir/result.pkl."""
+    """
+    Save the predictions as output_dir/result.pkl.
+
+    The folder is created if it does not exist.
+
+    Args:
+        predictions: For each query, one ranked list of BBDD IDs per painting.
+        output_dir: Folder where result.pkl is written.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     with open(output_dir / "result.pkl", "wb") as f:
         pickle.dump(predictions, f)

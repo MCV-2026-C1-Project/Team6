@@ -797,6 +797,16 @@ def segments(
 
 
 def crop_to_mask(img: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """
+    Crop an image to the bounding box of a mask.
+
+    Args:
+        img: Input image of shape (h, w) or (h, w, C).
+        mask: Binary mask of shape (h, w).
+
+    Returns:
+        Cropped image, or the whole image if the mask is empty.
+    """
     ys, xs = np.nonzero(mask)
     if ys.size == 0:
         return img
@@ -903,6 +913,17 @@ def evaluate(actual: list[list[int]], predicted: list[list[int]], k: int):
 
 
 def metrics(pred, gt):
+    """
+    Compute pixel-wise segmentation metrics of a mask against the ground truth.
+
+    Args:
+        pred: Predicted mask of shape (h, w); non-zero values are foreground.
+        gt: Ground-truth mask of shape (h, w); non-zero values are foreground.
+
+    Returns:
+        Dictionary with precision, recall, f1, iou and error_rate. Empty
+        denominators give 0.0, except iou, which is 1.0 when both masks are empty.
+    """
     pred, gt = pred.astype(bool), gt.astype(bool)
     tp = np.count_nonzero(pred & gt)
     fp = np.count_nonzero(pred & ~gt)

@@ -102,7 +102,15 @@ def load_images(folder: str, color_space: int = None) -> tuple[list[int], list[n
 
 
 def load_pickle(path: str | Path):
-    """Load a pickle file."""
+    """
+    Load a pickle file.
+
+    Args:
+        path: Path to the pickle file.
+
+    Returns:
+        The unpickled object.
+    """
     with open(path, "rb") as f:
         return pickle.load(f)
 
@@ -259,7 +267,25 @@ def metrics(pred: np.ndarray, gt: np.ndarray) -> dict:
 # =============================================================================
 
 def count_inliers(query_features, db_features, norm, lowe_ratio=0.75, ransac_reproj_px=5.0) -> int:
-    """Inliers of a RANSAC homography fitted on the matches that pass Lowe's ratio test."""
+    """
+    Count the inliers of a RANSAC homography fitted on the matches that pass Lowe's ratio test.
+
+    Descriptors are matched with a brute-force 2-NN matcher. At least 4 good
+    matches are needed to fit the homography; otherwise 0 is returned.
+
+    Args:
+        query_features: Tuple (points, descriptors) of the query painting, with
+            points of shape (N, 2) and descriptors of shape (N, D) or None.
+        db_features: Tuple (points, descriptors) of the database image, with
+            the same layout.
+        norm: OpenCV norm of the matcher (e.g. cv2.NORM_L2, cv2.NORM_HAMMING).
+        lowe_ratio: Max ratio between the best and second-best match distances.
+        ransac_reproj_px: RANSAC reprojection threshold, in pixels.
+
+    Returns:
+        Number of RANSAC inliers, or 0 if there are not enough descriptors,
+        good matches or no homography is found.
+    """
     query_points, query_descriptors = query_features
     db_points, db_descriptors = db_features
 
@@ -281,18 +307,57 @@ def count_inliers(query_features, db_features, norm, lowe_ratio=0.75, ransac_rep
 
 
 def _init_worker(db_features, norm, lowe_ratio, ransac_reproj_px):
+    """
+    Initialise a matching worker process.
+
+    Runs once in each worker process of the Pool: stores the database features
+    and matching arguments in the globals DB_FEATURES and MATCH_ARGS, so they
+    are not sent with every task, and limits OpenCV to one thread.
+
+    Args:
+        db_features: Features (points, descriptors) of every database image.
+        norm: OpenCV norm of the matcher.
+        lowe_ratio: Max ratio of Lowe's ratio test.
+        ransac_reproj_px: RANSAC reprojection threshold, in pixels.
+    """
     global DB_FEATURES, MATCH_ARGS
     DB_FEATURES, MATCH_ARGS = db_features, (norm, lowe_ratio, ransac_reproj_px)
     cv2.setNumThreads(1)
 
 
 def _inliers_row(query_features):
+    """
+    Count the inliers between one painting and every database image.
+
+    Runs in the worker processes, using the globals set by _init_worker.
+
+    Args:
+        query_features: Tuple (points, descriptors) of the painting.
+
+    Returns:
+        List with the number of inliers for each database image.
+    """
     return [count_inliers(query_features, db, *MATCH_ARGS) for db in DB_FEATURES]
 
 
 def inlier_matrix(paintings_features, db_features, norm, lowe_ratio=0.75, ransac_reproj_px=5.0,
                   n_workers=None) -> np.ndarray:
-    """M[i, j] = inliers between painting i and database image j (in parallel)."""
+    """
+    Compute the inlier matrix M[i, j] = inliers between painting i and database image j.
+
+    The rows are computed in parallel with a multiprocessing Pool.
+
+    Args:
+        paintings_features: Features (points, descriptors) of each painting.
+        db_features: Features (points, descriptors) of each database image.
+        norm: OpenCV norm of the matcher.
+        lowe_ratio: Max ratio of Lowe's ratio test.
+        ransac_reproj_px: RANSAC reprojection threshold, in pixels.
+        n_workers: Number of processes. If None, os.cpu_count() is used.
+
+    Returns:
+        Integer array of shape (n_paintings, n_database).
+    """
     init_args = (db_features, norm, lowe_ratio, ransac_reproj_px)
     with Pool(n_workers or os.cpu_count(), _init_worker, init_args) as pool:
         rows = list(tqdm(pool.imap(_inliers_row, paintings_features),
@@ -302,7 +367,24 @@ def inlier_matrix(paintings_features, db_features, norm, lowe_ratio=0.75, ransac
 
 def inliers_by_query(features_by_query, db_features, norm, lowe_ratio=0.75, ransac_reproj_px=5.0,
                      n_workers=None) -> list[np.ndarray]:
-    """Inlier matrix (n_paintings, n_database) of every query."""
+    """
+    Compute the inlier matrix (n_paintings, n_database) of every query.
+
+    The paintings of all queries are matched together in one inlier_matrix
+    call and the result is split back per query.
+
+    Args:
+        features_by_query: For each query, a list with the features
+            (points, descriptors) of each detected painting.
+        db_features: Features (points, descriptors) of each database image.
+        norm: OpenCV norm of the matcher.
+        lowe_ratio: Max ratio of Lowe's ratio test.
+        ransac_reproj_px: RANSAC reprojection threshold, in pixels.
+        n_workers: Number of processes. If None, os.cpu_count() is used.
+
+    Returns:
+        One integer array of shape (n_paintings, n_database) per query.
+    """
     paintings = [painting for query in features_by_query for painting in query]
     inliers = inlier_matrix(paintings, db_features, norm, lowe_ratio, ransac_reproj_px, n_workers)
     query_starts = np.cumsum([len(query) for query in features_by_query])[:-1]
@@ -382,13 +464,38 @@ UNKNOWN = -1
 
 
 def rank_painting(painting_inliers, db_ids, k, min_inliers) -> list[int]:
-    """Top-k database IDs of a painting, or [UNKNOWN] if its best match has < min_inliers."""
+    """
+    Return the top-k database IDs of a painting, or [UNKNOWN] if its best match has < min_inliers.
+
+    Args:
+        painting_inliers: Inliers with each database image, shape (n_database,).
+        db_ids: Database image IDs corresponding to painting_inliers.
+        k: Number of IDs to retrieve.
+        min_inliers: Inliers the best database image needs to not be unknown.
+
+    Returns:
+        Database IDs sorted by decreasing number of inliers (ties keep the
+        database order), or [UNKNOWN] (-1).
+    """
     if painting_inliers.max() < min_inliers:
         return [UNKNOWN]
     return [db_ids[i] for i in np.argsort(-painting_inliers, kind="stable")[:k]]
 
 
 def retrieve_with_unknowns(inliers_by_query, db_ids, k, min_inliers) -> list[list[list[int]]]:
-    """[[[ids painting 1], [ids painting 2]], [[-1]], ...] for every query."""
+    """
+    Rank the database images for every painting of every query, with unknowns.
+
+    Args:
+        inliers_by_query: One inlier array of shape (n_paintings, n_database)
+            per query, as returned by inliers_by_query.
+        db_ids: Database image IDs corresponding to the columns.
+        k: Number of IDs to retrieve per painting.
+        min_inliers: Inliers the best database image needs to not be unknown.
+
+    Returns:
+        One list per query with one top-k list per painting, e.g.
+        [[[ids painting 1], [ids painting 2]], [[-1]], ...].
+    """
     return [[rank_painting(painting, db_ids, k, min_inliers) for painting in query]
             for query in inliers_by_query]

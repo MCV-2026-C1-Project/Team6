@@ -26,7 +26,21 @@ KPs = List[cv2.KeyPoint]
 
 # ---------------------------------------------------------------- DoG
 def dog(gray: np.ndarray, contrast: float = 0.04, edge: float = 10, sigma: float = 1.6) -> KPs:
-    """DoG extrema in space+scale. `contrast` lower -> more keypoints; `edge` rejects edge-like points."""
+    """
+    Detect DoG extrema in space and scale (the SIFT detector).
+
+    SIFT returns one keypoint per orientation; duplicates at the same location
+    and size are merged and their angle is reset to -1.
+
+    Args:
+        gray: uint8 gray image.
+        contrast: SIFT contrast threshold (lower -> more keypoints).
+        edge: SIFT edge threshold; rejects edge-like points.
+        sigma: Gaussian sigma of the first octave.
+
+    Returns:
+        List of cv2.KeyPoint without orientation.
+    """
     kps = cv2.SIFT_create(contrastThreshold=contrast, edgeThreshold=edge, sigma=sigma).detect(gray)
     # SIFT returns one keypoint per orientation: keep one per location/scale (orientation is added in detect())
     return list({(k.pt, k.size): cv2.KeyPoint(*k.pt, k.size, -1, k.response) for k in kps}.values())
@@ -34,8 +48,28 @@ def dog(gray: np.ndarray, contrast: float = 0.04, edge: float = 10, sigma: float
 
 # ---------------------------------------------------------------- Harris-Laplace / Hessian-Laplace
 def _laplace_detector(gray, response, thr, n_scales, sigma0, k, log_thr) -> KPs:
-    """Shared scheme: at each scale find spatial maxima of `response`, keep those where the
-    scale-normalised |LoG| is also maximal across neighbouring scales (automatic scale selection)."""
+    """
+    Detect keypoints with the shared Harris-/Hessian-Laplace scheme.
+
+    At each scale find spatial 3x3 maxima of `response`, and keep those where
+    the scale-normalised |LoG| is also maximal across neighbouring scales
+    (automatic scale selection).
+
+    Args:
+        gray: uint8 gray image.
+        response: Function (g, sigma) -> (R, valid) giving the response map of
+            the float image g in [0, 1] at scale sigma, and a boolean mask (or
+            True) of the valid points.
+        thr: Minimum response.
+        n_scales: Number of scales evaluated.
+        sigma0: First scale.
+        k: Ratio between consecutive scales.
+        log_thr: Minimum scale-normalised |LoG|; rejects flat regions.
+
+    Returns:
+        List of cv2.KeyPoint with size = 2 * sigma, no orientation and the
+        response as strength.
+    """
     g = gray.astype(np.float32) / 255
     sigmas = [sigma0 * k ** i for i in range(n_scales + 2)]  # +2 = neighbours needed for scale selection
     log = [s ** 2 * np.abs(cv2.Laplacian(cv2.GaussianBlur(g, (0, 0), s), cv2.CV_32F)) for s in sigmas]
@@ -51,9 +85,32 @@ def _laplace_detector(gray, response, thr, n_scales, sigma0, k, log_thr) -> KPs:
 
 def harris_laplace(gray: np.ndarray, n_scales: int = 8, sigma0: float = 1.6, k: float = 1.4,
                    harris_thr: float = 1e-6, log_thr: float = 0.01, alpha: float = 0.04) -> KPs:
-    """Harris corners (scale-normalised) + Laplacian scale selection.
-    harris_thr: min Harris response -> main knob for the keypoint count. log_thr: rejects flat regions."""
+    """
+    Detect scale-normalised Harris corners with Laplacian scale selection.
+
+    Args:
+        gray: uint8 gray image.
+        n_scales: Number of scales evaluated.
+        sigma0: First (integration) scale.
+        k: Ratio between consecutive scales.
+        harris_thr: Minimum Harris response; main knob for the keypoint count.
+        log_thr: Minimum scale-normalised |LoG|; rejects flat regions.
+        alpha: Harris constant in det(M) - alpha * trace(M)^2.
+
+    Returns:
+        List of cv2.KeyPoint without orientation.
+    """
     def response(g, s):
+        """
+        Compute the scale-normalised Harris response at integration scale s.
+
+        Args:
+            g: Float gray image in [0, 1].
+            s: Integration scale; the differentiation scale is 0.7 * s.
+
+        Returns:
+            Tuple (R, True): the Harris response map and no validity mask.
+        """
         L = cv2.GaussianBlur(g, (0, 0), 0.7 * s)                            # differentiation scale
         Ix, Iy = (cv2.Sobel(L, cv2.CV_32F, *d) * 0.7 * s for d in ((1, 0), (0, 1)))
         A, B, C = (cv2.GaussianBlur(m, (0, 0), s) for m in (Ix * Ix, Iy * Iy, Ix * Iy))  # 2nd-moment matrix
@@ -63,11 +120,35 @@ def harris_laplace(gray: np.ndarray, n_scales: int = 8, sigma0: float = 1.6, k: 
 
 def hessian_laplace(gray: np.ndarray, n_scales: int = 8, sigma0: float = 1.6, k: float = 1.4,
                     det_thr: float = 2e-4, log_thr: float = 0.01, edge: float = 10.0) -> KPs:
-    """det(Hessian) maxima (blobs, stroke crossings) + Laplacian scale selection.
-    det_thr: min normalised det(H) -> main knob for the keypoint count. edge: rejects edge-like points."""
+    """
+    Detect det(Hessian) maxima (blobs, stroke crossings) with Laplacian scale selection.
+
+    Args:
+        gray: uint8 gray image.
+        n_scales: Number of scales evaluated.
+        sigma0: First scale.
+        k: Ratio between consecutive scales.
+        det_thr: Minimum normalised det(H); main knob for the keypoint count.
+        log_thr: Minimum scale-normalised |LoG|; rejects flat regions.
+        edge: Max principal curvature ratio; rejects edge-like points.
+
+    Returns:
+        List of cv2.KeyPoint without orientation.
+    """
     kxx = np.array([[1, -2, 1]], np.float32)
     kxy = np.array([[1, 0, -1], [0, 0, 0], [-1, 0, 1]], np.float32) / 4
     def response(g, s):
+        """
+        Compute the scale-normalised det(Hessian) at scale s.
+
+        Args:
+            g: Float gray image in [0, 1].
+            s: Gaussian smoothing scale.
+
+        Returns:
+            Tuple (R, valid): s^4 * det(H) and a boolean mask of the points
+            that pass the edge test trace(H)^2 < (edge + 1)^2 / edge * det(H).
+        """
         L = cv2.GaussianBlur(g, (0, 0), s)
         Lxx, Lyy, Lxy = (cv2.filter2D(L, -1, kern) for kern in (kxx, kxx.T, kxy))
         det = Lxx * Lyy - Lxy ** 2
@@ -76,8 +157,23 @@ def hessian_laplace(gray: np.ndarray, n_scales: int = 8, sigma0: float = 1.6, k:
 
 
 def fast(gray: np.ndarray, thr: int = 20, n_levels: int = 4, ratio: float = 1.5, sigma0: float = 2.0) -> KPs:
-    """FAST-9 corners on an image pyramid. thr: intensity difference (lower -> more points).
-    Level l is downscaled by ratio**l and gets size = 2 * sigma0 * ratio**l (sigma0 sets the descriptor support)."""
+    """
+    Detect FAST-9 corners on an image pyramid.
+
+    Level l is downscaled by ratio**l and its keypoints are mapped back to the
+    original coordinates with size = 2 * sigma0 * ratio**l (sigma0 sets the
+    descriptor support).
+
+    Args:
+        gray: uint8 gray image.
+        thr: FAST intensity difference threshold (lower -> more points).
+        n_levels: Number of pyramid levels.
+        ratio: Downscaling factor between consecutive levels.
+        sigma0: Scale of the keypoints of the first level.
+
+    Returns:
+        List of cv2.KeyPoint without orientation.
+    """
     det, kps = cv2.FastFeatureDetector_create(int(thr)), []
     for l in range(n_levels):
         f = ratio ** l
@@ -87,8 +183,21 @@ def fast(gray: np.ndarray, thr: int = 20, n_levels: int = 4, ratio: float = 1.5,
     return kps
 
 def add_orientation(gray: np.ndarray, kps: KPs, bins: int = 36, peak: float = 0.8) -> KPs:
-    """Rotation invariance: dominant gradient orientation(s) in a Gaussian window (as in SIFT).
-    A keypoint is duplicated for each histogram peak >= `peak` * max."""
+    """
+    Assign the dominant gradient orientation(s) in a Gaussian window (as in SIFT).
+
+    This gives rotation invariance. A keypoint is duplicated for each
+    histogram peak >= `peak` * max.
+
+    Args:
+        gray: Gray image.
+        kps: Keypoints to orient.
+        bins: Number of bins of the orientation histogram.
+        peak: Minimum peak height, relative to the maximum, to add an orientation.
+
+    Returns:
+        List of cv2.KeyPoint with the angle set, in degrees.
+    """
     g = cv2.GaussianBlur(gray.astype(np.float32), (0, 0), 1.0)
     mag, ang = cv2.cartToPolar(cv2.Sobel(g, cv2.CV_32F, 1, 0), cv2.Sobel(g, cv2.CV_32F, 0, 1), angleInDegrees=True)
     H, W = g.shape
@@ -109,8 +218,23 @@ def add_orientation(gray: np.ndarray, kps: KPs, bins: int = 36, peak: float = 0.
 
 # ---------------------------------------------------------------- Selection
 def anms(kps: KPs, n: Optional[int], pool: int = 3000, c: float = 0.9) -> KPs:
-    """Adaptive non-maximal suppression: keep the n keypoints that are strong AND spatially spread
-    (plain top-n by response clusters on textured areas). `pool` bounds the O(pool^2) cost."""
+    """
+    Select keypoints with adaptive non-maximal suppression.
+
+    Keep the n keypoints that are strong AND spatially spread (plain top-n by
+    response clusters on textured areas): each keypoint is ranked by its
+    distance to the nearest significantly stronger keypoint.
+
+    Args:
+        kps: Keypoints to select from.
+        n: Number of keypoints to keep. None keeps all.
+        pool: Only the `pool` strongest keypoints are considered; bounds the
+            O(pool^2) cost.
+        c: A keypoint suppresses another only if response_other < c * response.
+
+    Returns:
+        List of at most n keypoints.
+    """
     if n is None or len(kps) <= n:
         return list(kps)
     kps = sorted(kps, key=lambda k: -k.response)[:pool]

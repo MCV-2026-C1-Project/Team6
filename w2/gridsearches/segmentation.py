@@ -33,6 +33,18 @@ print(f"{len(data)} images loaded")
 
 
 def objective(trial):
+    """
+    Evaluate one segmentation configuration sampled by Optuna.
+
+    Samples the prefilter, colour space, channels, threshold method and
+    closing fraction, segments every image and scores it against its mask.
+
+    Args:
+        trial: Optuna trial used to sample the parameters.
+
+    Returns:
+        Mean of the METRIC score over all images.
+    """
     params = {
         "prefilter": trial.suggest_categorical("prefilter", ["none", "median"]),
         "color_space": trial.suggest_categorical("color_space", ["HSV", "LAB"]),
@@ -45,6 +57,13 @@ def objective(trial):
 
 
 def log(study, trial):
+    """
+    Print the progress of the study after each trial.
+
+    Args:
+        study: Optuna study being optimized.
+        trial: Trial that just finished.
+    """
     print(f"[{trial.number + 1}/{N_TRIALS}] {METRIC}={trial.value:.4f} "
           f"| best={study.best_value:.4f} | {time.time() - t0:.0f}s", end="\r")
 

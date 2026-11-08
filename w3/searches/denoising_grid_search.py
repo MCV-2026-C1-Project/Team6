@@ -402,6 +402,14 @@ def save_slide_decision(rows, selected, noisy_ids, query_count):
 
 
 def main():
+    """
+    Run the denoising filter comparison on QSD1.
+
+    Flags the noisy queries, evaluates retrieval without filtering and with
+    each candidate filter applied to the flagged queries, selects the best
+    setup (only if it beats the baseline) and saves the CSV files, chart,
+    slide text and visual grid to RESULTS_DIR.
+    """
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
     db_ids, db_images = load_images(BBDD_DIR)

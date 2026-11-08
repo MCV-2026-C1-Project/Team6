@@ -78,7 +78,15 @@ def impulse_fraction(image_bgr: np.ndarray) -> float:
 
 
 def has_impulse_noise(image_bgr: np.ndarray) -> bool:
-    """Return True if more than DETECT_FRACTION of the pixels are isolated."""
+    """
+    Return True if more than DETECT_FRACTION of the pixels are isolated.
+
+    Args:
+        image_bgr: Input image in BGR format.
+
+    Returns:
+        True if the image is detected as having impulse noise.
+    """
     return impulse_fraction(image_bgr) > DETECT_FRACTION
 
 
@@ -152,6 +160,16 @@ def denoise_image(image_bgr: np.ndarray) -> np.ndarray:
 # =============================================================================
 
 def psnr(img: np.ndarray, ref: np.ndarray) -> float:
+    """
+    Compute the peak signal-to-noise ratio of an image against a reference.
+
+    Args:
+        img: Image to evaluate (8-bit range).
+        ref: Reference image of the same shape.
+
+    Returns:
+        PSNR in dB, or infinity if both images are identical.
+    """
     mse = np.mean((img.astype(np.float64) - ref.astype(np.float64)) ** 2)
     return float("inf") if mse == 0 else 10 * np.log10(255 ** 2 / mse)
 

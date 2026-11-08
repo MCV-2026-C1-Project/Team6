@@ -7,6 +7,10 @@
 | Capdevila Estadella, Albert |
 | Ishtay Karameh, Ali Khaled |
 
+## Presentation
+
+The Week 4 project presentation is available [here](https://canva.link/o0fzwaxwwr2q2xv).
+
 ## Structure
 
 The project is organized by weeks. Each `wX` directory contains the work corresponding to **Week X**.
@@ -60,9 +64,25 @@ project/
 │   ├── keypoints.py
 │   ├── segmentation.py
 │   ├── utils.py
+│   ├── denoising.ipynb
+│   ├── descriptors.ipynb
+│   ├── keypoints.ipynb
+│   ├── segmentation.ipynb
 │   ├── searches/
+│   │   ├── denoising/
+│   │   │   ├── denoising_search.py
+│   │   │   └── results/
+│   │   ├── segmentation/
+│   │   │   ├── segmentation_search.py
+│   │   │   ├── segmentation_3paintings_test.py
+│   │   │   └── results/
+│   │   └── whole_pipeline/
+│   │       ├── whole_pipeline_search.py
+│   │       └── results/
 │   └── visualizations/
-└── ...
+│       └── figures/
+├── README.md
+└── requirements.txt
 ```
 
 > `data/` must sit next to the week folders (the scripts look for it at `../data` relative to their location).

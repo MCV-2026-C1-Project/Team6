@@ -62,6 +62,20 @@ HIST_METRICS = ["chi2", "hellinger", "histogram_intersection", "bhattacharyya", 
 # 1. DCT block
 # -----------------------------------------------------------------------------
 def objective_dct_block(trial):
+    """
+    Optuna objective for the DCT block descriptor.
+
+    Samples the colour space, channels, number of blocks, number of DCT
+    coefficients, whether to skip the DC term and the vector distance
+    metric. Describes the database and query images and retrieves the top 5
+    matches; mAP@1 is stored as a trial user attribute.
+
+    Args:
+        trial: Optuna trial used to sample the parameters.
+
+    Returns:
+        mAP@5 of the retrieval over the query set.
+    """
     color = trial.suggest_categorical("color", list(COLOR_SPACES))
     channels = trial.suggest_categorical("channels", CHANNELS)
     n_blocks = trial.suggest_categorical("n_blocks", [1, 2, 3, 4, 6, 8])
@@ -88,6 +102,20 @@ def objective_dct_block(trial):
 # 2. DCT histogram
 # -----------------------------------------------------------------------------
 def objective_dct_histogram(trial):
+    """
+    Optuna objective for the DCT histogram descriptor.
+
+    Samples the colour space, channels, resize size, DCT block size, number
+    of coefficients, regions and bins, whether to skip the DC term and the
+    histogram distance metric. Describes the database and query images and
+    retrieves the top 5 matches; mAP@1 is stored as a trial user attribute.
+
+    Args:
+        trial: Optuna trial used to sample the parameters.
+
+    Returns:
+        mAP@5 of the retrieval over the query set.
+    """
     color = trial.suggest_categorical("color", list(COLOR_SPACES))
     channels = trial.suggest_categorical("channels", CHANNELS)
     size = trial.suggest_categorical("size", [256, 384, 512, 672])
@@ -118,6 +146,20 @@ def objective_dct_histogram(trial):
 # 3. DCT pyramid
 # -----------------------------------------------------------------------------
 def objective_dct_pyramid(trial):
+    """
+    Optuna objective for the DCT pyramid descriptor.
+
+    Samples the colour space, channels, pyramid levels, number of DCT
+    coefficients, whether to skip the DC term and the vector distance
+    metric. Describes the database and query images and retrieves the top 5
+    matches; mAP@1 is stored as a trial user attribute.
+
+    Args:
+        trial: Optuna trial used to sample the parameters.
+
+    Returns:
+        mAP@5 of the retrieval over the query set.
+    """
     color = trial.suggest_categorical("color", list(COLOR_SPACES))
     channels = trial.suggest_categorical("channels", CHANNELS)
     levels = trial.suggest_categorical("levels", ["1,2", "1,2,3", "1,2,4", "1,2,3,4", "1,2,4,8"])
@@ -145,6 +187,20 @@ def objective_dct_pyramid(trial):
 # 4. DWT block
 # -----------------------------------------------------------------------------
 def objective_dwt_block(trial):
+    """
+    Optuna objective for the DWT block descriptor.
+
+    Samples the colour space, channels, resize size, number of blocks,
+    wavelet, decomposition levels and the vector distance metric. Describes
+    the database and query images and retrieves the top 5 matches; mAP@1 is
+    stored as a trial user attribute.
+
+    Args:
+        trial: Optuna trial used to sample the parameters.
+
+    Returns:
+        mAP@5 of the retrieval over the query set.
+    """
     color = trial.suggest_categorical("color", list(COLOR_SPACES))
     channels = trial.suggest_categorical("channels", CHANNELS)
     size = trial.suggest_categorical("size", [256, 384, 512, 672])
@@ -172,6 +228,20 @@ def objective_dwt_block(trial):
 # 5. DWT histogram
 # -----------------------------------------------------------------------------
 def objective_dwt_histogram(trial):
+    """
+    Optuna objective for the DWT histogram descriptor.
+
+    Samples the colour space, channels, resize size, number of blocks,
+    wavelet, decomposition levels, number of bins and the histogram distance
+    metric. Describes the database and query images and retrieves the top 5
+    matches; mAP@1 is stored as a trial user attribute.
+
+    Args:
+        trial: Optuna trial used to sample the parameters.
+
+    Returns:
+        mAP@5 of the retrieval over the query set.
+    """
     color = trial.suggest_categorical("color", list(COLOR_SPACES))
     channels = trial.suggest_categorical("channels", CHANNELS)
     size = trial.suggest_categorical("size", [256, 384, 512, 672])
@@ -207,6 +277,20 @@ LBP_SCALES = {
 }
 
 def objective_lbp_block(trial):
+    """
+    Optuna objective for the LBP block descriptor.
+
+    Samples the colour space, channels, resize size, number of blocks, the
+    LBP scales (uniform method) and the histogram distance metric. Describes
+    the database and query images and retrieves the top 5 matches; mAP@1 is
+    stored as a trial user attribute.
+
+    Args:
+        trial: Optuna trial used to sample the parameters.
+
+    Returns:
+        mAP@5 of the retrieval over the query set.
+    """
     color = trial.suggest_categorical("color", list(COLOR_SPACES))
     channels = trial.suggest_categorical("channels", CHANNELS)
     size = trial.suggest_categorical("size", [256, 384, 512, 672])

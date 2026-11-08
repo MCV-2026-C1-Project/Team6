@@ -77,6 +77,16 @@ def finish(regions: np.ndarray, fallback: bool) -> list:
 
 
 def w3_edges(img, fallback=False):
+    """
+    Week 3 painting detection: edge segmentation turned into regions.
+
+    Args:
+        img: BGR work-size image.
+        fallback: Whether to return the whole image when no painting is found.
+
+    Returns:
+        List of painting masks.
+    """
     return finish(S.edges_to_regions(S.edge_segmentation(S.gradient_magnitude(img))), fallback)
 
 
@@ -105,6 +115,15 @@ def w3_edges_minus_wall(img):
 
 
 def w4_split(img):
+    """
+    Week 4 painting detection with the current segmentation.py settings.
+
+    Args:
+        img: BGR work-size image.
+
+    Returns:
+        List of painting masks from segmentation.segment_steps.
+    """
     return S.segment_steps(img)["rects"]
 
 
@@ -122,6 +141,16 @@ METHODS = {
 # =============================================================================
 
 def scores(pred: np.ndarray, gt: np.ndarray) -> tuple[float, float, float]:
+    """
+    Compute pixel precision, recall and F1 of a predicted mask.
+
+    Args:
+        pred: Boolean predicted mask.
+        gt: Boolean ground-truth mask of the same shape.
+
+    Returns:
+        (precision, recall, F1), each 0 when undefined.
+    """
     tp = np.count_nonzero(pred & gt)
     fp = np.count_nonzero(pred & ~gt)
     fn = np.count_nonzero(~pred & gt)
@@ -131,6 +160,20 @@ def scores(pred: np.ndarray, gt: np.ndarray) -> tuple[float, float, float]:
 
 
 def evaluate(method, data: dict) -> dict:
+    """
+    Evaluate a detection method on every dataset.
+
+    The union of the predicted masks is scored against the ground-truth mask, and
+    the number of predicted paintings is compared with the true one.
+
+    Args:
+        method: Function mapping a work-size image to a list of painting masks.
+        data: Dictionary {dataset name: items returned by load}.
+
+    Returns:
+        Row with, per dataset, the right count, mean F1, precision, recall and the
+        ids of the images with the wrong count.
+    """
     row = {}
     for name, items in data.items():
         values, ok, wrong = [], 0, []
@@ -150,6 +193,15 @@ def evaluate(method, data: dict) -> dict:
 
 
 def rank(row: dict):
+    """
+    Sort key of a result row.
+
+    Args:
+        row: Row returned by evaluate.
+
+    Returns:
+        (total right count, total F1) over QSD1-W4 and QSD2-W3.
+    """
     return row["w4_count"] + row["w3_count"], row["w4_f1"] + row["w3_f1"]
 
 
@@ -157,18 +209,46 @@ _DATA = None
 
 
 def _init(data):
+    """
+    Initialize a worker process of the grid search.
+
+    Runs in the worker processes: stores the data in the global _DATA and limits
+    OpenCV to one thread.
+
+    Args:
+        data: Dictionary {dataset name: items returned by load}.
+    """
     global _DATA
     _DATA = data
     cv2.setNumThreads(1)
 
 
 def _evaluate_config(cfg: dict) -> dict:
+    """
+    Evaluate one grid configuration in a worker process.
+
+    Sets the parameters as attributes of the segmentation module and evaluates
+    w4_split on the global _DATA.
+
+    Args:
+        cfg: Dictionary {segmentation.py constant: value}.
+
+    Returns:
+        The configuration merged with the row returned by evaluate.
+    """
     for k, v in cfg.items():
         setattr(S, k, v)
     return {**cfg, **evaluate(w4_split, _DATA)}
 
 
 def save(rows: list, path: Path) -> None:
+    """
+    Save result rows to a CSV file, creating its folder if needed.
+
+    Args:
+        rows: List of dictionaries with the same keys.
+        path: Output CSV path.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=rows[0].keys())
@@ -177,12 +257,26 @@ def save(rows: list, path: Path) -> None:
 
 
 def show(row: dict, label: str) -> None:
+    """
+    Print a one-line summary of a result row.
+
+    Args:
+        row: Row returned by evaluate.
+        label: Name of the method or configuration.
+    """
     print(f"{label:22s} QSD1-W4 count {row['w4_count']}/30  F1 {row['w4_f1']:.4f} "
           f"(P {row['w4_precision']:.3f}, R {row['w4_recall']:.3f}) wrong [{row['w4_wrong']}] | "
           f"QSD2-W3 count {row['w3_count']}/30  F1 {row['w3_f1']:.4f} wrong [{row['w3_wrong']}]")
 
 
 def main() -> None:
+    """
+    Run the painting detection search.
+
+    Loads both datasets, compares the methods of METHODS (saved to
+    segmentation_methods.csv) and grid-searches segmentation.py in parallel
+    (saved to segmentation_grid.csv, top 10 printed).
+    """
     t0 = time.time()
     data = {name: load(folder) for name, folder in DATASETS.items()}
     print(f"Data loaded in {time.time() - t0:.0f}s")
